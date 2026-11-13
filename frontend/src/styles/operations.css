@@ -257,3 +257,6 @@ img.sprite.creature-art{image-rendering:auto;object-fit:contain}
 :root[data-theme="light"] .binding-tag.on-equip{color:#2f5674}
 .bag-slot.is-bound::before{content:"";position:absolute;left:6px;top:6px;width:7px;height:7px;border-radius:2px;background:#e9a96b;box-shadow:0 0 0 1px #0006}
 :root[data-theme="light"] .bag-slot.is-bound::before{background:#8a3d0f}
+/* Conjuntos das Eras (shared/itemSets.ts). */
+.set-line{color:#d8c27a}
+:root[data-theme="light"] .set-line{color:#6b4d0f}

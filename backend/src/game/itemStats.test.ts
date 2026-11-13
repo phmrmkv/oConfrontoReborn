@@ -88,3 +88,30 @@ test('duelo: roubo de vida vale só a parte configurada', () => {
   assert.equal(first(full).dealt, 360); assert.equal(first(full).stolen, 36); assert.equal(first(half).stolen, 18);
   assert.equal(resolveDuelRound(1, [fighter(1, { hp: 500, lifeSteal: 10 }), fighter(2)], max, tuning(0)).record.moves.find(m => m.characterId === 1)!.stolen, undefined);
 });
+
+test('conjuntos das Eras: bônus de 2 e 4 peças, misturáveis, e metade no duelo', async () => {
+  const { setBonuses, itemSets, eraSetKeys, setOf } = await import('../../../shared/itemSets');
+  assert.deepEqual([...eraSetKeys], itemSets.map(s => s.key));
+  assert.equal(setBonuses({}).active.length, 0);
+  assert.equal(setBonuses({ era1: 1 }).active.length, 0, 'uma peça não dá nada');
+  const two = setBonuses({ era1: 2 }), four = setBonuses({ era1: 4 }), mix = setBonuses({ era1: 2, era2: 2 });
+  assert.equal(two.defensePercent, 4); assert.equal(two.statusResistance, 0);
+  assert.equal(four.defensePercent, 4); assert.equal(four.statusResistance, 10);
+  assert.equal(mix.defensePercent, 4); assert.equal(mix.attackPercent, 4); assert.equal(mix.active.length, 2);
+  assert.equal(setBonuses({ capriel: 4 }, 50).critDamage, 5);
+  assert.equal(setOf('era3')?.name, 'Sábio da 3ª Era'); assert.equal(setOf(null), null);
+  // Nas contas: 4 peças do Guardião da 1ª Era dão +4% de defesa e +10 de resistência a efeitos; sem conjunto, nada muda.
+  const piece = (setKey: string | null) => gear({ armor: 10, setKey });
+  const plain = combatStats(hero, [piece(null), piece(null), piece(null), piece(null)]);
+  const worn = combatStats(hero, [piece('era1'), piece('era1'), piece('era1'), piece('era1')]);
+  assert.equal(worn.defense, Math.floor(plain.defense * 1.04)); assert.equal(worn.statusResistance, 10);
+  assert.equal(worn.sets.length, 1); assert.equal(worn.sets[0].pieces, 4);
+  assert.equal(plain.sets.length, 0);
+  const duel = combatStats(hero, [piece('era1'), piece('era1'), piece('era1'), piece('era1')], { setPercent: 50 });
+  assert.equal(duel.defense, Math.floor(plain.defense * 1.02)); assert.equal(duel.statusResistance, 5);
+  // Catálogo: toda peça das Eras tem o conjunto da sua Era; nada fora delas tem conjunto.
+  for (const i of items) {
+    const era = i.name.match(/ da ([1-4])ª Era$/)?.[1], capriel = / de Capriel$/.test(i.name);
+    assert.equal(i.setKey ?? null, era ? `era${era}` : capriel ? 'capriel' : null, i.name);
+  }
+});

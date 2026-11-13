@@ -81,6 +81,7 @@ export const settingDefs = {
   'pvp.lootProtectTier': { default: 7, min: 1, max: 11, label: 'Duelo: itens com esta melhoria ou mais nunca caem no espólio', unit: '+N', group: 'Duelo' },
   'pvp.upgradePercent': { default: 50, min: 0, max: 100, label: 'Duelo: quanto da vantagem da melhoria +N vale no duelo (100 = igual à caçada, onde +10 dobra os atributos do item; 50 = +10 vale +50%)', unit: '%', group: 'Duelo' },
   'pvp.lifeStealPercent': { default: 60, min: 0, max: 100, label: 'Duelo: quanto do roubo de vida dos equipamentos vale no duelo', unit: '%', group: 'Duelo' },
+  'pvp.setPercent': { default: 50, min: 0, max: 100, label: 'Duelo: quanto dos bônus de conjunto das Eras vale no duelo (100 = igual à caçada)', unit: '%', group: 'Duelo' },
   'pvp.rarityPercent': { default: 50, min: 0, max: 100, label: 'Duelo: quanto da vantagem da raridade do equipamento vale no duelo (100 = igual à caçada; 0 = raridade não conta)', unit: '%', group: 'Duelo' },
   'pvp.ransomHours': { default: 48, min: 1, max: 336, label: 'Duelo: prazo para resgatar um item perdido no espólio', unit: 'h', group: 'Duelo' },
   'pvp.ransomPercent': { default: 100, min: 0, max: 500, label: 'Duelo: preço do resgate (% do preço de loja do item, pago ao vencedor)', unit: '%', group: 'Duelo' },

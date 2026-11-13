@@ -2,11 +2,14 @@
 // Atributos são balanceamento desta adaptação, não cópia automática da wiki. Sprites: TibiaWiki (manifest.json).
 import type { ItemSlot } from '@prisma/client';
 import { forgeMaterials } from '../../shared/forge';
+import { eraSetKeys } from '../../shared/itemSets';
 
 export interface CatalogItem { name: string; slot: ItemSlot; attack: number; defense: number; armor: number; npcPrice: number; minLevel: number;
   vocations?: string; magicAttack?: number; criticalChance?: number; fireResistance?: number; speed?: number; sprite?: string;
   // Atributos secundários (shared/itemStats.ts), em %.
-  critDamage?: number; lifeSteal?: number; healPower?: number; statusResistance?: number }
+  critDamage?: number; lifeSteal?: number; healPower?: number; statusResistance?: number;
+  // Conjunto das Eras (shared/itemSets.ts).
+  setKey?: string }
 const item = (name: string, slot: ItemSlot, minLevel: number, attack: number, defense: number, armor: number, npcPrice: number, extra: Partial<CatalogItem> = {}): CatalogItem =>
   ({ name, slot, attack, defense, armor, npcPrice, minLevel, ...extra });
 // Preço de loja dos equipamentos novos: cresce com o quadrado do nível (≈ 20–90 lutas da própria faixa).
@@ -90,7 +93,7 @@ export const items: CatalogItem[] = [
 function eraGear(level: number, index: number): CatalogItem[] {
   const suffix = index < 4 ? ` da ${index + 1}ª Era` : ' de Capriel', pick = (bases: string[]) => bases[index % bases.length];
   const era = (base: string, slot: ItemSlot, attack: number, defense: number, armor: number, extra: Partial<CatalogItem> = {}) =>
-    item(base + suffix, slot, level, attack, defense, armor, price(level), { sprite: base, ...extra });
+    item(base + suffix, slot, level, attack, defense, armor, price(level), { sprite: base, setKey: eraSetKeys[index], ...extra });
   const r = (x: number) => Math.round(x);
   // Atributos secundários crescem um pouco a cada Era (shared/itemStats.ts).
   const step = (values: number[]) => values[Math.min(index, values.length - 1)];
