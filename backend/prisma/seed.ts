@@ -1,22 +1,25 @@
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
-import manifest from '../../frontend/public/assets/tibia/manifest.json';
+import sheets from '../../frontend/src/lib/spriteSheets.json';
 import { items, monsters } from './catalog';
 import { bestPotionFor } from '../../shared/potions';
 import { materialForLevel } from '../../shared/forge';
 const prisma = new PrismaClient();
-const sprite = (name: string) => manifest.entries.find(e => e.name === name)?.path ?? '';
+// Só arte própria: a criatura grava o retrato da folha dela (o mesmo arquivo que a arena usa); o item grava vazio, e a tela acha o
+// GIF próprio pelo nome (lib/itemArt.ts). Nenhum sprite do TibiaWiki entra no banco.
+const monsterSheets: Record<string, string> = sheets.monsters;
+const monsterSprite = (name: string) => monsterSheets[name] ? `/assets/sprites/retratos/${monsterSheets[name]}.webp` : '';
 // Monstros que já existiam antes da fase 1 de níveis: mantêm a regra de loot original.
 const original = new Set(['Rat', 'Wolf', 'Guardião da Pedreira', 'Rotworm', 'Orc', 'Minotaur', 'Ghoul', 'Cyclops', 'Dragon', 'Dragon Lord', 'Demon']);
 async function main() {
-  const missing = [...items.map(i => i.sprite ?? i.name), ...monsters.map(m => m.sprite ?? m.name)].filter(n => !sprite(n));
-  if (missing.length) throw new Error(`Sem sprite no manifest.json: ${missing.join(', ')}. Importe com npm run icons antes do seed.`);
+  const missing = monsters.map(m => m.sprite ?? m.name).filter(n => !monsterSprite(n));
+  if (missing.length) console.warn(`Criaturas sem arte própria (ficam sem figura até a folha chegar): ${missing.join(', ')}`);
   // O seed só grava por nome e nunca renomeia: nomes antigos saem por migração (ex.: 202611130006_capriel_positive_names).
   // Se a base ainda tem os nomes de antes, o seed criaria cópias das criaturas e das tarefas; pare e rode as migrações primeiro.
   const stale = await prisma.monster.count({ where: { name: { endsWith: ' de Capriel' } } }) + await prisma.itemBlueprint.count({ where: { name: 'Sudden Death Rune de Capriel' } });
   if (stale) throw new Error('A base ainda tem nomes antigos do Vale da Perdição. Rode npm run db:deploy antes do seed.');
   for (const { sprite: spriteName, ...i } of items) {
-    const data = { magicAttack: 0, criticalChance: 0, fireResistance: 0, speed: 0, vocations: 'ALL', ...i, spriteUrl: sprite(spriteName ?? i.name) };
+    const data = { magicAttack: 0, criticalChance: 0, fireResistance: 0, speed: 0, vocations: 'ALL', ...i, spriteUrl: '' };
     await prisma.itemBlueprint.upsert({ where: { name: i.name }, update: data, create: data });
   }
   const loot = async (monsterId: number, name: string, dropChance: number, maxAmount = 1) => {
@@ -26,7 +29,7 @@ async function main() {
   const gear = items.filter(i => i.npcPrice > 0 && !['CONSUMABLE', 'LOOT', 'BACKPACK'].includes(i.slot)).sort((a, b) => a.minLevel - b.minLevel);
   for (const [index, m] of monsters.entries()) {
     const { sprite: spriteName, ...fields } = m;
-    const data = { isBoss: false, element: 'PHYSICAL', ...fields, spriteUrl: sprite(spriteName ?? m.name) };
+    const data = { isBoss: false, element: 'PHYSICAL', ...fields, spriteUrl: monsterSprite(spriteName ?? m.name) };
     const monster = await prisma.monster.upsert({ where: { name: m.name }, update: data, create: data });
     if (original.has(m.name)) await loot(monster.id, m.level < 12 ? 'Health Potion' : 'Fire Sword', .15);
     else {

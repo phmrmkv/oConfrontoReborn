@@ -1,8 +1,7 @@
 import {useEffect,useRef,useState,useSyncExternalStore} from 'react';
-import manifest from '../../public/assets/tibia/manifest.json';
 import {itemArt} from '../lib/itemArt';
+import {creatureFile,portraitUrl} from '../lib/creatureArt';
 import {motionStill,watchMotion} from '../lib/theme';
-const icons=new Map(manifest.entries.map(e=>[e.name,e.path]));
 // Lado, em pixels, do GIF próprio de um item (public/assets/items): o canvas do ícone parado guarda esse tamanho.
 const OWN_ART_SIDE=128;
 
@@ -19,7 +18,13 @@ function StillFrame({src,size,alt,onError}:{src:string;size:number;alt:string;on
   return <canvas ref={ref} className="sprite own-art" width={OWN_ART_SIDE} height={OWN_ART_SIDE} style={{width:size,height:size}} role="img" aria-label={alt}/>;
 }
 
-// Um item com arte própria (GIF animado em public/assets/items, lib/itemArt.ts) usa a sua; os outros, o sprite do TibiaWiki.
+// Quadrinho no lugar de um ícone que ainda não tem arte própria: as iniciais do nome (a figura chega quando o GIF for gerado).
+export function Placeholder({label,size}:{label:string;size:number}){
+  const initials=label.replace(/[^\p{L}\p{N} ]/gu,'').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('')||'?';
+  return <span className="missing-icon" role="img" aria-label={label} title={label} style={{width:size,height:size,fontSize:Math.max(9,Math.round(size*.34))}}>{initials}</span>;
+}
+
+// Um item com arte própria (GIF animado em public/assets/items, lib/itemArt.ts) usa a sua; criatura ou herói, o retrato próprio.
 // `tier` (melhoria do item): +7 e +8 com brilho discreto, +9 forte, +10 em chamas (raro). "Menos movimento" deixa tudo parado,
 // inclusive o GIF, que fica no primeiro quadro.
 export default function Icon({name,size=32,src,fire=false,tier=0}:{name:string;size?:number;src?:string;fire?:boolean;tier?:number}) {
@@ -29,8 +34,11 @@ export default function Icon({name,size=32,src,fire=false,tier=0}:{name:string;s
   // "A|B" = tenta A (sprite novo) e cai para B se ainda não foi importado.
   const names=name.split('|');const label=names[0];
   const drawn=names.map(n=>itemArt(n)).find(Boolean)??null,own=drawn&&drawn!==ownFailed?drawn:null;
-  const image=own??names.map(n=>icons.get(n)).find(Boolean)??src;
-  if(!image||image===failed)return <span className="missing-icon" title={label}>?</span>;
+  // Sem GIF de item: o retrato próprio da criatura ou do herói com esse nome; depois `src`, se for arte própria (o banco antigo
+  // ainda pode trazer caminhos do TibiaWiki, que não existem mais no jogo). Sem nada disso, um quadrinho com as iniciais.
+  const portrait=names.map(n=>portraitUrl(creatureFile(n))).find(Boolean),ownSrc=src&&!src.startsWith('/assets/tibia/')?src:undefined;
+  const image=own??portrait??ownSrc;
+  if(!image||image===failed)return <Placeholder label={label} size={size}/>;
   const burning=fire||tier>=10,glow=!burning&&tier>=9?'glow-strong':!burning&&tier>=7?'glow-soft':'';
   const alt=burning?`${label} (+10, em chamas)`:tier>=7?`${label} (+${tier}, brilhando)`:label;
   // Se o GIF próprio não carregar (figura ainda fora do servidor), o ícone volta para o sprite antigo em vez de sumir.

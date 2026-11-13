@@ -271,3 +271,5 @@
 .battle-stage .fx-burst.impact.late .fx-cell{opacity:0;animation:fx-late .3s steps(4,jump-none) .24s forwards}
 @keyframes fx-late{from{opacity:1;background-position-x:0}to{opacity:1;background-position-x:100%}}
 :root[data-motion="reduce"] .battle-stage .fx-burst{display:none}
+/* Projétil sem a folha de efeitos: uma esfera de luz própria (antes era um ícone de runa do TibiaWiki). */
+.battle-stage .projectile-orb{display:block;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff6c8,#ffb347 45%,#c2410c 75%,transparent 76%);box-shadow:0 0 14px #ffb347}

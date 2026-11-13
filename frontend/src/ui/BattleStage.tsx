@@ -1,8 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import Icon from './GameIcon';
-import manifest from '../../public/assets/tibia/manifest.json';
 import {applyMotion} from '../lib/theme';
-import {creatureFile,effectCell,effectRow,effectsSheet,heroFile,heroShot,sheetUrl} from '../lib/creatureArt';
+import {creatureFile,effectCell,effectRow,effectsSheet,heroFile,heroShot,portraitUrl,sheetUrl} from '../lib/creatureArt';
 
 // Arena animada, usada na caçada, no Duelo e na Caçada em grupo: lutadores à esquerda e à direita encenam a rodada que o servidor
 // já resolveu (avanço, projétil, tranco, números que sobem, cura, guarda, esquiva, queda). Nenhuma regra de combate mora aqui.
@@ -14,11 +13,9 @@ export type Step={cues:Cue[];shake?:boolean;ms:number};
 // `sheet`: folha de sprites própria (4 colunas × 6 linhas, virada para a direita). Com ela o boneco anima quadro a quadro;
 // sem ela, usa o sprite parado do TibiaWiki (`src`) com os movimentos de corpo inteiro.
 export type StageFighter={id:string;name:string;src:string;sheet?:string;size?:number;boss?:boolean;rage?:boolean;down?:boolean;gone?:boolean;fx?:string};
-const paths=new Map(manifest.entries.map(e=>[e.name,e.path]));
-export const spriteOf=(name:string,fallback='')=>paths.get(name)??fallback;
-// Boneco de cada vocação (sprites do TibiaWiki já registrados no manifesto). O que voa quando o golpe é à distância vem de lib/creatureArt.
-const heroSprites:Record<string,string>={KNIGHT:'Hero',PALADIN:'Hunter',SORCERER:'Warlock',DRUID:'Monk'};
-export const heroSpriteOf=(baseVocation:string)=>spriteOf(heroSprites[baseVocation]??'Hero',spriteOf('Hero'));
+// Figura parada (sem folha): o retrato próprio da criatura ou do herói. Nenhum sprite do TibiaWiki é usado.
+export const spriteOf=(name:string,spritePath?:string)=>portraitUrl(creatureFile(name,spritePath))??'';
+export const heroSpriteOf=(baseVocation:string)=>portraitUrl(heroFile(baseVocation))??'';
 export const shotOf=heroShot;
 // Arte própria do jogo (versão de site em frontend/public/assets/sprites, ver CREDITOS.md lá; originais em art/sprites). Linhas da folha: 1 parado, 2 avançar, 3 atacar,
 // 4 defender, 5 curar, 6 apanhar (2 quadros) e cair (2 quadros). Quem não tem folha continua com o sprite do TibiaWiki.
@@ -94,7 +91,7 @@ export default function BattleStage({scene,turn,left,right,steps}:{scene:string|
       <div className="stage-floor"/>
       <div className={`stage-side left ${left.length>1?'many':''}`}>{left.map(f=>fighter(f,'left',left.length>1))}</div>
       {shotCues.map(c=>{const cell=fxSheet?effectCell(c.shot!):undefined;
-        return <span key={`${index}-${c.who}`} className={`projectile ${left.some(f=>f.id===c.who)?'left':'right'}${cell!==undefined?' own':''}`}>{cell!==undefined?<FxCell cell={cell}/>:<Icon name={c.shot!} size={36}/>}</span>;})}
+        return <span key={`${index}-${c.who}`} className={`projectile ${left.some(f=>f.id===c.who)?'left':'right'}${cell!==undefined?' own':''}`}>{cell!==undefined?<FxCell cell={cell}/>:<span className="projectile-orb" title={c.shot}/>}</span>;})}
       <div className={`stage-side right ${right.length>1?'many':''}`}>{right.map(f=>fighter(f,'right',right.length>1))}</div>
     </div>
     <button type="button" className="link-button stage-motion" aria-pressed={!still} title="Vale para o jogo todo; também fica em Configurações." onClick={toggle}>{still?'Animações desligadas · ligar':'Animações ligadas · desligar'}</button>
