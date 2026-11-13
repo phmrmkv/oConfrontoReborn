@@ -59,6 +59,8 @@ export const settingDefs = {
   'rarity.epicPer10k': { default: 250, min: 0, max: 10000, label: 'Raridade: equipamentos que caem Épicos', unit: 'por 10 mil', group: 'Raridade' },
   'rarity.legendaryPer10k': { default: 60, min: 0, max: 10000, label: 'Raridade: equipamentos que caem Lendários', unit: 'por 10 mil', group: 'Raridade' },
   'rarity.mythicPer10k': { default: 10, min: 0, max: 10000, label: 'Raridade: equipamentos que caem Míticos', unit: 'por 10 mil', group: 'Raridade' },
+  // Loot inteligente (shared/loot.ts): equipamento de outra vocação vira, com esta chance, o equivalente da vocação de quem caçou.
+  'loot.ownVocationPercent': { default: 70, min: 0, max: 100, label: 'Loot inteligente: chance de um equipamento de outra vocação virar o equivalente da vocação de quem caçou', unit: '%', group: 'Recompensas' },
   'rarity.bossBoostPercent': { default: 300, min: 100, max: 1000, label: 'Raridade: multiplicador dessas chances quando quem derruba é um chefe', unit: '%', group: 'Raridade' },
   'pvp.levelBandPercent': { default: 10, min: 1, max: 100, label: 'Duelo: diferença máxima de nível entre os dois (% do maior nível)', unit: '%', group: 'Duelo' },
   'pvp.dailyLimit': { default: 10, min: 1, max: 100, label: 'Duelo: duelos por personagem a cada 24 horas', unit: '', group: 'Duelo' },
@@ -68,6 +70,7 @@ export const settingDefs = {
   'pvp.wagerFeePercent': { default: 5, min: 0, max: 50, label: 'Duelo: taxa da arena sobre o pote da aposta (sai do jogo)', unit: '%', group: 'Duelo' },
   'pvp.lootChancePercent': { default: 25, min: 0, max: 100, label: 'Duelo: chance de o vencedor levar um item no duelo de espólio (0 = desligado)', unit: '%', group: 'Duelo' },
   'pvp.lootProtectTier': { default: 7, min: 1, max: 11, label: 'Duelo: itens com esta melhoria ou mais nunca caem no espólio', unit: '+N', group: 'Duelo' },
+  'pvp.upgradePercent': { default: 50, min: 0, max: 100, label: 'Duelo: quanto da vantagem da melhoria +N vale no duelo (100 = igual à caçada, onde +10 dobra os atributos do item; 50 = +10 vale +50%)', unit: '%', group: 'Duelo' },
   'pvp.rarityPercent': { default: 50, min: 0, max: 100, label: 'Duelo: quanto da vantagem da raridade do equipamento vale no duelo (100 = igual à caçada; 0 = raridade não conta)', unit: '%', group: 'Duelo' },
   'pvp.ransomHours': { default: 48, min: 1, max: 336, label: 'Duelo: prazo para resgatar um item perdido no espólio', unit: 'h', group: 'Duelo' },
   'pvp.ransomPercent': { default: 100, min: 0, max: 500, label: 'Duelo: preço do resgate (% do preço de loja do item, pago ao vencedor)', unit: '%', group: 'Duelo' },
