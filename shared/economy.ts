@@ -17,6 +17,8 @@ export const itemReasons = {
   MARKET_LIST: 'transfer', MARKET_RETURN: 'transfer', MARKET_BUY: 'transfer',
   // Ferreiro: fabricar cria o item e gasta materiais; reforjar troca o item antigo pelo novo; desmontar destrói o item e devolve materiais.
   FORGE_CRAFT: 'source', FORGE_MATERIAL_USE: 'sink', FORGE_REFORGE_OUT: 'sink', FORGE_REFORGE_IN: 'source', FORGE_SALVAGE: 'sink', FORGE_SALVAGE_MATERIAL: 'source',
+  // Despertar: o mesmo exemplar troca de raridade (sai na antiga e entra na nova, como na reforja).
+  FORGE_AWAKEN_OUT: 'sink', FORGE_AWAKEN_IN: 'source',
   GROUP_HUNT: 'source',
   // Espólio de duelo e resgate: o item muda de dono (soma zero).
   DUEL_LOOT_OUT: 'transfer', DUEL_LOOT_IN: 'transfer', DUEL_RANSOM_OUT: 'transfer', DUEL_RANSOM_IN: 'transfer',
@@ -64,6 +66,9 @@ export const settingDefs = {
   'rarity.mythicPer10k': { default: 10, min: 0, max: 10000, label: 'Raridade: equipamentos que caem Míticos', unit: 'por 10 mil', group: 'Raridade' },
   // Loot inteligente (shared/loot.ts): equipamento de outra vocação vira, com esta chance, o equivalente da vocação de quem caçou.
   'loot.ownVocationPercent': { default: 70, min: 0, max: 100, label: 'Loot inteligente: chance de um equipamento de outra vocação virar o equivalente da vocação de quem caçou', unit: '%', group: 'Recompensas' },
+  // Fragmentos de chefe (shared/rarity.ts, awakenCost): o caminho garantido para a raridade, sem depender do sorteio.
+  'boss.fragmentsPerWin': { default: 1, min: 0, max: 20, label: 'Fragmentos de chefe por vitória contra chefe (caçada e Caçada em grupo; 0 = desligado)', unit: '', group: 'Raridade' },
+  'boss.awakenBaseFragments': { default: 5, min: 1, max: 1000, label: 'Fragmentos para despertar um item de Comum para Incomum (dobra a cada degrau: Raro 2×, Épico 4×, Lendário 8×, Mítico 16×)', unit: '', group: 'Raridade' },
   'rarity.bossBoostPercent': { default: 300, min: 100, max: 1000, label: 'Raridade: multiplicador dessas chances quando quem derruba é um chefe', unit: '%', group: 'Raridade' },
   'pvp.levelBandPercent': { default: 10, min: 1, max: 100, label: 'Duelo: diferença máxima de nível entre os dois (% do maior nível)', unit: '%', group: 'Duelo' },
   'pvp.dailyLimit': { default: 10, min: 1, max: 100, label: 'Duelo: duelos por personagem a cada 24 horas', unit: '', group: 'Duelo' },

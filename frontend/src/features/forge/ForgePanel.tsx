@@ -4,16 +4,16 @@ import {fmt,when} from '../../lib/format';
 import type {Hero,Item,GameConfig,Perform} from '../../lib/types';
 import Icon from '../../ui/GameIcon';
 import {RarityFrame,RarityTag} from '../../ui/RarityFrame';
-import {rarityName,raritySuffix} from '../../../../shared/rarity';
+import {MAX_RARITY,awakenCost,rarityName,raritySuffix} from '../../../../shared/rarity';
 import {Limited} from '../../ui/ShowMore';
 import {Pager,usePaged} from '../../ui/Pager';
 import {upgradeSuccessPercent,upgradeBreakPercent,upgradeFailBonus} from '../../../../shared/economy';
 import {vocationAllowed} from '../../../../shared/adventure';
 import {isForgeable,materialForLevel,reforgeKeptTier,salvageReturn} from '../../../../shared/forge';
 type Recipe={id:number;name:string;slot:string;minLevel:number;vocations:string;spriteUrl:string;attack:number;defense:number;armor:number;magicAttack:number;material:string;craftGold:string;reforgeGold:string};
-type Overview={level:number;craftMaterials:number;salvageMaterials:number;shopMaxLevel:number;materials:{name:string;minLevel:number;spriteUrl:string;have:number}[];recipes:Recipe[];bag:Item[]};
-type Mode='upgrade'|'craft'|'reforge'|'salvage'|'history';
-const modes:[Mode,string][]=[['upgrade','Melhorar'],['craft','Fabricar'],['reforge','Reforjar'],['salvage','Desmontar'],['history','Meu histórico']];
+type Overview={level:number;bossFragments:number;fragmentsPerWin:number;awakenBase:number;craftMaterials:number;salvageMaterials:number;shopMaxLevel:number;materials:{name:string;minLevel:number;spriteUrl:string;have:number}[];recipes:Recipe[];bag:Item[]};
+type Mode='upgrade'|'awaken'|'craft'|'reforge'|'salvage'|'history';
+const modes:[Mode,string][]=[['upgrade','Melhorar'],['awaken','Despertar'],['craft','Fabricar'],['reforge','Reforjar'],['salvage','Desmontar'],['history','Meu histórico']];
 const slotNames:Record<string,string>={WEAPON:'Arma',ARMOR:'Armadura',HELMET:'Elmo',LEGS:'Pernas',BOOTS:'Botas',SHIELD:'Escudo',AMULET:'Amuleto',RING:'Anel',AMMO:'Flecha / runa'};
 const stats=(r:Recipe)=>[r.attack&&`ATK ${r.attack}`,r.magicAttack&&`Magia ${r.magicAttack}`,r.defense&&`DEF ${r.defense}`,r.armor&&`ARM ${r.armor}`].filter(Boolean).join(' · ');
 export default function ForgePanel({hero,inventory,config,busy,fighting,perform}:{hero:Hero;inventory:{items:Item[]};config:GameConfig|null;busy:boolean;fighting:boolean;perform:Perform}){
@@ -27,14 +27,15 @@ export default function ForgePanel({hero,inventory,config,busy,fighting,perform}
   const owned=[...hero.equipment,...(o?.bag??inventory.items)].filter(i=>isForgeable(i.blueprint.slot)&&i.quantity===1);
   return <section className="panel"><div className="section-title"><h2>Forja do aventureiro</h2><Icon name="Magic Longsword" size={40}/></div>
     <div className="forge-tabs" role="tablist" aria-label="O que fazer no Ferreiro">{modes.map(([m,label])=><button key={m} role="tab" aria-selected={mode===m} className={mode===m?'active-chip':''} onClick={()=>setMode(m)}>{label}</button>)}</div>
-    {mode!=='upgrade'&&o&&<div className="forge-materials" aria-label="Seus materiais">{o.materials.map(m=><div key={m.name} className={materialForLevel(hero.level).name===m.name?'current':''} title={`${m.name}: nível ${m.minLevel}+`}><Icon name={m.name} src={m.spriteUrl} size={28}/><b>{m.have}</b><small>{m.name}</small></div>)}</div>}
+    {mode!=='upgrade'&&mode!=='awaken'&&o&&<div className="forge-materials" aria-label="Seus materiais">{o.materials.map(m=><div key={m.name} className={materialForLevel(hero.level).name===m.name?'current':''} title={`${m.name}: nível ${m.minLevel}+`}><Icon name={m.name} src={m.spriteUrl} size={28}/><b>{m.have}</b><small>{m.name}</small></div>)}</div>}
     {mode!=='upgrade'&&loadError&&<p className="error" role="alert">{loadError}</p>}
     {mode==='upgrade'&&<UpgradeSection hero={hero} items={owned.filter(i=>i.blueprint.slot!=='AMMO')} config={config} busy={busy} fighting={fighting} perform={act}/>}
+    {mode==='awaken'&&o&&<AwakenSection o={o} hero={hero} items={owned} busy={busy||fighting} act={act}/>}
     {mode==='craft'&&o&&<CraftSection hero={hero} o={o} have={have} busy={busy||fighting} act={act}/>}
     {mode==='reforge'&&o&&<ReforgeSection hero={hero} o={o} items={owned.filter(i=>!i.rareItem)} have={have} busy={busy||fighting} act={act}/>}
     {mode==='history'&&<HistorySection hero={hero} refresh={inventory.items}/>}
     {mode==='salvage'&&o&&<SalvageSection hero={hero} o={o} items={owned.filter(i=>!i.rareItem&&!i.isEquipped)} busy={busy||fighting} act={act}/>}
-    {mode!=='upgrade'&&<p className="muted">Materiais caem dos monstros da mesma faixa de nível (chefes sempre deixam alguns) e podem ser trocados no Mercado. O Mercador vende equipamentos só até o nível {o?.shopMaxLevel??100}; acima disso, o equipamento vem daqui ou do espólio dos monstros.</p>}
+    {mode!=='upgrade'&&mode!=='awaken'&&<p className="muted">Materiais caem dos monstros da mesma faixa de nível (chefes sempre deixam alguns) e podem ser trocados no Mercado. O Mercador vende equipamentos só até o nível {o?.shopMaxLevel??100}; acima disso, o equipamento vem daqui ou do espólio dos monstros.</p>}
   </section>;
 }
 type Act=(work:()=>Promise<unknown>,message?:string)=>Promise<void>;
@@ -68,6 +69,17 @@ function ReforgeSection({hero,o,items,have,busy,act}:{hero:Hero;o:Overview;items
           <button disabled={busy||!enough} onClick={()=>{if(!window.confirm(`Reforjar ${item.blueprint.name}${item.upgradeTier?` +${item.upgradeTier}`:''} em ${r.name}${tier?` +${tier}`:''}? O item antigo deixa de existir.`))return;void act(async()=>{const res=await api(`/characters/${hero.id}/forge/reforge`,{itemId:item.id,targetId:r.id},crypto.randomUUID());setPick(null);return res;});}}>Reforjar</button></div>;}}/>
       {!targets.length&&<p className="empty">Ainda não há item maior desse tipo para o seu nível e vocação.</p>}</>}
   </>;
+}
+// Despertar: fragmentos de chefe sobem a raridade de um exemplar em um degrau (custo em shared/rarity.ts, awakenCost).
+function AwakenSection({hero,o,items,busy,act}:{hero:Hero;o:Overview;items:Item[];busy:boolean;act:Act}){
+  const sorted=[...items].sort((a,b)=>Number(b.isEquipped)-Number(a.isEquipped)||(b.rarity??0)-(a.rarity??0)||b.blueprint.minLevel-a.blueprint.minLevel);
+  return <>
+    <p className="muted">Fragmentos de chefe sobem a raridade de um equipamento em um degrau, sem sorteio: o caminho garantido para o item que você quer. Cada vitória contra chefe (na caçada ou em grupo) dá {o.fragmentsPerWin}. Do Comum ao Incomum custa {awakenCost(1,o.awakenBase)}, e o custo dobra a cada degrau até o Mítico ({awakenCost(MAX_RARITY,o.awakenBase)}). Vale para itens equipados, favoritos e +10; a melhoria do item continua a mesma.</p>
+    <div className="stat-tiles"><div><b>{o.bossFragments.toLocaleString('pt-BR')}</b><span>fragmentos de chefe</span></div></div>
+    <Limited items={sorted} label="Ver mais" render={i=>{const r=i.rarity??0,target=r+1,cost=awakenCost(target,o.awakenBase),done=r>=MAX_RARITY;
+      return <div className="market-row" key={i.id}><RarityFrame rarity={r}><Icon name={i.blueprint.name} src={i.blueprint.spriteUrl} size={40} tier={i.upgradeTier}/></RarityFrame><div><h3>{i.blueprint.name}{i.upgradeTier?` +${i.upgradeTier}`:''} <RarityTag rarity={r}/>{i.isEquipped?<small className="muted"> · equipado</small>:null}</h3><p>{done?'Já está na raridade mais alta.':`${rarityName(r)} → ${rarityName(target)} · ${cost} fragmento(s)`}</p></div>
+        <button disabled={busy||done||o.bossFragments<cost} title={done?'':o.bossFragments<cost?`Faltam ${cost-o.bossFragments} fragmento(s).`:''} onClick={()=>{if(!window.confirm(`Despertar ${i.blueprint.name}${i.upgradeTier?` +${i.upgradeTier}`:''} de ${rarityName(r)} para ${rarityName(target)} por ${cost} fragmento(s) de chefe? Não dá para desfazer.`))return;void act(()=>api(`/characters/${hero.id}/forge/awaken`,{itemId:i.id},crypto.randomUUID()));}}>Despertar</button></div>;}}/>
+    {!sorted.length&&<p className="empty">Nenhum equipamento para despertar.</p>}</>;
 }
 function SalvageSection({hero,o,items,busy,act}:{hero:Hero;o:Overview;items:Item[];busy:boolean;act:Act}){
   return <>

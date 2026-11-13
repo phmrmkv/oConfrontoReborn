@@ -125,3 +125,14 @@ test('Ferreiro: cada falha soma chance à próxima tentativa do mesmo item, com 
   assert.ok(ex.expectedItemsUsed < plain.expectedItemsUsed && ex.survivalChance > plain.survivalChance);
   assert.deepEqual([d()['upgrade.failBonusPercent'], d()['upgrade.failBonusMax']], [5, 15]);
 });
+
+test('fragmentos de chefe: despertar custa o dobro a cada degrau', async () => {
+  const { awakenCost } = await import('../../../shared/rarity');
+  const { itemReasons } = await import('../../../shared/economy');
+  assert.deepEqual([1, 2, 3, 4, 5].map(t => awakenCost(t, 5)), [5, 10, 20, 40, 80]);
+  assert.equal([1, 2, 3, 4, 5].reduce((s, t) => s + awakenCost(t, 5), 0), 155);
+  assert.deepEqual([0, 6].map(t => awakenCost(t, 5)), [0, 0], 'Comum não é destino e não há nada acima de Mítico');
+  assert.deepEqual([1, 5].map(t => awakenCost(t, 0)), [1, 16], 'base nunca abaixo de 1');
+  assert.equal(itemReasons.FORGE_AWAKEN_OUT, 'sink'); assert.equal(itemReasons.FORGE_AWAKEN_IN, 'source');
+  assert.equal(defaultSettings()['boss.fragmentsPerWin'], 1); assert.equal(defaultSettings()['boss.awakenBaseFragments'], 5);
+});

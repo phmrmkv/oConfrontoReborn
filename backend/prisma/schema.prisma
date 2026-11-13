@@ -104,7 +104,9 @@ model Character {
   agility                Int                    @default(10)
   resistance             Int                    @default(10)
   statPoints             Int                    @default(0)
-  goldInHand             BigInt                 @default(100)
+  goldInHand             BigInt                 @default(100)
+  // Fragmentos de chefe: cada vitória contra chefe dá alguns; o Ferreiro os usa para despertar a raridade de um item (shared/rarity.ts).
+  bossFragments  Int      @default(0)
   goldInBank             BigInt                 @default(0)
   huntMonsterId          Int?
   huntEndsAt             DateTime?
