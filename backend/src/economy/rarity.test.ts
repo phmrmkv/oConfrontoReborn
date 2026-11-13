@@ -77,6 +77,19 @@ test('contas de combate: raridade multiplica ataque, magia, defesa e armadura, s
   assert.equal(mythic.criticalChance, common.criticalChance); assert.equal(mythic.fireResistance, common.fireResistance); assert.equal(mythic.dodgeChance, common.dodgeChance);
 });
 
+test('duelo: só parte da vantagem da melhoria +N vale; na caçada, +10 continua dobrando', () => {
+  const base = combatStats(hero, []).attack, plus10 = [blade(100, { upgradeTier: 10 })];
+  assert.equal(combatStats(hero, plus10).attack - base, 200);
+  assert.equal(combatStats(hero, plus10, { upgradePercent: 100 }).attack - base, 200);
+  assert.equal(combatStats(hero, plus10, { upgradePercent: 50 }).attack - base, 150);
+  assert.equal(combatStats(hero, plus10, { upgradePercent: 0 }).attack - base, 100);
+  // Os dois juntos: +10 Mítico no duelo padrão = 100 × 1,5 × 1,2 = 180.
+  assert.equal(combatStats(hero, [blade(100, { upgradeTier: 10, rarity: 5 })], { upgradePercent: 50, rarityPercent: 50 }).attack - base, 180);
+  // Valores fora da faixa ficam presos entre 0 e 100.
+  assert.equal(combatStats(hero, plus10, { upgradePercent: 300 }).attack - base, 200);
+  assert.equal(defaultSettings()['pvp.upgradePercent'], 50);
+});
+
 test('duelo: só parte da vantagem da raridade vale', () => {
   const base = combatStats(hero, []).attack, mythic = [blade(100, { rarity: 5 })];
   assert.equal(combatStats(hero, mythic, { rarityPercent: 100 }).attack - base, 140);

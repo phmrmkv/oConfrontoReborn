@@ -17,8 +17,9 @@ export type Hero = ReturnType<typeof hero>;
 export interface Foe { hp: number; attack: number; defense: number; isBoss?: boolean; element?: string; regionKey?: string }
 
 // Personagem no nível, com os pontos distribuídos e o melhor equipamento da loja que ele pode usar.
-// `rarity` (0 a 5) vale para todas as peças; `rarityPercent` é quanto da vantagem da raridade entra na conta (o duelo usa pvp.rarityPercent).
-export function hero(voc: BaseVocation, level: number, items: CatalogItem[], tier = 0, rarity = 0, rarityPercent = 100) {
+// `tier` (+N) e `rarity` (0 a 5) valem para todas as peças; `rarityPercent` e `upgradePercent` são quanto dessas vantagens entra na conta
+// (o duelo usa pvp.rarityPercent e pvp.upgradePercent).
+export function hero(voc: BaseVocation, level: number, items: CatalogItem[], tier = 0, rarity = 0, rarityPercent = 100, upgradePercent = 100) {
   const t = typicalAttributes(voc, level), v = t.vitality - 10, r = t.resistance - 10;
   const c = { ...t, level, classTier: classLevels.filter(l => l <= level).length, vocation: level >= promotion.minLevel ? promotedOf[voc] : voc };
   const gear = gearSlots.flatMap(slot => {
@@ -26,7 +27,7 @@ export function hero(voc: BaseVocation, level: number, items: CatalogItem[], tie
     return best ? [{ upgradeTier: tier, rarity, blueprint: { magicAttack: 0, criticalChance: 0, fireResistance: 0, speed: 0, ...best } }] : [];
   });
   const maxHp = 150 + (level - 1) * levelGains.hp + v * 15, maxMana = 55 + (level - 1) * levelGains.mana + r * 15;
-  return { c, maxHp, maxMana, stats: combatStats(c, gear, { rarityPercent }) };
+  return { c, maxHp, maxMana, stats: combatStats(c, gear, { rarityPercent, upgradePercent }) };
 }
 // Política de jogador atento: cura com pouca vida, defende golpe anunciado, usa a habilidade mais forte que puder.
 function choose(hp: number, maxHp: number, mana: number, costs: Record<Action, number>, warning: boolean): Action {

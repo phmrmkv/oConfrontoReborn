@@ -222,8 +222,8 @@ export async function answerDuel(accountId: number, characterId: number, duelId:
     const state: DuelState = { stats: {} }, fighters: Prisma.DuelFighterCreateManyDuelInput[] = [];
     for (const h of [c, rival].sort((a, b) => a.id - b.id)) {
       const equipment = await tx.inventoryItem.findMany({ where: { characterId: h.id, isEquipped: true }, include: { blueprint: true } });
-      // No duelo só parte da vantagem da raridade vale (pvp.rarityPercent), para o equipamento não decidir sozinho.
-      const s = combatStats(h, equipment, { rarityPercent: settings['pvp.rarityPercent'] });
+      // No duelo só parte da vantagem da raridade e da melhoria +N vale (pvp.rarityPercent, pvp.upgradePercent), para o equipamento não decidir sozinho.
+      const s = combatStats(h, equipment, { rarityPercent: settings['pvp.rarityPercent'], upgradePercent: settings['pvp.upgradePercent'] });
       state.stats[h.id] = { name: h.name, attack: s.attack, defense: s.defense, agility: h.agility, criticalChance: s.criticalChance, dodgeChance: s.dodgeChance };
       // Cópia da vida e mana máximas: o duelo começa com os dois inteiros e não mexe na vida real.
       fighters.push({ characterId: h.id, vocation: h.vocation, hp: h.maxHp, maxHp: h.maxHp, mana: h.maxMana, maxMana: h.maxMana, activeCharacterId: h.id });
