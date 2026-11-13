@@ -3,6 +3,7 @@ import {api} from '../../lib/api';
 import {msg} from '../../lib/format';
 import type {Hero} from '../../lib/types';
 import Icon from '../../ui/GameIcon';
+import PowerIcon from '../../ui/PowerIcon';
 import {RarityFrame,RarityTag} from '../../ui/RarityFrame';
 import {raritySuffix} from '../../../../shared/rarity';
 import {Feedback} from '../../ui/Feedback';
@@ -205,7 +206,7 @@ function DuelView({d,hero,left,busy,surrender,setSurrender,choose,forfeit,reload
       :<><h2 className="arena-title">Seu golpe nesta rodada</h2>
         <div className="skill-groups duel-skills">{groups.map(g=><div key={g.key} role="group" aria-label={g.label} className={`skill-group ${g.key}`}><div className="skill-head"><span>{g.label}</span></div>
           <div className="skill-grid">{g.actions.map(key=>{const a=d.actions.find(x=>x.key===key)!;return <button key={key} type="button" className={`skill ${d.me.mana<a.mana?'no-mana':''}`} disabled={busy||d.me.mana<a.mana} title={a.help} onClick={()=>choose(key)}>
-            <span className="skill-icon"><Icon name={actionIcon[key]??vocationIcon[baseVocation(d.me.vocation)]??'Sword'} size={32}/></span><b>{a.label}</b><small className={a.mana?'cost':'cost free'}>{a.mana?`${a.mana} MP`:'Livre'}</small><span className="skill-help">{a.help}</span></button>;})}</div></div>)}</div></>}
+            <span className="skill-icon"><PowerIcon vocation={baseVocation(d.me.vocation)} action={key} fallback={actionIcon[key]??vocationIcon[baseVocation(d.me.vocation)]??'Sword'}/></span><b>{a.label}</b><small className={a.mana?'cost':'cost free'}>{a.mana?`${a.mana} MP`:'Livre'}</small><span className="skill-help">{a.help}</span></button>;})}</div></div>)}</div></>}
       <div className="duel-surrender">{surrender?<><span>Render-se entrega a vitória a {d.foe.character.name}. Tem certeza?</span>
         <button type="button" className="danger-button" disabled={busy} onClick={forfeit}>Sim, me rendo</button><button type="button" disabled={busy} onClick={()=>setSurrender(false)}>Continuar lutando</button></>
         :<button type="button" disabled={busy} onClick={()=>setSurrender(true)}><Icon name="Boots of Haste" size={20}/> Render-se</button>}</div></>

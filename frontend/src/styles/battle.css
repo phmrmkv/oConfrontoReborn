@@ -278,3 +278,5 @@
 .battle-stage .fx-burst.special .fx-cell{width:150px;height:150px}
 .battle-stage .fighter.many .fx-burst.special .fx-cell{width:104px;height:104px}
 .battle-stage .fx-burst.special.late .fx-cell{opacity:0;animation:fx-late .4s steps(4,jump-none) .24s forwards}
+/* Ícones próprios dos poderes (ui/PowerIcon.tsx): pintura detalhada, desenhada suave e um pouco maior que o sprite de item. */
+.skill-icon .power-art{image-rendering:auto;width:40px!important;height:40px!important;filter:drop-shadow(0 1px 2px #000a)}
