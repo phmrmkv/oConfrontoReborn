@@ -9,7 +9,7 @@ import { addItem } from '../src/economy/economy';
 import { itemDrift } from '../src/economy/reconcile';
 import { listItem, buyListing, cancelListing } from '../src/economy/marketService';
 import { BattleService } from '../src/game/battleService';
-import { sellNpc } from '../src/game/gameService';
+import { sellNpc, upgrade } from '../src/game/gameService';
 import { reforge, salvage } from '../src/game/forgeService';
 import { MAX_RARITY } from '../../shared/rarity';
 
@@ -123,6 +123,34 @@ test('MySQL: raridade do exemplar no drop, no Mercado, no Mercador, no Ferreiro 
       if (before) await prisma.gameSetting.update({ where: { key }, data: { value: before.value } }); else await prisma.gameSetting.delete({ where: { key } });
     }
   });
+  await t.test('Ferreiro: falha soma chance à próxima tentativa do mesmo item e o acerto zera', async () => {
+    const item = await grant(c, sword.id, 0);
+    await prisma.inventoryItem.update({ where: { id: item.id }, data: { upgradeTier: 5 } });
+    const fails = async () => (await prisma.inventoryItem.findUniqueOrThrow({ where: { id: item.id } })).upgradeFails;
+    let seenFail = false, seenStreak = false, seenReset = false;
+    // De +5 para +6 a chance é 65% e nada quebra; ao acertar, o item volta a +5 para tentar de novo.
+    for (let n = 0; n < 400 && !(seenStreak && seenReset); n++) {
+      const before = await fails();
+      const r = await upgrade(a, c, item.id, 5, randomUUID());
+      assert.equal(r.chance, Math.min(100, 65 + Math.min(15, before * 5)), `chance com ${before} falha(s)`);
+      if (r.outcome === 'FAILED') {
+        assert.equal(await fails(), before + 1); seenFail = true; if (before >= 1) seenStreak = true;
+        assert.equal(r.nextBonus, Math.min(15, (before + 1) * 5));
+      } else {
+        assert.equal(r.outcome, 'SUCCESS'); assert.equal(await fails(), 0); if (before > 0) seenReset = true;
+        await prisma.inventoryItem.update({ where: { id: item.id }, data: { upgradeTier: 5 } });
+      }
+    }
+    assert(seenFail && seenStreak && seenReset, 'viu falha, falhas seguidas e o acerto zerando');
+    // Reforjar zera a ajuda.
+    await prisma.inventoryItem.update({ where: { id: item.id }, data: { upgradeFails: 2 } });
+    await transaction(tx => addItem(tx, c, emerald.id, settings['forge.craftMaterials'], 'ADMIN_GRANT'));
+    const blade = await grant(c, halberd.id, 0);
+    await prisma.inventoryItem.update({ where: { id: blade.id }, data: { upgradeFails: 3 } });
+    await reforge(a, c, blade.id, naginata.id, randomUUID());
+    assert.equal((await prisma.inventoryItem.findUniqueOrThrow({ where: { id: blade.id } })).upgradeFails, 0);
+  });
+
   await t.test('extrato de itens bate com a mochila dos dois', async () => {
     assert.deepEqual((await itemDrift(prisma, 5000)).filter(x => x.characterId === c || x.characterId === d), []);
   });

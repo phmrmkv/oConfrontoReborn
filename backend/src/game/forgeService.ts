@@ -76,7 +76,7 @@ export async function reforge(accountId: number, characterId: number, itemId: nu
       await takeStack(tx, characterId, material.id, qty, 'FORGE_MATERIAL_USE', ref);
       await addGold(tx, characterId, -gold, 'FORGE_REFORGE', ref);
       // O mesmo item (mesma linha, mesmo slot se estiver equipado) passa a ser o novo; o extrato registra a troca.
-      await tx.inventoryItem.update({ where: { id: item.id }, data: { blueprintId: target.id, upgradeTier: tier } });
+      await tx.inventoryItem.update({ where: { id: item.id }, data: { blueprintId: target.id, upgradeTier: tier, upgradeFails: 0 } });
       // A raridade é do exemplar: continua a mesma depois de reforjar.
       await recordItem(tx, characterId, item.blueprintId, -1, 'FORGE_REFORGE_OUT', ref, item.upgradeTier, item.rarity);
       await recordItem(tx, characterId, target.id, 1, 'FORGE_REFORGE_IN', ref, tier, item.rarity);

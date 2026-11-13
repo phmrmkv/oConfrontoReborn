@@ -201,6 +201,8 @@ model InventoryItem {
   upgradeTier  Int           @default(0)
   // Raridade do exemplar: 0 Comum … 5 Mítico (shared/rarity.ts). Só equipamento sai acima de Comum.
   rarity       Int           @default(0)
+  // Falhas seguidas de melhoria deste exemplar (somam chance à próxima, upgrade.failBonus*); zera no acerto.
+  upgradeFails Int           @default(0)
   favorite     Boolean       @default(false)
   rareItemId   Int?          @unique
   rareItem     RareItem?     @relation(fields: [rareItemId], references: [id])

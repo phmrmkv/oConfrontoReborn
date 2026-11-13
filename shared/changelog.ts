@@ -1,6 +1,10 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-melhoria-com-ajuda', date: '2026-11-13', title: 'Ferreiro: cada falha ajuda a próxima', items: [
+    'Quando uma melhoria falha e o item continua inteiro, a próxima tentativa daquele mesmo item ganha +5 pontos de chance, até +15. A ajuda zera quando a melhoria dá certo, ao reforjar o item ou se ele for vendido no Mercado.',
+    'O risco de quebra continua o mesmo, mas fica menor junto com a chance de falhar. A tela do Ferreiro mostra a ajuda de cada item.',
+  ] },
   { id: '2026-11-13-atributos-secundarios', date: '2026-11-13', title: 'Equipamentos com atributos novos', items: [
     'Anéis, amuletos e o equipamento das Eras agora trazem atributos novos: dano crítico (o crítico bate mais forte), roubo de vida (parte do dano volta como vida), poder de cura (a cura recupera mais) e resistência a efeitos (chance de evitar veneno, queimadura e lentidão).',
     'Eles aparecem no detalhe de cada item, na comparação do Mercado e no resumo do seu equipamento. Na arena, o roubo de vida aparece como um número verde no seu personagem.',
