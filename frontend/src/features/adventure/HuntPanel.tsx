@@ -25,9 +25,9 @@ const hotkeys:Record<string,string>={ATTACK:'1',TRIPLE_HIT:'2',FIFTH_HIT:'3',INT
 // Cada golpe tem o seu ícone, conforme a vocação; o que não estiver aqui usa skillIcon ou o ícone da vocação.
 const strikeIcons:Record<string,Record<string,string>>={
   KNIGHT:{ATTACK:'Sword',TRIPLE_HIT:'Giant Sword',FIFTH_HIT:'Warlord Sword'},
-  PALADIN:{ATTACK:'Bow',TRIPLE_HIT:'Crossbow',FIFTH_HIT:'Throwing Star'},
-  SORCERER:{ATTACK:'Wand of Vortex',TRIPLE_HIT:'Skull Staff',FIFTH_HIT:'Fire Sword'},
-  DRUID:{ATTACK:'Snakebite Rod',TRIPLE_HIT:'Staff',FIFTH_HIT:'Terra Hood'},
+  PALADIN:{ATTACK:'Bow',TRIPLE_HIT:'Burst Arrow',FIFTH_HIT:'Power Bolt'},
+  SORCERER:{ATTACK:'Wand of Vortex',TRIPLE_HIT:'Great Fireball Rune',FIFTH_HIT:'Sudden Death Rune'},
+  DRUID:{ATTACK:'Snakebite Rod',TRIPLE_HIT:'Heavy Magic Missile Rune',FIFTH_HIT:'Terra Hood'},
 };
 const skillIcon:Record<string,string>={HEAL:'Health Potion',DEFEND_SHIELD:'Mastermind Shield',FLEE:'Boots of Haste',INTERRUPT:'Fire Sword'};
 export default function HuntPanel({hero,state,monsters,battle,busy,start,turn,dismiss,goTemple}:{hero:Hero;state:JourneyState|null;monsters:Monster[];battle:Battle|null;busy:boolean;goTemple:()=>void;start:(m:Monster)=>Promise<void>;turn:(a:string)=>Promise<void>;dismiss:()=>void}) {

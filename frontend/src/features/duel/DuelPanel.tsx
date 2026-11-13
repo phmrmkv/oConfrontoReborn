@@ -112,7 +112,7 @@ export default function DuelPanel({hero,openProfile}:{hero:Hero;openProfile:(nam
     {!fighting&&!s.eligible&&<section className="panel"><div className="section-title"><h2>Desafiar um amigo</h2><span>{s.today}/{s.rules.dailyLimit} hoje</span></div>
       <p className="muted">Só amigos, de outras contas, com até {s.rules.levelBandPercent}% de diferença de nível. O desafio vale {s.rules.inviteHours} h; cada rodada, {s.rules.roundHours} h (quem não escolhe a tempo defende, e duas rodadas seguidas sem voltar é derrota).</p>
       <div className="duel-modes" role="radiogroup" aria-label="O que está em jogo">{s.rules.modes.map(m=><button key={m} type="button" role="radio" aria-checked={mode===m} className={mode===m?'active-chip':''} onClick={()=>{setMode(m);setLootOk(false);}}>
-        <Icon name={m==='HONOR'?'Warlord Sword':m==='GOLD'?'Gold Coin':'Chain Armor'} size={22}/><span>{modeLabels[m]}</span></button>)}</div>
+        <Icon name={m==='HONOR'?'Warlord Sword':m==='GOLD'?'Gold Coin':'Backpack'} size={22}/><span>{modeLabels[m]}</span></button>)}</div>
       <p className={mode==='HONOR'?'duel-stake':'duel-stake risky'}>{modeHelp[mode]}{mode!=='HONOR'?` Até ${s.rules.pairDailyLimit} duelos assim com o mesmo amigo por dia.`:''}</p>
       {mode==='GOLD'&&<div className="duel-wager">
         <label className="price-label">Aposta proposta (ouro)<input inputMode="numeric" value={wager} maxLength={16} onChange={e=>setWager(e.target.value.replace(/\D/g,''))} placeholder="Quanto quer apostar?"/></label>

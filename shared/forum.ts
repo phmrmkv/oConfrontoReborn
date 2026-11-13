@@ -1,7 +1,7 @@
 // Fórum (estilo Reddit): categorias, limites de texto e a ordem "Em alta". Ícones: arte própria do jogo.
 export const forumCategories = [
-  { key: 'duvidas', name: 'Dúvidas', icon: 'Hat of the Mad', description: 'Pergunte e marque a resposta que resolveu.' },
-  { key: 'guias', name: 'Guias', icon: 'Hunting Spear', description: 'Rotas de caçada, equipamentos e estratégias.' },
+  { key: 'duvidas', name: 'Dúvidas', icon: 'Strange Talisman', description: 'Pergunte e marque a resposta que resolveu.' },
+  { key: 'guias', name: 'Guias', icon: 'Backpack', description: 'Rotas de caçada, equipamentos e estratégias.' },
   { key: 'sugestoes', name: 'Sugestões', icon: 'Crown Helmet', description: 'Ideias para o jogo.' },
   { key: 'bugs', name: 'Bugs', icon: 'Bug', description: 'Algo não funcionou como deveria.' },
   { key: 'comercio', name: 'Comércio', icon: 'Gold Coin', description: 'Procuro e ofereço itens (as trocas são no Mercado).' },

@@ -44,6 +44,12 @@ export default function Icon({name,size=32,src,fire=false,tier=0}:{name:string;s
   // Se o GIF próprio não carregar (figura ainda fora do servidor), o ícone mostra o quadrinho com as iniciais em vez de sumir.
   const img=own&&still?<StillFrame src={own} size={size} alt={alt} onError={()=>setOwnFailed(own)}/>
     :<img className={own?'sprite own-art':'sprite'} src={image} width={size} height={size} alt={alt} loading={own?'lazy':undefined} decoding="async" onError={()=>own?setOwnFailed(own):setFailed(image)}/>;
-  if(burning)return <span className="fire-icon" title="Item raro +10">{img}</span>;
-  return glow?<span className={`tier-glow ${glow}`} title={`Melhorado +${tier}`}>{img}</span>:img;
+  // Camada própria de aprimoramento (art-items.md: aro dourado no +7 e +8, aro forte no +9, fogo no +10 raro), por cima do ícone.
+  // Sem o GIF da camada, fica o brilho e o fogo antigos.
+  const layer=burning?itemArt('aprimoramento-10-raro'):tier>=9?itemArt('aprimoramento-9'):tier>=7?itemArt('aprimoramento-7-8'):null;
+  const title=burning?'Item raro +10':`Melhorado +${tier}`;
+  if(layer)return <span className={`upgrade-layer ${burning?'burning':''}`} title={title} style={{width:size,height:size}}>{img}
+    {still?<StillFrame src={layer} size={size} alt="" onError={()=>{}}/>:<img className="upgrade-ring" src={layer} alt="" width={size} height={size} loading="lazy" decoding="async"/>}</span>;
+  if(burning)return <span className="fire-icon" title={title}>{img}</span>;
+  return glow?<span className={`tier-glow ${glow}`} title={title}>{img}</span>:img;
 }
