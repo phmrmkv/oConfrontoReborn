@@ -45,3 +45,5 @@ export const effectCell = (shot: string): number | undefined => fx.effectCells?.
 /** A linha (0 a 5) de uma animação de efeito da arena. */
 export const effectRow = (kind: 'guard' | 'heal' | 'impact'): number | undefined => fx.effectRows?.[kind];
 export const portraitUrl = (file?: string) => file ? `/assets/sprites/retratos/${file}.webp` : undefined;
+/** O retrato vivo (WebP animado com a linha "parado, respirando" da folha), usado enquanto as animações estão ligadas. */
+export const livePortraitUrl = (file?: string) => file ? `/assets/sprites/vivos/${file}.webp` : undefined;

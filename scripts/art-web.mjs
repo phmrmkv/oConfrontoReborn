@@ -2,7 +2,9 @@
 // Versões de site da arte própria.
 // Os originais (PNG grandes, como saem do gerador de imagens) ficam em art/, fora do que o site serve. Este módulo limpa cada
 // folha e grava a versão leve (WebP) em frontend/public/assets. É chamado por scripts/art.mjs (`npm run art`, `npm run build`).
-// De cada folha sai também o retrato (primeiro quadro, enquadrado, 128 px) que as listas do jogo mostram fora da arena.
+// De cada folha sai também o retrato (primeiro quadro, enquadrado, 128 px) que as listas do jogo mostram fora da arena, e o
+// retrato vivo (assets/sprites/vivos/<nome>.webp): os 4 quadros da linha "parado, respirando" num WebP animado, no mesmo
+// enquadramento, que as listas usam enquanto as animações estão ligadas.
 // Só refaz o que mudou: art/web.json guarda o SHA-256 de cada original e a receita usada.
 //   node scripts/art-web.mjs --conferir   mostra o que a limpeza faria em cada folha, sem gravar nada
 //   node scripts/art-web.mjs --refazer    refaz todas as versões de site
@@ -14,7 +16,9 @@ import { fileURLToPath } from 'node:url';
 // Mude ao alterar a limpeza ou a compressão: todas as saídas são refeitas no próximo build.
 export const RECIPE = 1;
 // Receita do retrato (enquadramento e tamanho); mudar refaz só os retratos, sem recomprimir as folhas.
-const PORTRAIT = 1, PORTRAIT_SIDE = 128;
+const PORTRAIT = 2, PORTRAIT_SIDE = 128;
+// Retrato vivo: ida e volta pelos 4 quadros da linha 1 (1-2-3-4-3-2), sem pulo no fim da volta.
+const LIVE_ORDER = [0, 1, 2, 3, 2, 1], LIVE_DELAY = 170;
 const COLS = 4, ROWS = 6, SHEET_W = 1024, SHEET_H = 1536;
 // O gerador devolve o fundo com uma névoa quase invisível (alfa 1 a 15) e o corpo com alfa 240 a 254. A névoa pesa no arquivo
 // e suja o contorno; a curva abaixo zera o que é névoa, deixa o corpo opaco e preserva a suavização das bordas.
@@ -106,17 +110,25 @@ export function cleanSheet(px, w, h) {
 
 const webp = { quality: 90, alphaQuality: 100, effort: 6, smartSubsample: true };
 
-// Retrato: o desenho do primeiro quadro (parado), centralizado num quadrado com um pouco de folga.
+// Retrato: o desenho da linha 1 (parado), centralizado num quadrado com um pouco de folga. O quadrado cobre os 4 quadros da linha,
+// para o retrato vivo não cortar o balanço do corpo e o parado (quadro 1) ficar no mesmo lugar dele.
 async function portrait(sharp, px, w, fw, fh) {
   let x0 = fw, y0 = fh, x1 = -1, y1 = -1;
-  for (let y = 0; y < fh; y++) for (let x = 0; x < fw; x++) if (px[(y * w + x) * 4 + 3] >= 32) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  for (let c = 0; c < COLS; c++) for (let y = 0; y < fh; y++) for (let x = 0; x < fw; x++) if (px[(y * w + c * fw + x) * 4 + 3] >= 32) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
   if (x1 < 0) return null;
-  const side = Math.round(Math.max(x1 - x0 + 1, y1 - y0 + 1) * 1.08), ox = Math.round((x0 + x1 + 1 - side) / 2), oy = Math.round((y0 + y1 + 1 - side) / 2), sq = Buffer.alloc(side * side * 4);
-  for (let y = Math.max(0, -oy); y < side && oy + y < fh; y++) {
-    const from = Math.max(0, -ox), to = Math.min(side, fw - ox);
-    px.copy(sq, (y * side + from) * 4, ((oy + y) * w + ox + from) * 4, ((oy + y) * w + ox + to) * 4);
-  }
-  return sharp(sq, { raw: { width: side, height: side, channels: 4 } }).resize(PORTRAIT_SIDE, PORTRAIT_SIDE, { kernel: 'lanczos3' }).webp({ quality: 90, alphaQuality: 100, effort: 6 }).toBuffer();
+  const side = Math.round(Math.max(x1 - x0 + 1, y1 - y0 + 1) * 1.08), ox = Math.round((x0 + x1 + 1 - side) / 2), oy = Math.round((y0 + y1 + 1 - side) / 2);
+  const frame = async c => {
+    const sq = Buffer.alloc(side * side * 4);
+    for (let y = Math.max(0, -oy); y < side && oy + y < fh; y++) {
+      const from = Math.max(0, -ox), to = Math.min(side, fw - ox);
+      px.copy(sq, (y * side + from) * 4, ((oy + y) * w + c * fw + ox + from) * 4, ((oy + y) * w + c * fw + ox + to) * 4);
+    }
+    return sharp(sq, { raw: { width: side, height: side, channels: 4 } }).resize(PORTRAIT_SIDE, PORTRAIT_SIDE, { kernel: 'lanczos3' }).png().toBuffer();
+  };
+  const frames = await Promise.all([0, 1, 2, 3].map(frame)), opts = { quality: 90, alphaQuality: 100, effort: 6 };
+  const still = await sharp(frames[0]).webp(opts).toBuffer();
+  const live = await sharp(LIVE_ORDER.map(i => frames[i]), { join: { animated: true } }).webp({ ...opts, loop: 0, delay: LIVE_ORDER.map(() => LIVE_DELAY) }).toBuffer();
+  return { still, live };
 }
 
 // Folhas da arena: art/sprites/<nome>.png → frontend/public/assets/sprites/<nome>.webp e retratos/<nome>.webp.
@@ -127,8 +139,8 @@ export async function buildSheets(root, { log = console.log, force = false, dryR
   const manifest = fs.existsSync(manifestFile) ? JSON.parse(fs.readFileSync(manifestFile, 'utf8')) : { recipe: RECIPE, sheets: {} };
   manifest.sheets ??= {};
   if (!sharp) { log('Arte: a biblioteca sharp não está instalada (npm ci); as versões de site já gravadas continuam valendo.'); return { sharp: false, made: 0 }; }
-  const faces = path.join(out, 'retratos');
-  fs.mkdirSync(src, { recursive: true }); fs.mkdirSync(faces, { recursive: true });
+  const faces = path.join(out, 'retratos'), lives = path.join(out, 'vivos');
+  fs.mkdirSync(src, { recursive: true }); fs.mkdirSync(faces, { recursive: true }); fs.mkdirSync(lives, { recursive: true });
   for (const n of fs.readdirSync(out).filter(n => n.endsWith('.png'))) {
     const meta = await sharp(path.join(out, n)).metadata().catch(() => null);
     if (meta?.width !== SHEET_W || meta?.height !== SHEET_H) { log(`Arte: ${n} não tem ${SHEET_W}×${SHEET_H} (${meta ? `${meta.width}×${meta.height}` : 'ilegível'}); ficou onde estava e não entra no jogo.`); continue; }
@@ -138,9 +150,9 @@ export async function buildSheets(root, { log = console.log, force = false, dryR
   const from = dryRun ? [src, out] : [src], names = [...new Set(from.flatMap(d => fs.existsSync(d) ? fs.readdirSync(d).filter(n => n.endsWith('.png')).map(n => n.slice(0, -4)) : []))].sort();
   let made = 0, drawn = 0, before = 0, after = 0;
   for (const name of names) {
-    const file = [src, out].map(d => path.join(d, `${name}.png`)).find(f => fs.existsSync(f)), target = path.join(out, `${name}.webp`), face = path.join(faces, `${name}.webp`), hash = sha(file), known = manifest.sheets[name];
+    const file = [src, out].map(d => path.join(d, `${name}.png`)).find(f => fs.existsSync(f)), target = path.join(out, `${name}.webp`), face = path.join(faces, `${name}.webp`), alive = path.join(lives, `${name}.webp`), hash = sha(file), known = manifest.sheets[name];
     const fresh = !force && manifest.recipe === RECIPE && known?.sha256 === hash;
-    const needSheet = !fresh || !fs.existsSync(target), needFace = needSheet || known?.portrait !== PORTRAIT || !fs.existsSync(face);
+    const needSheet = !fresh || !fs.existsSync(target), needFace = needSheet || known?.portrait !== PORTRAIT || !fs.existsSync(face) || !fs.existsSync(alive);
     if (!dryRun && !needSheet && !needFace) continue;
     const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
     if (info.width !== SHEET_W || info.height !== SHEET_H) { log(`Arte: ${name}.png não tem ${SHEET_W}×${SHEET_H}; ignorado.`); continue; }
@@ -154,15 +166,15 @@ export async function buildSheets(root, { log = console.log, force = false, dryR
       log(`Arte: ${name}.webp ${kb(size)} → ${kb(buf.length)}${notes ? ' (' + notes + ')' : ''}`);
     }
     const pic = await portrait(sharp, data, info.width, info.width / COLS, info.height / ROWS);
-    if (pic) { fs.writeFileSync(face, pic); manifest.sheets[name].portrait = PORTRAIT; drawn++; }
+    if (pic) { fs.writeFileSync(face, pic.still); fs.writeFileSync(alive, pic.live); manifest.sheets[name].portrait = PORTRAIT; drawn++; }
   }
   if (dryRun) return { sharp: true, made: 0 };
   // Versão de site cujo original sumiu: sai junto (só as que este script criou).
-  for (const name of Object.keys(manifest.sheets)) if (!names.includes(name)) { fs.rmSync(path.join(out, `${name}.webp`), { force: true }); fs.rmSync(path.join(faces, `${name}.webp`), { force: true }); delete manifest.sheets[name]; log(`Arte: ${name}.webp removido (o original não existe mais).`); }
+  for (const name of Object.keys(manifest.sheets)) if (!names.includes(name)) { fs.rmSync(path.join(out, `${name}.webp`), { force: true }); fs.rmSync(path.join(faces, `${name}.webp`), { force: true }); fs.rmSync(path.join(lives, `${name}.webp`), { force: true }); delete manifest.sheets[name]; log(`Arte: ${name}.webp removido (o original não existe mais).`); }
   manifest.recipe = RECIPE; manifest.sheets = Object.fromEntries(Object.entries(manifest.sheets).sort(([a], [b]) => a.localeCompare(b)));
   writeText(manifestFile, JSON.stringify(manifest, null, 2) + '\n');
   if (made) log(`Arte: ${made} folha(s) preparada(s) para o site, ${kb(before)} → ${kb(after)}.`);
-  if (drawn) log(`Arte: ${drawn} retrato(s) gravado(s) em frontend/public/assets/sprites/retratos.`);
+  if (drawn) log(`Arte: ${drawn} retrato(s) gravado(s) em frontend/public/assets/sprites/retratos (parados) e vivos (animados).`);
   return { sharp: true, made, drawn };
 }
 

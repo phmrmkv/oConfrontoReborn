@@ -1,12 +1,13 @@
 import {useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {itemArt} from '../lib/itemArt';
-import {creatureFile,portraitUrl} from '../lib/creatureArt';
+import {creatureFile,livePortraitUrl,portraitUrl} from '../lib/creatureArt';
 import {motionStill,watchMotion} from '../lib/theme';
 // Lado, em pixels, do GIF próprio de um item (public/assets/items): o canvas do ícone parado guarda esse tamanho.
 const OWN_ART_SIDE=128;
 
-// O primeiro quadro de um GIF, que é o ícone parado do item: um <img> não deixa parar a animação, um canvas não anima.
-function StillFrame({src,size,alt,onError}:{src:string;size:number;alt:string;onError:()=>void}){
+// O primeiro quadro de um GIF ou WebP animado, que é o ícone parado: um <img> não deixa parar a animação, um canvas não anima.
+// Também usado pelos ícones de região (RegionIcon) e de poder (PowerIcon) com as animações desligadas.
+export function StillFrame({src,size,alt,onError,className='sprite own-art'}:{src:string;size:number;alt:string;onError:()=>void;className?:string}){
   const ref=useRef<HTMLCanvasElement>(null),failed=useRef(onError);failed.current=onError;
   useEffect(()=>{
     let alive=true;const img=new Image();
@@ -15,7 +16,7 @@ function StillFrame({src,size,alt,onError}:{src:string;size:number;alt:string;on
     img.src=src;
     return()=>{alive=false;};
   },[src]);
-  return <canvas ref={ref} className="sprite own-art" width={OWN_ART_SIDE} height={OWN_ART_SIDE} style={{width:size,height:size}} role="img" aria-label={alt}/>;
+  return <canvas ref={ref} className={className} width={OWN_ART_SIDE} height={OWN_ART_SIDE} style={{width:size,height:size}} role="img" aria-label={alt}/>;
 }
 
 // Quadrinho no lugar de um ícone que ainda não tem arte própria: as iniciais do nome (a figura chega quando o GIF for gerado).
@@ -36,7 +37,9 @@ export default function Icon({name,size=32,src,fire=false,tier=0}:{name:string;s
   const drawn=names.map(n=>itemArt(n)).find(Boolean)??null,own=drawn&&drawn!==ownFailed?drawn:null;
   // Sem GIF de item: o retrato próprio da criatura ou do herói com esse nome; depois `src`, se for arte própria (o banco antigo
   // ainda pode trazer caminhos do TibiaWiki, que não existem mais no jogo). Sem nada disso, um quadrinho com as iniciais.
-  const portrait=names.map(n=>portraitUrl(creatureFile(n))).find(Boolean),ownSrc=src&&!src.startsWith('/assets/tibia/')?src:undefined;
+  // Retrato: o vivo (respirando) com as animações ligadas; se ele falhar, o parado.
+  const file=names.map(n=>creatureFile(n)).find(Boolean),live=still?undefined:livePortraitUrl(file);
+  const portrait=live&&live!==failed?live:portraitUrl(file),ownSrc=src&&!src.startsWith('/assets/tibia/')?src:undefined;
   const image=own??portrait??ownSrc;
   if(!image||image===failed)return <Placeholder label={label} size={size}/>;
   const burning=fire||tier>=10,glow=!burning&&tier>=9?'glow-strong':!burning&&tier>=7?'glow-soft':'';
