@@ -13,7 +13,7 @@
 - `forgeService.ts` – Ferreiro além da melhoria: fabricar com materiais, reforjar para item de nível maior (guarda metade da melhoria), desmontar em materiais; `GET /characters/:id/forge` monta a tela
 
 ## Rotas
-`/characters/*`, `/characters/:id/duel*`, `/duel/ranking`, `/monsters`, `/shop`, `/market`, `/characters/:id/{battles,equip,shop,sell,upgrade,use,temple,stats,journey,tasks}`.
+`/characters/*`, `/characters/:id/duel*`, `/duel/ranking`, `/monsters`, `/items/names` (nome e tipo de todos os itens, para a aba Ícones), `/shop`, `/market`, `/characters/:id/{battles,equip,shop,sell,upgrade,use,temple,stats,journey,tasks}`.
 
 ## Dependências permitidas
 Depende de `core`, `economy` e `premium` (só `isPremium`).

@@ -25,3 +25,20 @@ export function itemArt(name: string, has: (file: string) => boolean = f => file
   }
   return null;
 }
+
+/** Um item do catálogo sem GIF com o próprio nome: o arquivo que falta e a figura que ele usa enquanto isso. */
+export type MissingArt<T> = T & { file: string; borrowed: string | null };
+
+/**
+ * O que falta no lote de arte: os itens do catálogo sem GIF com o próprio nome, na ordem recebida. `borrowed` é a
+ * figura do item-base que uma variante usa enquanto não tem a sua, ou `null` (aparece com o sprite antigo).
+ */
+export function missingArt<T extends { name: string }>(items: readonly T[], has: (file: string) => boolean = f => files.has(f)): MissingArt<T>[] {
+  return items.filter(item => !has(itemFile(item.name))).map(item => ({ ...item, file: itemFile(item.name), borrowed: itemArt(item.name, has) }));
+}
+
+/** Os GIFs cujo nome não é o de nenhum item do catálogo (nome digitado errado, ou item que saiu do jogo). */
+export function strayArt(gifs: readonly string[], items: readonly { name: string }[]): string[] {
+  const known = new Set(items.map(item => itemFile(item.name)));
+  return gifs.filter(file => !known.has(file));
+}

@@ -15,7 +15,7 @@
 | `features/characters` · `premium` · `ledger` · `support` | Personagens/classes, Premium e pagamento, Extrato, Suporte |
 | `features/admin` | Painel da equipe |
 | `features/confrontation` | `AppPanel`: o app Confrontation visto pelo site (progresso que a conta enviou e os rankings do app; só leitura) |
-| `features/atlas` | Biblioteca de ícones: a arte própria dos itens (GIFs) e os sprites do TibiaWiki |
+| `features/atlas` | Biblioteca de ícones: a arte própria dos itens (GIFs), o que ainda falta no lote (itens sem GIF, com o nome do arquivo esperado; `GET /api/items/names`) e os sprites do TibiaWiki |
 
 **Regras:** `lib` não importa ninguém; `ui` só `lib`; uma feature não importa outra (exceções declaradas em `scripts/check-drawers.mjs`: admin→ledger, auth→adventure, characters→adventure). Preços, taxas e chances vêm de `/config`; nunca fixe números de economia aqui. Ações do jogador: `command()`/`perform()` do `App.tsx` (já mandam `Idempotency-Key`). Rótulos em português; sprites do TibiaWiki.
 

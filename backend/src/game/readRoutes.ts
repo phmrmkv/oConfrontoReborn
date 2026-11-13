@@ -44,6 +44,11 @@ readRoutes.get('/characters/:id/inventory', asyncRoute(async (req, res) => {
   res.json(paged(items, total, page));
 }));
 readRoutes.get('/monsters', asyncRoute(async (_req,res) => { res.json(await prisma.monster.findMany({ orderBy: { level: 'asc' }, take: 200 })); }));
+// O nome e o tipo de todos os itens do jogo, para a aba Ícones mostrar o que ainda falta no lote de arte própria.
+// O catálogo é fixo (190 itens em 2026-11-13), então vem inteiro; a tela mostra 10 por vez.
+readRoutes.get('/items/names', asyncRoute(async (_req,res) => {
+  res.json({ items: await prisma.itemBlueprint.findMany({ select: { name: true, slot: true }, orderBy: { name: 'asc' }, take: 1000 }) });
+}));
 readRoutes.get('/shop', asyncRoute(async (_req,res) => {
   // Equipamento acima do nível configurado só sai do Ferreiro (fabricar/reforjar) ou do loot.
   const settings = await loadSettings(prisma);

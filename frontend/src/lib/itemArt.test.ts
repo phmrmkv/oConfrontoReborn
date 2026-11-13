@@ -1,7 +1,7 @@
 // Regra do nome do arquivo da arte própria dos itens: a mesma que o catálogo de arte (art-items.md) usa.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { baseItem, itemArt, itemFile } from './itemArt';
+import { baseItem, itemArt, itemFile, missingArt, strayArt } from './itemArt';
 
 test('itemFile: minúsculas, sem acento e com hífen', () => {
   assert.equal(itemFile('Sword'), 'sword');
@@ -27,4 +27,20 @@ test('itemArt: a figura do item, a do item-base para a variante sem figura, ou n
   assert.equal(itemArt('Crossbow da 2ª Era', has), '/assets/items/crossbow.gif');
   assert.equal(itemArt('Bow', has), null);
   assert.equal(itemArt('', has), null);
+});
+
+test('missingArt: o que falta no lote, com a figura do item-base que a variante usa enquanto isso', () => {
+  const has = (file: string) => ['sword', 'crossbow'].includes(file);
+  const items = [{ name: 'Sword', slot: 'WEAPON' }, { name: 'Crossbow da 1ª Era', slot: 'WEAPON' }, { name: 'Bow', slot: 'WEAPON' }];
+  assert.deepEqual(missingArt(items, has), [
+    { name: 'Crossbow da 1ª Era', slot: 'WEAPON', file: 'crossbow-da-1-era', borrowed: '/assets/items/crossbow.gif' },
+    { name: 'Bow', slot: 'WEAPON', file: 'bow', borrowed: null },
+  ]);
+  assert.deepEqual(missingArt([], has), []);
+});
+
+test('strayArt: GIF com nome que não é de nenhum item do catálogo', () => {
+  const items = [{ name: 'Sword' }, { name: 'Crossbow da 1ª Era' }];
+  assert.deepEqual(strayArt(['sword', 'swrod', 'crossbow-da-1-era', 'crossbow'], items), ['swrod', 'crossbow']);
+  assert.deepEqual(strayArt([], items), []);
 });

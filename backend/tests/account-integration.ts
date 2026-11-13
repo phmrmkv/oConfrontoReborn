@@ -81,6 +81,27 @@ test('MySQL: conta — o site mostra o progresso e o ranking do app Confrontatio
   } finally { await new Promise<void>(resolve => server.close(() => resolve())); await prisma.$disconnect(); }
 });
 
+// Aba Ícones: o nome e o tipo de todos os itens do jogo, para a tela saber o que ainda falta no lote de arte própria.
+test('MySQL: conta — a aba Ícones recebe o nome e o tipo de todos os itens do jogo', async () => {
+  assert.match(process.env.DATABASE_URL ?? '', /\/[^/?]*_test(?:\?|$)/, 'Use uma base dedicada terminada em _test.');
+  const tag = randomUUID().slice(0, 8), password = 'Conta-teste-2026!', email = `icones-${tag}@example.invalid`;
+  await prisma.account.create({ data: { email, password: await hashPassword(password), characters: { create: { name: `Icones ${tag}` } } } });
+  await prisma.itemBlueprint.create({ data: { name: `Elmo de Teste ${tag}`, slot: 'HELMET', spriteUrl: '' } });
+  const server = createApp().listen(0, '127.0.0.1'); await eventOnce(server, 'listening');
+  const address = server.address(); assert(address && typeof address !== 'string');
+  const base = `http://127.0.0.1:${address.port}/api`, origin = process.env.APP_ORIGIN ?? 'http://localhost:5173';
+  const call = (cookie: string, path: string, body?: unknown) => fetch(base + path, { method: body === undefined ? 'GET' : 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Game-Client': 'oconfronto', Origin: origin, Cookie: cookie }, body: body === undefined ? undefined : JSON.stringify(body) });
+  try {
+    assert.equal((await call('', '/items/names')).status, 401);
+    const cookie = (await call('', '/auth/login', { email, password })).headers.get('set-cookie')?.split(';')[0] ?? '';
+    const { items } = await (await call(cookie, '/items/names')).json() as { items: Record<string, unknown>[] };
+    assert.deepEqual(items.find(item => item.name === `Elmo de Teste ${tag}`), { name: `Elmo de Teste ${tag}`, slot: 'HELMET' });
+    // Só nome e tipo: nada de preço, atributos ou dono sai por esta rota.
+    assert.ok(items.every(item => Object.keys(item).sort().join() === 'name,slot'));
+  } finally { await new Promise<void>(resolve => server.close(() => resolve())); await prisma.$disconnect(); }
+});
+
 // Apagar a conta pelo site (Configurações > Apagar a conta): pede a senha e derruba todos os acessos.
 test('MySQL: conta — apagar pelo site pede a senha, encerra os acessos e a conta fica sem e-mail e sem nome', async () => {
   assert.match(process.env.DATABASE_URL ?? '', /\/[^/?]*_test(?:\?|$)/, 'Use uma base dedicada terminada em _test.');
