@@ -18,7 +18,7 @@ type Section='scraps'|'testimonials'|'visits';
 const date=(d:string)=>new Date(d).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
 const Avatar=({c,size=40}:{c:Card;size?:number})=><Icon name={c.profileAvatar??c.profileEmblem??'Hero'} size={size}/>;
 // Perfil de comunidade (estilo Orkut): cartão, amigos, recados, depoimentos e, no próprio perfil, visitas e pedidos.
-export default function ProfilePanel({hero,name,openProfile,perform}:{hero:Hero;name:string;openProfile:(name:string)=>void;perform:Perform}){
+export default function ProfilePanel({hero,name,openProfile,perform,busy}:{hero:Hero;name:string;openProfile:(name:string)=>void;perform:Perform;busy:boolean}){
   const [p,setP]=useState<Profile|null>(null),[mine,setMine]=useState<Mine|null>(null),[error,setError]=useState(''),[section,setSection]=useState<Section>('scraps'),[editing,setEditing]=useState(false),[version,setVersion]=useState(0);
   // Listas do perfil em páginas de 10; `version` recarrega a página atual depois de cada ação.
   const list=(kind:string)=>`/community/profiles/${encodeURIComponent(name)}/${kind}?as=${hero.id}`,friends=usePaged<Card>(list('friends'),version);
@@ -38,7 +38,7 @@ export default function ProfilePanel({hero,name,openProfile,perform}:{hero:Hero;
           {(p.profile.profileAbout||p.profile.profileBio)&&<p className="profile-about">{p.profile.profileAbout??p.profile.profileBio}</p>}
           {p.owner?<button onClick={()=>setEditing(!editing)}>{editing?'Fechar edição':'Editar perfil'}</button>:!p.sameAccount&&<>{!p.blockedByMe&&<FriendButton p={p} act={act}/>}<BlockButton p={p} act={act}/></>}
         </section>
-        {editing&&mine&&<Editor mine={mine} act={act} onDone={()=>setEditing(false)}/>}
+        {editing&&mine&&<Editor mine={mine} act={act} busy={busy} onDone={()=>setEditing(false)}/>}
         {p.duels&&<Duels d={p.duels} owner={p.owner} openProfile={openProfile}/>}
         <section className="panel"><div className="section-title"><h2>Amigos</h2><span>{p.friendCount}</span></div>
           <div className="friend-grid">{friends.items.map(f=><button key={f.id} className="friend" onClick={()=>openProfile(f.name)} title={`${f.name} · Nv. ${f.level}`}><Avatar c={f} size={36}/><small>{f.name}</small></button>)}</div>
@@ -48,9 +48,9 @@ export default function ProfilePanel({hero,name,openProfile,perform}:{hero:Hero;
       </aside>
       <section className="panel profile-main">
         <div className="profile-tabs" role="tablist">{([['scraps',`Recados (${p.scrapCount})`],['testimonials',`Depoimentos (${p.testimonialCount})${p.owner&&mine?.pendingTestimonials?` · ${mine.pendingTestimonials} novo(s)`:''}`],...(p.owner?[['visits',`Visitas e pedidos${mine&&mine.incoming.length?` (${mine.incoming.length})`:''}`]]:[])] as [Section,string][]).map(([s,l])=><button key={s} role="tab" aria-selected={section===s} className={section===s?'active-chip':''} onClick={()=>setSection(s)}>{l}</button>)}</div>
-        {section==='scraps'&&<Scraps p={p} hero={hero} act={act} openProfile={openProfile} path={list('scraps')} version={version}/>}
-        {section==='testimonials'&&<Testimonials p={p} act={act} openProfile={openProfile} path={list('testimonials')} version={version}/>}
-        {section==='visits'&&p.owner&&mine&&<Visits mine={mine} act={act} openProfile={openProfile} path={list('visitors')} version={version}/>}
+        {section==='scraps'&&<Scraps p={p} hero={hero} act={act} busy={busy} openProfile={openProfile} path={list('scraps')} version={version}/>}
+        {section==='testimonials'&&<Testimonials p={p} act={act} busy={busy} openProfile={openProfile} path={list('testimonials')} version={version}/>}
+        {section==='visits'&&p.owner&&mine&&<Visits mine={mine} act={act} busy={busy} openProfile={openProfile} path={list('visitors')} version={version}/>}
       </section>
     </div>}
   </div>;
@@ -84,23 +84,24 @@ function Duels({d,owner,openProfile}:{d:DuelRecord;owner:boolean;openProfile:(na
       :<p className="muted">{owner?'Você ainda não duelou. Desafie um amigo na aba Duelo.':'Ainda sem duelos.'}</p>}
   </section>;
 }
-function Report({kind,id,act}:{kind:'scrap'|'testimonial';id:number;act:Act}){
-  return <AskReason label="Denunciar" question="Por que você está denunciando? A equipe vai analisar." onSubmit={reason=>void act('report',{kind,id,reason})}/>;
+function Report({kind,id,act,busy}:{kind:'scrap'|'testimonial';id:number;act:Act;busy:boolean}){
+  return <AskReason label="Denunciar" question="Por que você está denunciando? A equipe vai analisar." busy={busy} onSubmit={(reason,sent)=>void act('report',{kind,id,reason},sent)}/>;
 }
-type ListProps={act:Act;openProfile:(n:string)=>void;path:string;version:number};
-function Scraps({p,hero,act,openProfile,path,version}:ListProps&{p:Profile;hero:Hero}){
+// `busy` vem do App: enquanto uma ação está a caminho, os botões que enviam ficam desligados.
+type ListProps={act:Act;busy:boolean;openProfile:(n:string)=>void;path:string;version:number};
+function Scraps({p,hero,act,busy,openProfile,path,version}:ListProps&{p:Profile;hero:Hero}){
   const [text,setText]=useState(''),scraps=usePaged<Scrap>(path,version);
   return <>
     <form className="ops-form profile-write" onSubmit={e=>{e.preventDefault();void act('scraps',{to:p.profile.name,text},()=>setText(''));}}>
       <label>{p.owner?'Escrever no seu mural':`Deixar um recado para ${p.profile.name}`} ({text.length}/{limits.scrap})<textarea value={text} onChange={e=>setText(e.target.value)} maxLength={limits.scrap} rows={3} required/></label>
-      <button className="primary">Enviar recado</button></form>
+      <button className="primary" disabled={busy}>Enviar recado</button></form>
     {scraps.items.map(s=><article className="post" key={s.id}><button className="post-avatar" onClick={()=>openProfile(s.author.name)} aria-label={`Perfil de ${s.author.name}`}><Avatar c={s.author}/></button>
       <div><p className="post-head"><button className="link-button" onClick={()=>openProfile(s.author.name)}>{s.author.name}</button> <small>{date(s.createdAt)}</small></p><p className="post-text">{s.text}</p>
-        <p className="post-actions">{(p.owner||s.author.id===hero.id)&&<button className="link-button" onClick={()=>{if(window.confirm('Apagar este recado?'))void act(`scraps/${s.id}/delete`,{});}}>Apagar</button>}{s.author.id!==hero.id&&<Report kind="scrap" id={s.id} act={act}/>}</p></div></article>)}
+        <p className="post-actions">{(p.owner||s.author.id===hero.id)&&<button className="link-button" onClick={()=>{if(window.confirm('Apagar este recado?'))void act(`scraps/${s.id}/delete`,{});}}>Apagar</button>}{s.author.id!==hero.id&&<Report kind="scrap" id={s.id} act={act} busy={busy}/>}</p></div></article>)}
     {!scraps.total&&!scraps.loading&&<p className="empty">Nenhum recado ainda.</p>}<Pager page={scraps.page} pages={scraps.pages} busy={scraps.loading} onPage={n=>void scraps.go(n)}/>
   </>;
 }
-function Testimonials({p,act,openProfile,path,version}:ListProps&{p:Profile}){
+function Testimonials({p,act,busy,openProfile,path,version}:ListProps&{p:Profile}){
   // O servidor já filtra: o dono recebe também os pendentes; cada página separa os dois grupos.
   const [text,setText]=useState(''),list=usePaged<Testimonial>(path,version);
   const pending=list.items.filter(t=>t.status==='PENDING'),approved=list.items.filter(t=>t.status==='APPROVED');
@@ -108,13 +109,13 @@ function Testimonials({p,act,openProfile,path,version}:ListProps&{p:Profile}){
     {!p.owner&&!p.sameAccount&&<form className="ops-form profile-write" onSubmit={e=>{e.preventDefault();void act('testimonials',{to:p.profile.name,text},()=>setText(''));}}>
       <label>Escrever um depoimento sobre {p.profile.name} ({text.length}/{limits.testimonial})<textarea value={text} onChange={e=>setText(e.target.value)} maxLength={limits.testimonial} rows={4} required/></label>
       <p className="muted">O depoimento só aparece depois que {p.profile.name} aprovar. Se você já escreveu um, este substitui o anterior.</p>
-      <button className="primary">Enviar depoimento</button></form>}
+      <button className="primary" disabled={busy}>Enviar depoimento</button></form>}
     {p.owner&&pending.length>0&&<h3 className="profile-subtitle">Esperando sua aprovação</h3>}
     {[...(p.owner?pending:[]),...approved].map(t=><article className={`post ${t.status==='PENDING'?'pending':''}`} key={t.id}><button className="post-avatar" onClick={()=>openProfile(t.author.name)} aria-label={`Perfil de ${t.author.name}`}><Avatar c={t.author}/></button>
       <div><p className="post-head"><button className="link-button" onClick={()=>openProfile(t.author.name)}>{t.author.name}</button> <small>{date(t.createdAt)}</small></p><p className="post-text">{t.text}</p>
         <p className="post-actions">{p.owner&&t.status==='PENDING'&&<><button className="link-button" onClick={()=>void act(`testimonials/${t.id}/approve`,{})}>Aprovar</button><button className="link-button" onClick={()=>void act(`testimonials/${t.id}/reject`,{})}>Recusar</button></>}
           {p.owner&&t.status==='APPROVED'&&<button className="link-button" onClick={()=>{if(window.confirm('Tirar este depoimento do seu perfil?'))void act(`testimonials/${t.id}/delete`,{});}}>Remover</button>}
-          {!p.owner&&<Report kind="testimonial" id={t.id} act={act}/>}</p></div></article>)}
+          {!p.owner&&<Report kind="testimonial" id={t.id} act={act} busy={busy}/>}</p></div></article>)}
     {!list.total&&!list.loading&&<p className="empty">Nenhum depoimento ainda.</p>}<Pager page={list.page} pages={list.pages} busy={list.loading} onPage={n=>void list.go(n)}/>
   </>;
 }
@@ -133,7 +134,7 @@ function Visits({mine,act,openProfile,path,version}:ListProps&{mine:Mine}){
     {!visitors.total&&!visitors.loading&&<p className="muted">Ninguém visitou ainda.</p>}
   </>;
 }
-function Editor({mine,act,onDone}:{mine:Mine;act:Act;onDone:()=>void}){
+function Editor({mine,act,busy,onDone}:{mine:Mine;act:Act;busy:boolean;onDone:()=>void}){
   const [avatar,setAvatar]=useState(mine.profileAvatar??''),[about,setAbout]=useState(mine.profileAbout??'');
   return <section className="panel"><div className="section-title"><h2>Editar perfil</h2></div>
     <form className="ops-form" onSubmit={e=>{e.preventDefault();void act('profile',{avatar:avatar||null,about},onDone);}}>
@@ -143,5 +144,5 @@ function Editor({mine,act,onDone}:{mine:Mine;act:Act;onDone:()=>void}){
       </fieldset>
       {!mine.premium&&<p className="muted">As imagens com coroa (lendárias) e a descrição de até {limits.aboutPremium} caracteres fazem parte do Premium.</p>}
       <label>Sobre você ({about.length}/{mine.aboutLimit})<textarea value={about} onChange={e=>setAbout(e.target.value)} maxLength={mine.aboutLimit} rows={5}/></label>
-      <button className="primary">Salvar perfil</button></form></section>;
+      <button className="primary" disabled={busy}>Salvar perfil</button></form></section>;
 }

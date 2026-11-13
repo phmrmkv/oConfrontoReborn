@@ -1,6 +1,11 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-forum-nao-perde-texto', date: '2026-11-13', title: 'O Fórum não perde mais o que você escreveu', items: [
+    'Se o envio de um comentário ou de uma resposta falhar (por exemplo, pelo intervalo de 10 segundos entre comentários), o texto continua no campo para você tentar de novo.',
+    'No Fórum e no Perfil, os botões de enviar ficam desligados enquanto uma ação está a caminho.',
+    'Denunciar duas vezes o mesmo texto não abre dois atendimentos: o jogo avisa que a equipe já está analisando. Cada conta pode ter até 10 denúncias em análise, contadas à parte dos pedidos de ajuda.',
+  ] },
   { id: '2026-11-12-app-no-site', date: '2026-11-12', title: 'O app Confrontation aparece no site', items: [
     'A aba App Confrontation, em Comunidade, mostra o progresso que a sua conta enviou pelo app: fase mais longe, poder da companhia, Vigília, ouro ganho e itens coletados.',
     'Na mesma aba ficam os rankings do app, desta semana e geral, com a sua posição. O ouro do app e o ouro deste jogo continuam separados.',

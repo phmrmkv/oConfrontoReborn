@@ -143,7 +143,7 @@ export default function App(){
  {tab==='duel'&&<DuelPanel hero={hero} openProfile={openProfile}/>}
  {tab==='rares'&&<RaresPanel openProfile={openProfile}/>}
  {tab==='app'&&<AppPanel openProfile={openProfile}/>}
- {tab==='forum'&&<ForumPanel hero={hero} postId={routeParam} openPost={openPost} openProfile={openProfile} perform={perform}/>}
- {tab==='profile'&&<ProfilePanel hero={hero} name={routeParam||hero.name} openProfile={openProfile} perform={perform}/>}
+ {tab==='forum'&&<ForumPanel hero={hero} postId={routeParam} openPost={openPost} openProfile={openProfile} perform={perform} busy={busy}/>}
+ {tab==='profile'&&<ProfilePanel hero={hero} name={routeParam||hero.name} openProfile={openProfile} perform={perform} busy={busy}/>}
  </Suspense></main><EquipmentPanel hero={hero} busy={busy} fighting={fighting} command={command} inBag={tab==='bag'} openSlot={openSlot}/></div></div>;
 }

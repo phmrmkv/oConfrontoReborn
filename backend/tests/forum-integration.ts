@@ -6,6 +6,7 @@ import { prisma } from '../src/core/db';
 import { hashPassword } from '../src/core/password';
 import { createComment, createPost, deleteOwn, getPost, listPosts, markSolved, vote } from '../src/community/forumService';
 import { reportContent } from '../src/community/communityService';
+import { limits } from '../../shared/community';
 
 test('MySQL: fórum com tópicos, respostas, votos, resolvido e denúncia', async t => {
   assert.match(process.env.DATABASE_URL ?? '', /\/[^/?]*_test(?:\?|$)/, 'Use uma base dedicada terminada em _test.');
@@ -52,6 +53,21 @@ test('MySQL: fórum com tópicos, respostas, votos, resolvido e denúncia', asyn
     await reportContent(C.id, c, 'post', postId, 'Teste de denúncia');
     const ticket = await prisma.supportTicket.findFirstOrThrow({ where: { accountId: C.id, kind: 'REPORT' }, include: { messages: true } });
     assert.match(ticket.messages[0].body, /Como passar do Demon/);
+    // Repetir a mesma denúncia (clique repetido, outra aba) não abre outro atendimento: a resposta avisa que já foi enviada.
+    const reports = () => prisma.supportTicket.count({ where: { accountId: C.id, kind: 'REPORT' } });
+    assert.match((await reportContent(C.id, c, 'post', postId, 'De novo')).message, /já denunciou/);
+    const both = await Promise.all([reportContent(C.id, c, 'comment', answer, 'Duas ao mesmo tempo'), reportContent(C.id, c, 'comment', answer, 'Duas ao mesmo tempo')]);
+    assert.equal(both.filter(r => /já denunciou/.test(r.message)).length, 1);
+    assert.equal(await reports(), 2);
+    // Teto de denúncias em análise por conta: com o teto cheio a próxima é recusada; resolvida uma, volta a caber.
+    await prisma.supportTicket.createMany({ data: Array.from({ length: limits.openReports - 2 }, (_, i) => ({ accountId: C.id, kind: 'REPORT', subject: `Denúncia de enchimento ${i}` })) });
+    const other = (await createComment(A.id, a, postId, { body: 'Outro comentário para denunciar.' })).id;
+    await assert.rejects(() => reportContent(C.id, c, 'comment', other, 'Passou do teto'), /denúncias em análise/);
+    assert.equal(await reports(), limits.openReports);
+    await prisma.supportTicket.update({ where: { id: ticket.id }, data: { status: 'RESOLVED' } });
+    assert.match((await reportContent(C.id, c, 'comment', other, 'Agora cabe')).message, /Denúncia enviada/);
+    // Resolvida a denúncia do tópico, denunciar o mesmo tópico de novo abre um atendimento novo (o teto é que segura).
+    await assert.rejects(() => reportContent(C.id, c, 'post', postId, 'De novo, depois de resolvida'), /denúncias em análise/);
     await assert.rejects(() => deleteOwn(B.id, b, 'post', postId), /não encontrado/);
     await deleteOwn(A.id, a, 'post', postId);
     await assert.rejects(() => getPost(B.id, postId, b), /não encontrado/);

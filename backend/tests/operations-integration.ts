@@ -16,6 +16,7 @@ import { issueToken } from '../src/account/accountTokens';
 import { unequip, upgrade, sellNpc } from '../src/game/gameService';
 import { itemDrift, feederAlerts } from '../src/economy/reconcile';
 import { loadSettings } from '../src/core/settings';
+import { limits } from '../../shared/community';
 
 // Estes cenários pressupõem os padrões de configuração (taxa de venda 5%, anúncio 10 de ouro, promoção 5000).
 // Não alteram configurações usadas por outros testes (as suítes rodam em paralelo na mesma base _test).
@@ -372,6 +373,21 @@ test('MySQL: livro-razão, mercado com taxas e expiração, Premium, pagamentos,
       assert(!JSON.stringify(view).includes('Nota interna'));
       const other = await login(seller.email); assert.equal((await call(other.cookie, `/support/tickets/${id}`)).status, 404);
       assert.equal((await call(player.cookie, '/support/tickets', { kind: 'REPORT', subject: 'Denúncia', body: 'Texto longo o bastante.', reportedName: 'Ninguém Existe' })).status, 404);
+      // A mesma denúncia (mesmo assunto, mesmo personagem) ainda em análise não abre outro atendimento; outra, sim.
+      const report = { kind: 'REPORT', subject: 'Duelo #1', body: 'Ofendeu durante o duelo, repetidas vezes.', reportedName: sellerChar.name };
+      assert.equal((await call(player.cookie, '/support/tickets', report)).status, 201);
+      const again = await call(player.cookie, '/support/tickets', report);
+      assert.equal(again.status, 409); assert.match((await again.json()).error, /já enviou esta denúncia/);
+      assert.equal((await call(player.cookie, '/support/tickets', { ...report, subject: 'Duelo #2' })).status, 201);
+      // Pedidos de ajuda e denúncias contam à parte: com o teto de ajuda cheio, ainda dá para denunciar, e o contrário.
+      const mine = { accountId: buyer.id };
+      await prisma.supportTicket.createMany({ data: Array.from({ length: 4 }, (_, i) => ({ ...mine, kind: 'SUPPORT', subject: `Ajuda de enchimento ${i}` })) });
+      const full = await call(player.cookie, '/support/tickets', { kind: 'SUPPORT', subject: 'Mais um pedido', body: 'Texto longo o bastante.' });
+      assert.equal(full.status, 429); assert.match((await full.json()).error, /5 atendimentos abertos/);
+      assert.equal((await call(player.cookie, '/support/tickets', { ...report, subject: 'Duelo #3' })).status, 201);
+      await prisma.supportTicket.createMany({ data: Array.from({ length: limits.openReports - 3 }, (_, i) => ({ ...mine, kind: 'REPORT', subject: `Denúncia de enchimento ${i}` })) });
+      const capped = await call(player.cookie, '/support/tickets', { ...report, subject: 'Duelo #4' });
+      assert.equal(capped.status, 429); assert.match((await capped.json()).error, /denúncias em análise/);
     });
   } finally { globalThis.fetch = realFetch; await new Promise<void>(r => server.close(() => r())); await prisma.$disconnect(); }
 });

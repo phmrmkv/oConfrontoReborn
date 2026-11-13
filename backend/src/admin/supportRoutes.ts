@@ -2,8 +2,11 @@ import { Router } from 'express';
 import { asyncRoute, pageOf, paged } from '../core/http';
 import { prisma, transaction } from '../core/db';
 import { GameError, integer } from '../core/engine';
+import { limits, tooManyReports } from '../../../shared/community';
 
 export const supportRoutes = Router();
+// Pedidos de ajuda ainda não resolvidos, por conta. As denúncias contam à parte (limits.openReports, o mesmo teto das
+// denúncias de textos do fórum e do perfil): denunciar não tira de ninguém o direito de pedir ajuda.
 const MAX_OPEN = 5;
 function text(value: unknown, field: string, min: number, max: number) {
   const v = typeof value === 'string' ? value.replace(/\r\n/g, '\n').trim() : '';
@@ -29,7 +32,14 @@ supportRoutes.post('/support/tickets', asyncRoute(async (req, res) => {
   }
   const ticket = await transaction(async tx => {
     await tx.$queryRaw`SELECT id FROM \`Account\` WHERE id = ${accountId} FOR UPDATE`;
-    if (await tx.supportTicket.count({ where: { accountId, status: { not: 'RESOLVED' } } }) >= MAX_OPEN) throw new GameError(429, `Você já tem ${MAX_OPEN} atendimentos abertos. Aguarde a resposta antes de abrir outro.`);
+    const open = await tx.supportTicket.findMany({ where: { accountId, kind, status: { not: 'RESOLVED' } }, select: { id: true, subject: true, reportedCharacterId: true } });
+    if (kind === 'REPORT') {
+      // A mesma denúncia (mesmo assunto, mesmo personagem) ainda em análise não abre outro atendimento; o texto novo
+      // não se perde: a tela mantém o que foi escrito e a pessoa responde pelo atendimento que já existe.
+      const same = open.find(t => t.subject === subject && t.reportedCharacterId === reportedCharacterId);
+      if (same) throw new GameError(409, `Você já enviou esta denúncia (atendimento nº ${same.id}) e a equipe está analisando. Para acrescentar algo, responda por ele.`);
+      if (open.length >= limits.openReports) throw new GameError(429, tooManyReports);
+    } else if (open.length >= MAX_OPEN) throw new GameError(429, `Você já tem ${MAX_OPEN} atendimentos abertos. Aguarde a resposta antes de abrir outro.`);
     const t = await tx.supportTicket.create({ data: { accountId, kind, subject, reportedCharacterId } });
     await tx.supportMessage.create({ data: { ticketId: t.id, authorAccountId: accountId, body } });
     return t;

@@ -1,10 +1,10 @@
 // Perfil de comunidade: imagem e descrição, recados, depoimentos (com aprovação), amizades, visitas e denúncias.
 // Toda mudança trava o personagem do autor (lockCharacter) e confere que ele é da conta autenticada.
 import { Prisma } from '@prisma/client';
-import { prisma, transaction, lockCharacter } from '../core/db';
+import { prisma, transaction, lockAccount, lockCharacter } from '../core/db';
 import { GameError, integer } from '../core/engine';
 import { isPremium } from '../premium/premium';
-import { cleanText, isAvatar, limits } from '../../../shared/community';
+import { cleanText, isAvatar, limits, tooManyReports } from '../../../shared/community';
 type Tx = Prisma.TransactionClient;
 const card = { id: true, name: true, level: true, vocation: true, classTier: true, profileAvatar: true, profileEmblem: true } as const;
 
@@ -218,6 +218,9 @@ export async function searchCharacters(q: unknown) {
 export async function reportContent(accountId: number, characterId: number, kind: unknown, id: unknown, reason: unknown) {
   const why = message(reason, 500, 'o motivo da denúncia'), contentId = integer(Number(id));
   return transaction(async tx => {
+    // A conta é travada antes do personagem (a mesma ordem de quem apaga a conta): a conferência das denúncias em análise,
+    // logo abaixo, vale para todos os personagens dela de uma vez.
+    await lockAccount(tx, accountId);
     await lockCharacter(tx, accountId, characterId);
     const who = { include: { author: { select: { id: true, name: true, accountId: true } } } } as const;
     const found = kind === 'scrap' ? await tx.profileScrap.findUnique({ where: { id: contentId }, ...who })
@@ -230,7 +233,13 @@ ${p.body}` })
     if (!item) throw new GameError(404, 'Conteúdo não encontrado.');
     if (item.author.accountId === accountId) throw new GameError(400, 'Você não pode denunciar o próprio texto.');
     const label = ({ scrap: 'recado', testimonial: 'depoimento', post: 'tópico do fórum', comment: 'comentário do fórum' } as Record<string, string>)[String(kind)];
-    const ticket = await tx.supportTicket.create({ data: { accountId, kind: 'REPORT', subject: `Denúncia de ${label} #${contentId} (${item.author.name})`.slice(0, 120), reportedCharacterId: item.author.id } });
+    // Repetir a denúncia de um texto que a equipe ainda analisa não abre outro atendimento (clique repetido, outra aba,
+    // outro personagem da conta); e há um teto de denúncias em análise por conta, para a fila da equipe não ser inundada.
+    const subject = `Denúncia de ${label} #${contentId} (`;
+    const open = await tx.supportTicket.findMany({ where: { accountId, kind: 'REPORT', status: { not: 'RESOLVED' } }, select: { subject: true } });
+    if (open.some(t => t.subject.startsWith(subject))) return { message: 'Você já denunciou este texto e a equipe está analisando. Para acrescentar algo, responda pelo Suporte.' };
+    if (open.length >= limits.openReports) throw new GameError(429, tooManyReports);
+    const ticket = await tx.supportTicket.create({ data: { accountId, kind: 'REPORT', subject: `${subject}${item.author.name})`.slice(0, 120), reportedCharacterId: item.author.id } });
     await tx.supportMessage.create({ data: { ticketId: ticket.id, authorAccountId: accountId, body: `Motivo: ${why}\n\nTexto denunciado (${label} #${contentId}, de ${item.author.name}):\n${item.text}` } });
     return { message: 'Denúncia enviada para a equipe. Obrigado.' };
   });

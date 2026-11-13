@@ -4,7 +4,7 @@
 
 ## Arquivos
 - `adminRoutes.ts` – contas, punições, Premium manual, pedidos/reembolso, configurações, economia, extratos, ajuste de ouro, auditoria, saúde, conciliação
-- `supportRoutes.ts` – tickets e denúncias do jogador
+- `supportRoutes.ts` – tickets e denúncias do jogador. Tetos por conta, contados à parte: 5 pedidos de ajuda abertos e `limits.openReports` denúncias em análise (o mesmo teto das denúncias de textos, em `shared/community.ts`); a mesma denúncia (assunto e personagem iguais) ainda em análise é recusada com 409
 
 ## Rotas
 `/admin/*`, `/support/*`.
