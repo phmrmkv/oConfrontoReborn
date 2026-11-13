@@ -59,6 +59,8 @@ export const settingDefs = {
   'rarity.epicPer10k': { default: 250, min: 0, max: 10000, label: 'Raridade: equipamentos que caem Épicos', unit: 'por 10 mil', group: 'Raridade' },
   'rarity.legendaryPer10k': { default: 60, min: 0, max: 10000, label: 'Raridade: equipamentos que caem Lendários', unit: 'por 10 mil', group: 'Raridade' },
   'rarity.mythicPer10k': { default: 10, min: 0, max: 10000, label: 'Raridade: equipamentos que caem Míticos', unit: 'por 10 mil', group: 'Raridade' },
+  // Loot inteligente (shared/loot.ts): equipamento de outra vocação vira, com esta chance, o equivalente da vocação de quem caçou.
+  'loot.ownVocationPercent': { default: 70, min: 0, max: 100, label: 'Loot inteligente: chance de um equipamento de outra vocação virar o equivalente da vocação de quem caçou', unit: '%', group: 'Recompensas' },
   'rarity.bossBoostPercent': { default: 300, min: 100, max: 1000, label: 'Raridade: multiplicador dessas chances quando quem derruba é um chefe', unit: '%', group: 'Raridade' },
   'pvp.levelBandPercent': { default: 10, min: 1, max: 100, label: 'Duelo: diferença máxima de nível entre os dois (% do maior nível)', unit: '%', group: 'Duelo' },
   'pvp.dailyLimit': { default: 10, min: 1, max: 100, label: 'Duelo: duelos por personagem a cada 24 horas', unit: '', group: 'Duelo' },

@@ -1,6 +1,10 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-loot-da-sua-vocacao', date: '2026-11-13', title: 'O equipamento que cai serve para você', items: [
+    'Quando uma criatura derruba um equipamento de outra vocação, na maior parte das vezes ele chega como o equivalente da sua: mesmo tipo e nível parecido. O resultado da batalha avisa quando isso acontece.',
+    'Itens que servem a todas as vocações continuam caindo como sempre.',
+  ] },
   { id: '2026-11-12-raridade-dos-equipamentos', date: '2026-11-12', title: 'Equipamentos agora têm raridade', items: [
     'Cada equipamento que cai pode vir Comum, Incomum, Raro, Épico, Lendário ou Mítico. Quanto mais raro, mais ataque, magia, defesa e armadura o mesmo item entrega (até +40% no Mítico). Chefes têm três vezes mais chance de derrubar exemplares acima de Comum.',
     'A raridade aparece como uma moldura colorida em volta do ícone e uma etiqueta ao lado do nome: verde, azul, roxo, dourado e vermelho.',

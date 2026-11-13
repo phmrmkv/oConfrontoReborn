@@ -94,6 +94,35 @@ test('MySQL: raridade do exemplar no drop, no Mercado, no Mercador, no Ferreiro 
     assert.equal((await lastLedger(c, 'FORGE_REFORGE_OUT')).rarity, 4); assert.equal((await lastLedger(c, 'FORGE_REFORGE_IN')).rarity, 4);
   });
 
+  await t.test('loot inteligente: arma de Arqueiro que cai para um Cavaleiro vira a arma de Cavaleiro da mesma Era', async () => {
+    const crossbow = await bp('Crossbow da 1ª Era'), key = 'loot.ownVocationPercent';
+    const before = await prisma.gameSetting.findUnique({ where: { key } });
+    const setPercent = (value: number) => prisma.gameSetting.upsert({ where: { key }, update: { value }, create: { key, value } });
+    const monster = await prisma.monster.create({ data: { name: `Arqueiro Caído ${tag}`, hp: 1, attack: 1, defense: 0, experience: 1, goldMin: 1, goldMax: 1, spriteUrl: '',
+      loots: { create: [{ blueprintId: crossbow.id, dropChance: 1, maxAmount: 1 }] } } });
+    const hunt = async () => {
+      const battle = await BattleService.start(a, c, monster.id);
+      let result = await BattleService.turn(a, c, battle.id, 0, 'ATTACK');
+      for (let v = 1; v < 10 && result.status === 'ONGOING'; v++) result = await BattleService.turn(a, c, battle.id, v, 'ATTACK');
+      assert.equal(result.status, 'VICTORY');
+      const drops = (result as unknown as { rewards: { droppedItems: { blueprintId: number; name: string; adapted?: boolean }[] } }).rewards.droppedItems;
+      assert.equal(drops.length, 1); return drops[0];
+    };
+    try {
+      await setPercent(100);
+      const adapted = await hunt(), own = await prisma.itemBlueprint.findUniqueOrThrow({ where: { id: adapted.blueprintId } });
+      assert.equal(adapted.adapted, true); assert.equal(own.vocations, 'KNIGHT'); assert.equal(own.slot, 'WEAPON'); assert.equal(own.minLevel, 250);
+      assert.equal(adapted.name, own.name);
+      const row = await prisma.inventoryItem.findFirstOrThrow({ where: { characterId: c }, orderBy: { id: 'desc' } });
+      assert.equal(row.blueprintId, own.id, 'a mochila recebe o item trocado');
+      assert.equal((await prisma.itemLedger.findFirstOrThrow({ where: { characterId: c, reason: 'LOOT' }, orderBy: { id: 'desc' } })).blueprintId, own.id, 'o extrato registra o item que entrou');
+      await setPercent(0);
+      const kept = await hunt();
+      assert.equal(kept.blueprintId, crossbow.id); assert.equal(kept.adapted, undefined);
+    } finally {
+      if (before) await prisma.gameSetting.update({ where: { key }, data: { value: before.value } }); else await prisma.gameSetting.delete({ where: { key } });
+    }
+  });
   await t.test('extrato de itens bate com a mochila dos dois', async () => {
     assert.deepEqual((await itemDrift(prisma, 5000)).filter(x => x.characterId === c || x.characterId === d), []);
   });
