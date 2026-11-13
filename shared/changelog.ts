@@ -2,6 +2,7 @@
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
   { id: '2026-11-13-fragmentos-de-chefe', date: '2026-11-13', title: 'Fragmentos de chefe: raridade garantida', items: [
+    'Em Caçar, cada criatura mostra o que pode deixar e a chance de cada item, em "O que pode deixar".',
     'Cada vitória contra um chefe, na caçada ou em grupo, dá 1 fragmento de chefe.',
     'No Ferreiro, a aba Despertar usa os fragmentos para subir a raridade de um equipamento em um degrau, sem sorteio: 5 para Incomum, 10 para Raro, 20 para Épico, 40 para Lendário e 80 para Mítico. Vale para itens equipados, favoritos e +10, e a melhoria continua a mesma.',
   ] },

@@ -43,7 +43,9 @@ readRoutes.get('/characters/:id/inventory', asyncRoute(async (req, res) => {
   const [items,total] = await Promise.all([prisma.inventoryItem.findMany({ where, include: { blueprint: true, rareItem: { select: { id: true, serial: true, status: true } } }, orderBy: { id: 'asc' }, take: 10, skip: (page-1)*10 }),prisma.inventoryItem.count({ where })]);
   res.json(paged(items, total, page));
 }));
-readRoutes.get('/monsters', asyncRoute(async (_req,res) => { res.json(await prisma.monster.findMany({ orderBy: { level: 'asc' }, take: 200 })); }));
+// Com a tabela de loot de cada criatura (chance publicada na tela de Caçar; o sorteio continua só no servidor).
+readRoutes.get('/monsters', asyncRoute(async (_req,res) => { res.json(await prisma.monster.findMany({ orderBy: { level: 'asc' }, take: 200,
+  include: { loots: { select: { dropChance: true, maxAmount: true, blueprint: { select: { name: true, slot: true, spriteUrl: true, vocations: true } } }, orderBy: { dropChance: 'desc' } } } })); }));
 readRoutes.get('/shop', asyncRoute(async (_req,res) => {
   // Equipamento acima do nível configurado só sai do Ferreiro (fabricar/reforjar) ou do loot.
   const settings = await loadSettings(prisma);
