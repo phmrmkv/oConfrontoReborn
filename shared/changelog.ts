@@ -1,6 +1,13 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-12-raridade-dos-equipamentos', date: '2026-11-12', title: 'Equipamentos agora têm raridade', items: [
+    'Cada equipamento que cai pode vir Comum, Incomum, Raro, Épico, Lendário ou Mítico. Quanto mais raro, mais ataque, magia, defesa e armadura o mesmo item entrega (até +40% no Mítico). Chefes têm três vezes mais chance de derrubar exemplares acima de Comum.',
+    'A raridade aparece como uma moldura colorida em volta do ícone e uma etiqueta ao lado do nome: verde, azul, roxo, dourado e vermelho.',
+    'Ela é do exemplar: continua a mesma ao melhorar, reforjar, vender no Mercado ou trocar de dono no Espólio. O Mercado ganhou um filtro por raridade.',
+    'No duelo só metade da vantagem da raridade vale, para o equipamento não decidir a luta sozinho.',
+    'O que você já tinha na mochila continua igual: é Comum. Os itens +10 numerados seguem como antes; a raridade é outra coisa e pode se somar a eles.',
+  ] },
   { id: '2026-11-12-retratos-das-criaturas', date: '2026-11-12', title: 'A arte nova saiu da arena', items: [
     'As criaturas aparecem com o retrato da arte nova também na lista de Caçar, no Bestiário, nas Missões, no registro da batalha e na Caçada em grupo.',
     'Na Caçada em grupo, a fera da arena também usa a arte nova, com as mesmas animações da caçada.',

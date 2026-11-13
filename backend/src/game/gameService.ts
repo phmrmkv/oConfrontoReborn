@@ -13,6 +13,7 @@ import { BASE_ATTRIBUTE } from '../../../shared/progression';
 // Cada ponto em Vitalidade dá +15 de vida máxima; em Resistência, +15 de mana máxima.
 const STAT_BONUS = 15;
 import { statsResetCost, npcSellPrice, percentOf, resolveUpgrade, upgradeSuccessPercent, PROTECTION_STONE, type UpgradeOutcome, type UpgradeResult } from '../../../shared/economy';
+import { rarityName } from '../../../shared/rarity';
 
 export async function requireIdle(tx: Prisma.TransactionClient, characterId: number) {
   if (await tx.battle.findFirst({ where: { characterId, isFinished: false }, select: { id: true } }))
@@ -100,11 +101,14 @@ export async function sellNpc(accountId: number, characterId: number, itemId: nu
     // O NPC paga só o preço-base: a melhoria se perderia. Quem quer valorizar o item deve anunciá-lo no mercado.
     if (item.upgradeTier > 0 && !confirmUpgraded)
       throw new GameError(409, `Este item está melhorado (+${item.upgradeTier}). O Mercador paga só o preço-base e a melhoria se perde. Ofereça no Mercado para vendê-lo por mais.`);
+    // A raridade também não entra no preço do Mercador: quem vende um exemplar acima de Comum precisa confirmar.
+    if (item.rarity > 0 && !confirmUpgraded)
+      throw new GameError(409, `Este exemplar é ${rarityName(item.rarity)}. O Mercador paga o mesmo que por um Comum. Ofereça no Mercado para vendê-lo por mais.`);
     const settings = await loadSettings(tx);
     const proceeds = npcSellPrice(item.blueprint.npcPrice, settings['economy.npcSellPercent']) * BigInt(item.quantity);
     await tx.inventoryItem.delete({ where: { id: itemId } });
     await retireRare(tx, item.rareItemId, 'NPC_SELL');
-    await recordItem(tx, characterId, item.blueprintId, -item.quantity, 'NPC_SELL', { type: 'blueprint', id: item.blueprintId }, item.upgradeTier);
+    await recordItem(tx, characterId, item.blueprintId, -item.quantity, 'NPC_SELL', { type: 'blueprint', id: item.blueprintId }, item.upgradeTier, item.rarity);
     await addGold(tx, characterId, proceeds, 'NPC_SELL', { type: 'blueprint', id: item.blueprintId });
     return { received: proceeds.toString(), goldInHand: (c.goldInHand + proceeds).toString() };
   });
@@ -152,7 +156,7 @@ export async function upgrade(accountId: number, characterId: number, itemId: nu
         // já tratado acima
       } else if (outcome === 'BROKE') {
         await tx.inventoryItem.delete({ where: { id: itemId } });
-        await recordItem(tx, characterId, item.blueprintId, -1, 'UPGRADE_BREAK', { type: 'item', id: itemId }, item.upgradeTier);
+        await recordItem(tx, characterId, item.blueprintId, -1, 'UPGRADE_BREAK', { type: 'item', id: itemId }, item.upgradeTier, item.rarity);
         await event(tx, characterId, 'UPGRADE', `${item.blueprint.name} quebrou`, `A melhoria para +${item.upgradeTier + 1} falhou e o item se partiu. ${cost} ouro perdidos.`);
       } else {
         await event(tx, characterId, 'UPGRADE', `${item.blueprint.name}: melhoria falhou`, `O item resistiu e continua em +${item.upgradeTier}. ${cost} ouro perdidos.`);

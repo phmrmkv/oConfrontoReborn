@@ -3,6 +3,8 @@ import {api} from '../../lib/api';
 import {fmt,when} from '../../lib/format';
 import type {Hero,Item,GameConfig,Perform} from '../../lib/types';
 import Icon from '../../ui/GameIcon';
+import {RarityFrame,RarityTag} from '../../ui/RarityFrame';
+import {rarityName,raritySuffix} from '../../../../shared/rarity';
 import {Limited} from '../../ui/ShowMore';
 import {Pager,usePaged} from '../../ui/Pager';
 import {upgradeSuccessPercent,upgradeBreakPercent} from '../../../../shared/economy';
@@ -58,9 +60,9 @@ function ReforgeSection({hero,o,items,have,busy,act}:{hero:Hero;o:Overview;items
   const targets=item?o.recipes.filter(r=>r.slot===item.blueprint.slot&&r.minLevel>item.blueprint.minLevel&&r.minLevel<=hero.level&&vocationAllowed(r.vocations,hero.vocation)).sort((a,b)=>b.minLevel-a.minLevel):[];
   return <>
     <p className="muted">Troque um item seu por um do mesmo tipo e de nível maior, sem começar do zero: ele guarda metade da melhoria (um +6 vira +3). Custa {o.craftMaterials} materiais da faixa do item novo + ouro. Itens raros (+10) não podem ser reforjados.</p>
-    <div className="forge-pick" role="group" aria-label="Item para reforjar"><Limited items={items} label="Ver mais" render={i=><button key={i.id} className={pick===i.id?'bag-slot selected':'bag-slot'} onClick={()=>setPick(i.id)} title={`${i.blueprint.name} +${i.upgradeTier}`}><Icon name={i.blueprint.name} src={i.blueprint.spriteUrl} size={36}/><small className="bag-name">{i.blueprint.name}</small><span>{i.upgradeTier?`+${i.upgradeTier}`:''}{i.isEquipped?' ⚔':''}</span></button>}/></div>
+    <div className="forge-pick" role="group" aria-label="Item para reforjar"><Limited items={items} label="Ver mais" render={i=><button key={i.id} className={pick===i.id?'bag-slot selected':'bag-slot'} onClick={()=>setPick(i.id)} title={`${i.blueprint.name} +${i.upgradeTier}${raritySuffix(i.rarity??0)}`}><RarityFrame rarity={i.rarity}><Icon name={i.blueprint.name} src={i.blueprint.spriteUrl} size={36}/></RarityFrame><small className="bag-name">{i.blueprint.name}</small><span>{i.upgradeTier?`+${i.upgradeTier}`:''}{i.isEquipped?' ⚔':''}</span></button>}/></div>
     {!items.length&&<p className="empty">Nenhum equipamento para reforjar.</p>}
-    {item&&<><h3 className="forge-subtitle">{item.blueprint.name}{item.upgradeTier?` +${item.upgradeTier}`:''} pode virar:</h3>
+    {item&&<><h3 className="forge-subtitle">{item.blueprint.name}{item.upgradeTier?` +${item.upgradeTier}`:''} <RarityTag rarity={item.rarity}/> pode virar:</h3>{(item.rarity??0)>0&&<p className="muted">A raridade é do exemplar: continua {rarityName(item.rarity??0)} depois de reforjar.</p>}
       <Limited items={targets} label="Ver mais opções" render={r=>{const enough=have(r.material)>=o.craftMaterials&&BigInt(hero.goldInHand)>=BigInt(r.reforgeGold),tier=reforgeKeptTier(item.upgradeTier);
         return <div className="market-row" key={r.id}><Icon name={r.name} src={r.spriteUrl} size={40}/><div><h3>{r.name}{tier?` +${tier}`:''}</h3><p>Nv. {r.minLevel}{stats(r)?` · ${stats(r)}`:''}</p><p><Cost material={r.material} qty={o.craftMaterials} have={have(r.material)} gold={r.reforgeGold}/></p></div>
           <button disabled={busy||!enough} onClick={()=>{if(!window.confirm(`Reforjar ${item.blueprint.name}${item.upgradeTier?` +${item.upgradeTier}`:''} em ${r.name}${tier?` +${tier}`:''}? O item antigo deixa de existir.`))return;void act(async()=>{const res=await api(`/characters/${hero.id}/forge/reforge`,{itemId:item.id,targetId:r.id},crypto.randomUUID());setPick(null);return res;});}}>Reforjar</button></div>;}}/>
@@ -71,8 +73,8 @@ function SalvageSection({hero,o,items,busy,act}:{hero:Hero;o:Overview;items:Item
   return <>
     <p className="muted">Desmonte equipamentos que você não usa: o item some e você recebe {o.salvageMaterials} materiais da faixa dele (+1 a cada 3 níveis de melhoria). Equipados e raros (+10) não aparecem aqui.</p>
     <Limited items={items} label="Ver mais" render={i=>{const material=materialForLevel(i.blueprint.minLevel).name,qty=salvageReturn(o.salvageMaterials,i.upgradeTier);
-      return <div className="market-row" key={i.id}><Icon name={i.blueprint.name} src={i.blueprint.spriteUrl} size={40}/><div><h3>{i.blueprint.name}{i.upgradeTier?` +${i.upgradeTier}`:''}</h3><p>Nv. {i.blueprint.minLevel} · rende {qty}× {material}</p></div>
-        <button disabled={busy||qty<1} onClick={()=>{if(!window.confirm(`Desmontar ${i.blueprint.name}${i.upgradeTier?` +${i.upgradeTier}`:''}? O item some e você recebe ${qty}× ${material}.`))return;void act(()=>api(`/characters/${hero.id}/forge/salvage`,{itemId:i.id,confirmUpgraded:i.upgradeTier>0},crypto.randomUUID()));}}>Desmontar</button></div>;}}/>
+      return <div className="market-row" key={i.id}><RarityFrame rarity={i.rarity}><Icon name={i.blueprint.name} src={i.blueprint.spriteUrl} size={40}/></RarityFrame><div><h3>{i.blueprint.name}{i.upgradeTier?` +${i.upgradeTier}`:''} <RarityTag rarity={i.rarity}/></h3><p>Nv. {i.blueprint.minLevel} · rende {qty}× {material}</p></div>
+        <button disabled={busy||qty<1} onClick={()=>{if(!window.confirm(`Desmontar ${i.blueprint.name}${i.upgradeTier?` +${i.upgradeTier}`:''}${raritySuffix(i.rarity??0)}? O item some e você recebe ${qty}× ${material}${(i.rarity??0)>0?' (o mesmo que um Comum renderia)':''}.`))return;void act(()=>api(`/characters/${hero.id}/forge/salvage`,{itemId:i.id,confirmUpgraded:i.upgradeTier>0||(i.rarity??0)>0},crypto.randomUUID()));}}>Desmontar</button></div>;}}/>
     {!items.length&&<p className="empty">Nenhum equipamento solto na mochila para desmontar.</p>}
   </>;
 }

@@ -11,6 +11,7 @@ import { pageOf, paged } from '../core/http';
 import { combatStats } from './combatStats';
 import { addGold, recordItem } from '../economy/economy';
 import { PROTECTION_STONE } from '../../../shared/economy';
+import { raritySuffix } from '../../../shared/rarity';
 import { event, awardAchievements } from './adventureService';
 import { arenaFee, canChallenge, duelActionCosts, duelActionHelp, duelActionLabels, duelActions, duelModes, honorCosmetic, honorCosmetics, honorDelta, levelGap, lootEligible, modeLabels, wagerCap,
   type DuelAction, type DuelMode, type DuelRoundRecord } from '../../../shared/pvp';
@@ -74,8 +75,8 @@ export async function duelState(accountId: number, characterId: number, rawQuery
   ]);
   const blueprints = await prisma.itemBlueprint.findMany({ where: { id: { in: [...lost, ...won].map(l => l.blueprintId) } }, select: { id: true, name: true, spriteUrl: true } });
   const bp = (id: number) => blueprints.find(b => b.id === id);
-  const lootView = (l: { id: number; duelId: number; blueprintId: number; upgradeTier: number; ransomPrice: bigint; expiresAt: Date }) => ({ id: l.id, duelId: l.duelId,
-    item: bp(l.blueprintId)?.name ?? 'Item', sprite: bp(l.blueprintId)?.spriteUrl ?? '', upgradeTier: l.upgradeTier, ransomPrice: l.ransomPrice.toString(), expiresAt: l.expiresAt });
+  const lootView = (l: { id: number; duelId: number; blueprintId: number; upgradeTier: number; rarity: number; ransomPrice: bigint; expiresAt: Date }) => ({ id: l.id, duelId: l.duelId,
+    item: bp(l.blueprintId)?.name ?? 'Item', sprite: bp(l.blueprintId)?.spriteUrl ?? '', upgradeTier: l.upgradeTier, rarity: l.rarity, ransomPrice: l.ransomPrice.toString(), expiresAt: l.expiresAt });
   const [received, sent, today] = await Promise.all([
     prisma.duel.findMany({ where: { ...invite, opponentId: c.id }, orderBy: { id: 'desc' }, take: 10, include: { challenger: { select: card } } }),
     prisma.duel.findMany({ where: { ...invite, challengerId: c.id }, orderBy: { id: 'desc' }, take: 10, include: { opponent: { select: card } } }),
@@ -114,7 +115,7 @@ async function duelView(duelId: number, viewerId: number) {
   const lootItem = loot ? await prisma.itemBlueprint.findUnique({ where: { id: loot.blueprintId }, select: { name: true } }) : null;
   return { id: d.id, round: d.round, status: d.status, outcome: d.outcome, winnerId: d.winnerId, deadlineAt: d.deadlineAt, finishedAt: d.finishedAt,
     mode: d.mode, stake: d.stake.toString(), fee: d.fee.toString(), honorDelta: d.honorDelta,
-    loot: loot && { id: loot.id, item: lootItem?.name ?? 'Item', upgradeTier: loot.upgradeTier, status: loot.status, winnerId: loot.winnerId, ransomPrice: loot.ransomPrice.toString() },
+    loot: loot && { id: loot.id, item: lootItem?.name ?? 'Item', upgradeTier: loot.upgradeTier, rarity: loot.rarity, status: loot.status, winnerId: loot.winnerId, ransomPrice: loot.ransomPrice.toString() },
     me: side(me, true), foe: side(foe, false),
     actions: duelActions.map(a => ({ key: a, label: labels[a], mana: costs[a], help: duelActionHelp[a] })),
     rounds: ((d.log ?? []) as unknown as DuelRoundRecord[]) };
@@ -131,7 +132,7 @@ export async function duelHistory(accountId: number, characterId: number, query:
   const blueprints = await prisma.itemBlueprint.findMany({ where: { id: { in: rows.flatMap(d => d.loots.map(l => l.blueprintId)) } }, select: { id: true, name: true } });
   return paged(rows.map(d => ({ id: d.id, opponent: d.challengerId === c.id ? d.opponent : d.challenger, outcome: d.outcome, won: d.winnerId === c.id, draw: d.winnerId === null,
     rounds: d.round, finishedAt: d.finishedAt, mode: d.mode, stake: d.stake.toString(), fee: d.fee.toString(), honorDelta: d.honorDelta,
-    loot: d.loots[0] ? { item: blueprints.find(b => b.id === d.loots[0].blueprintId)?.name ?? 'Item', upgradeTier: d.loots[0].upgradeTier, status: d.loots[0].status, mine: d.loots[0].winnerId === c.id } : null })), total, page);
+    loot: d.loots[0] ? { item: blueprints.find(b => b.id === d.loots[0].blueprintId)?.name ?? 'Item', upgradeTier: d.loots[0].upgradeTier, rarity: d.loots[0].rarity, status: d.loots[0].status, mine: d.loots[0].winnerId === c.id } : null })), total, page);
 }
 // Ranking de honra: só vitórias em duelo, por classe; nunca por ouro. Respeita quem escondeu a fama. Cache de 60 s.
 const rankingCache = new Map<string, { at: number; data: unknown }>();
@@ -221,7 +222,8 @@ export async function answerDuel(accountId: number, characterId: number, duelId:
     const state: DuelState = { stats: {} }, fighters: Prisma.DuelFighterCreateManyDuelInput[] = [];
     for (const h of [c, rival].sort((a, b) => a.id - b.id)) {
       const equipment = await tx.inventoryItem.findMany({ where: { characterId: h.id, isEquipped: true }, include: { blueprint: true } });
-      const s = combatStats(h, equipment);
+      // No duelo só parte da vantagem da raridade vale (pvp.rarityPercent), para o equipamento não decidir sozinho.
+      const s = combatStats(h, equipment, { rarityPercent: settings['pvp.rarityPercent'] });
       state.stats[h.id] = { name: h.name, attack: s.attack, defense: s.defense, agility: h.agility, criticalChance: s.criticalChance, dodgeChance: s.dodgeChance };
       // Cópia da vida e mana máximas: o duelo começa com os dois inteiros e não mexe na vida real.
       fighters.push({ characterId: h.id, vocation: h.vocation, hp: h.maxHp, maxHp: h.maxHp, mana: h.maxMana, maxMana: h.maxMana, activeCharacterId: h.id });
@@ -361,12 +363,12 @@ async function rollLoot(tx: Tx, duelId: number, winnerId: number, loserId: numbe
   }
   const item = candidates[dice(0, candidates.length - 1)];
   await tx.inventoryItem.update({ where: { id: item.id }, data: { characterId: winnerId, favorite: false } });
-  await recordItem(tx, loserId, item.blueprintId, -1, 'DUEL_LOOT_OUT', ref, item.upgradeTier);
-  await recordItem(tx, winnerId, item.blueprintId, 1, 'DUEL_LOOT_IN', ref, item.upgradeTier);
+  await recordItem(tx, loserId, item.blueprintId, -1, 'DUEL_LOOT_OUT', ref, item.upgradeTier, item.rarity);
+  await recordItem(tx, winnerId, item.blueprintId, 1, 'DUEL_LOOT_IN', ref, item.upgradeTier, item.rarity);
   const ransomPrice = BigInt(item.blueprint.npcPrice) * BigInt(settings['pvp.ransomPercent']) / 100n;
-  await tx.duelLoot.create({ data: { duelId, loserId, winnerId, inventoryItemId: item.id, blueprintId: item.blueprintId, upgradeTier: item.upgradeTier, ransomPrice,
+  await tx.duelLoot.create({ data: { duelId, loserId, winnerId, inventoryItemId: item.id, blueprintId: item.blueprintId, upgradeTier: item.upgradeTier, rarity: item.rarity, ransomPrice,
     expiresAt: new Date(Date.now() + settings['pvp.ransomHours'] * HOUR) } });
-  const label = `${item.blueprint.name}${item.upgradeTier ? ` +${item.upgradeTier}` : ''}`;
+  const label = `${item.blueprint.name}${item.upgradeTier ? ` +${item.upgradeTier}` : ''}${raritySuffix(item.rarity)}`;
   return { winner: `Espólio: você levou ${label}. O oponente pode resgatá-lo em ${settings['pvp.ransomHours']} h.`, loser: `Espólio: você perdeu ${label}. Resgate-o em ${settings['pvp.ransomHours']} h por ${ransomPrice.toLocaleString('pt-BR')} de ouro.` };
 }
 // Resgate: o perdedor paga o preço ao vencedor e o item volta. Se o vencedor já vendeu, anunciou, equipou ou desmontou o item, o resgate acabou.
@@ -386,8 +388,8 @@ export async function ransomLoot(accountId: number, characterId: number, lootId:
     await addGold(tx, fresh.loserId, -fresh.ransomPrice, 'DUEL_RANSOM', ref);
     await addGold(tx, fresh.winnerId, fresh.ransomPrice, 'DUEL_RANSOM', ref);
     await tx.inventoryItem.update({ where: { id: item.id }, data: { characterId: fresh.loserId, favorite: false } });
-    await recordItem(tx, fresh.winnerId, item.blueprintId, -1, 'DUEL_RANSOM_OUT', ref, item.upgradeTier);
-    await recordItem(tx, fresh.loserId, item.blueprintId, 1, 'DUEL_RANSOM_IN', ref, item.upgradeTier);
+    await recordItem(tx, fresh.winnerId, item.blueprintId, -1, 'DUEL_RANSOM_OUT', ref, item.upgradeTier, item.rarity);
+    await recordItem(tx, fresh.loserId, item.blueprintId, 1, 'DUEL_RANSOM_IN', ref, item.upgradeTier, item.rarity);
     await tx.duelLoot.update({ where: { id: lootId }, data: { status: 'RANSOMED', resolvedAt: new Date() } });
     await event(tx, fresh.winnerId, 'DUEL', 'Espólio resgatado', `O dono pagou ${fresh.ransomPrice.toLocaleString('pt-BR')} de ouro e levou o item de volta.`);
     return { message: `Item resgatado por ${fresh.ransomPrice.toLocaleString('pt-BR')} de ouro.` };
