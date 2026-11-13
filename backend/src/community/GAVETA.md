@@ -5,9 +5,11 @@
 ## Arquivos
 - `communityService.ts` – regras de perfil, recados, depoimentos, amizades, visitas e denúncias
 - `communityRoutes.ts` – rotas `/community/*`, `/forum*` e `/characters/:id/{community,forum}/*`
+- `rankingService.ts` – ranking geral (aba Ranking): Nível ou Honra, filtro de vocação e de classe, páginas de 10 e a posição de quem olha
 - `forumService.ts` – fórum: tópicos, comentários (um nível de resposta), votos, resolvido, apagar o próprio
 
 ## Rotas
+`GET /ranking?board=LEVEL|HONOR&vocation=&tier=&page=&as=<id>` (regras em `shared/ranking.ts`; nunca por ouro; sem fama escondida, conta apagada nem equipe).
 `GET /community/profiles/:nome?as=<id>`, `GET /community/search?q=`, `GET /characters/:id/community`, `POST /characters/:id/community/{profile,scraps,testimonials,friends,report,block,unblock}` e ações por id.
 
 ## Dependências permitidas

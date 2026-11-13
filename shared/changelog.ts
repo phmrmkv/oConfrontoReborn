@@ -1,6 +1,11 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-ranking', date: '2026-11-13', title: 'Ranking', items: [
+    'Nova aba Ranking, em Comunidade: os aventureiros de nível mais alto e os de mais honra no Duelo.',
+    'Dá para filtrar por vocação (Cavaleiro, Arqueiro, Feiticeiro, Druida) e por classe, da que ainda não tem classe até a 8ª.',
+    'Sua posição aparece no alto, com um atalho para a sua página. Quem esconde a fama no perfil não entra no ranking.',
+  ] },
   { id: '2026-11-13-poderes', date: '2026-11-13', title: 'Poderes novos na caçada', items: [
     'Cada vocação ganhou um poder próprio na caçada: Grito de guerra (Cavaleiro), Flecha envenenada (Arqueiro), Raio congelante (Feiticeiro) e Raízes (Druida).',
     'Todos ganharam Meditar, que recupera parte da mana e defende melhor naquele turno.',

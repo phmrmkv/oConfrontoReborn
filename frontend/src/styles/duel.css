@@ -73,3 +73,12 @@
 .friends-box .market-row h3,.friends-box .market-row h3 .link-button{font-size:14px}
 .friends-box .market-row p{font-size:12px}
 .friends-box .market-row button{font-size:13px;min-height:36px}
+/* Ranking geral (features/ranking): filtros, a linha do próprio herói e o pódio. */
+.ranking-filters{display:flex;flex-wrap:wrap;gap:12px;margin:8px 0}
+.ranking-filters label{display:flex;align-items:center;gap:6px}
+.ranking-me{margin:6px 0 10px}
+.ranking-list{list-style:none;margin:0;padding:0}
+.ranking-list li.mine{outline:2px solid var(--accent,#b9892f);outline-offset:-2px}
+.ranking-list .podium-1 .duel-rank{color:#d4a017}
+.ranking-list .podium-2 .duel-rank{color:#a8a9ad}
+.ranking-list .podium-3 .duel-rank{color:#b0703c}

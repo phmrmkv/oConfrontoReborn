@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { asyncRoute, pageOf } from '../core/http';
 import { integer } from '../core/engine';
 import { createComment, createPost, deleteOwn, getPost, listPosts, markSolved, vote } from './forumService';
+import { ranking } from './rankingService';
 import { blockCharacter, unblockCharacter, decideTestimonial, deleteScrap, myCommunity, profileList, publicProfile, reportContent, requestFriend, respondFriend, searchCharacters, updateCommunityProfile, writeScrap, writeTestimonial } from './communityService';
 
 export const communityRoutes = Router();
@@ -14,6 +15,8 @@ communityRoutes.get('/community/profiles/:name/:list', asyncRoute(async (req, re
   const { page, skip, take } = pageOf(req.query);
   res.json(await profileList(res.locals.accountId, req.params.name, req.params.list, req.query.as ? id(req.query.as) : null, page, skip, take));
 }));
+// Ranking geral: ?board=LEVEL|HONOR&vocation=KNIGHT…&tier=0…8&page=N&as=<personagem da conta, para a posição dele>.
+communityRoutes.get('/ranking', asyncRoute(async (req, res) => { res.json(await ranking(res.locals.accountId, req.query)); }));
 communityRoutes.get('/community/search', asyncRoute(async (req, res) => { res.json(await searchCharacters(req.query.q)); }));
 communityRoutes.get('/characters/:id/community', asyncRoute(async (req, res) => { res.json(await myCommunity(res.locals.accountId, id(req.params.id))); }));
 // Mudanças: sempre em nome de um personagem da conta (o serviço trava e confere).
