@@ -6,7 +6,7 @@ import {api} from '../../lib/api';
 import {msg} from '../../lib/format';
 import {baseItem,itemArtFiles,itemFile,missingArt,strayArt} from '../../lib/itemArt';
 
-type CatalogItem={name:string;slot:string};
+type CatalogItem={name:string;slot:string;spriteUrl:string};
 // O que falta no lote de arte própria: os itens do jogo (rota /items/names) sem GIF com o próprio nome, com o nome
 // exato do arquivo que faz cada um entrar sozinho no próximo build. A busca aceita o nome com ou sem acento.
 function MissingArt(){
@@ -21,7 +21,7 @@ function MissingArt(){
       <p className="muted">Salve o GIF com o nome que aparece em cada item e ele entra sozinho no próximo build. Enquanto isso, a variante das Eras ou de Capriel usa a figura do item-base, se ela já existir; os outros aparecem com o sprite do TibiaWiki.</p>
       <input placeholder="Buscar item sem arte…" aria-label="Buscar item sem arte própria" value={search} onChange={e=>setSearch(e.target.value)}/>
       {found.length===0&&<p className="muted">Nenhum item sem arte com esse nome.</p>}
-      <Limited items={found} label="Ver mais itens sem arte" render={i=><div className="market-row" key={i.name}><Icon name={i.name} size={40}/>
+      <Limited items={found} label="Ver mais itens sem arte" render={i=><div className="market-row" key={i.name}><Icon name={i.name} src={i.spriteUrl||undefined} size={40}/>
         <div><h3>{i.name}</h3><p>Arquivo: <b>{i.file}.gif</b> · {i.borrowed?`por enquanto usa a figura de ${baseItem(i.name)}`:'por enquanto, sprite do TibiaWiki'}</p></div></div>}/></>}
     {stray.length>0&&<p className="error" role="status">{stray.length===1?'Um GIF tem':`${stray.length} GIFs têm`} nome que não é de nenhum item do jogo e não aparece{stray.length===1?'':'m'} em lugar nenhum: {stray.map(f=>`${f}.gif`).join(', ')}. Confira o nome do arquivo.</p>}
   </>;
