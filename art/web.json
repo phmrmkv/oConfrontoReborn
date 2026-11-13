@@ -36,6 +36,11 @@
       "bytes": 294382,
       "portrait": 1
     },
+    "arqueiro-especiais": {
+      "sha256": "43b5d2c1ef8767d578d8b28a420467c2edab42aa69f1ab1c6aa74b82e12e6813",
+      "bytes": 239070,
+      "portrait": 1
+    },
     "assassino": {
       "sha256": "a0c5bc562ac38404913264de4702a336c033c12f72abc821ccef88b3104dd691",
       "bytes": 187018,
@@ -101,6 +106,11 @@
       "bytes": 305976,
       "portrait": 1
     },
+    "druida-especiais": {
+      "sha256": "b80bde6ced6419994884eb9bc1dae0039e5a1426ce9b021a815a14211c588319",
+      "bytes": 409068,
+      "portrait": 1
+    },
     "elemental-de-agua": {
       "sha256": "52ee5546f16748bae423f9adec1a3400f1013f36683a3dcbfb0def7d9449433e",
       "bytes": 380296,
@@ -134,6 +144,11 @@
     "feiticeiro": {
       "sha256": "23961b6098f9be85fabd5d5a9e2843c7738a7026c11ce488890e16f1c53e6a00",
       "bytes": 338564,
+      "portrait": 1
+    },
+    "feiticeiro-especiais": {
+      "sha256": "9462c51c883f16d1d6aca157c03cc16a6b9259a845e09797587f3de7796d0618",
+      "bytes": 373484,
       "portrait": 1
     },
     "golem-de-pedra": {

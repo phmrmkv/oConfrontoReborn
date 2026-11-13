@@ -2,7 +2,7 @@
 
 > Arquivo gerado por `npm run art` a partir de `scripts/art.mjs`. Para mudar um comando, edite a lista naquele arquivo e rode de novo.
 
-A arena de batalha usa só arte própria. Cada personagem vem numa folha só, sempre no mesmo formato. Hoje **60 de 64** folhas estão prontas.
+A arena de batalha usa só arte própria. Cada personagem vem numa folha só, sempre no mesmo formato. Hoje **63 de 64** folhas estão prontas.
 
 ## Como usar
 1. Copie o comando inteiro do personagem e cole no ChatGPT (gere um personagem por vez).
@@ -93,9 +93,9 @@ Só as folhas novas ou alteradas são refeitas (`art/web.json` guarda o que já 
 | `apocalypse.png` | Apocalypse | Chefe | feito | Apocalypse (nv. 1000) |
 | `efeitos.png` | Efeitos da arena | Efeitos | falta | projéteis, escudo de guarda, cura e impacto na arena |
 | `cavaleiro-especiais.png` | Cavaleiro: especiais | Especiais | feito | Golpe brutal, Fúria berserker e Interromper |
-| `arqueiro-especiais.png` | Arqueiro: especiais | Especiais | falta | Tiro preciso, Salva de flechas e Interromper |
-| `feiticeiro-especiais.png` | Feiticeiro: especiais | Especiais | falta | Explosão, Tempestade e Interromper |
-| `druida-especiais.png` | Druida: especiais | Especiais | falta | Espinhos, Fúria natural e Interromper |
+| `arqueiro-especiais.png` | Arqueiro: especiais | Especiais | feito | Tiro preciso, Salva de flechas e Interromper |
+| `feiticeiro-especiais.png` | Feiticeiro: especiais | Especiais | feito | Explosão, Tempestade e Interromper |
+| `druida-especiais.png` | Druida: especiais | Especiais | feito | Espinhos, Fúria natural e Interromper |
 
 ## Heróis
 
@@ -1487,7 +1487,7 @@ Formato obrigatório:
 Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel, paleta limitada (aço, latão, vinho), luz vindo de cima à esquerda, sem anti-aliasing borrado e sem degradê suave. Mesmo estilo de um cavaleiro de armadura de aço escuro e capa vinho já usado no jogo. O mesmo personagem, com as mesmas cores e proporções, em todos os quadros em que aparece. Efeitos de magia e de golpe soltos no ar, sem caixa nem fundo.
 ```
 
-### Arqueiro: especiais · `arqueiro-especiais.png` · falta
+### Arqueiro: especiais · `arqueiro-especiais.png` · feito
 
 ```
 Crie uma sprite sheet de pixel art para um jogo de RPG por turnos visto de lado: os GOLPES ESPECIAIS de um herói que já existe no jogo.
@@ -1510,7 +1510,7 @@ Formato obrigatório:
 Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel, paleta limitada (verde-musgo, couro marrom, madeira clara), luz vindo de cima à esquerda, sem anti-aliasing borrado e sem degradê suave. Mesmo estilo de um cavaleiro de armadura de aço escuro e capa vinho já usado no jogo. O mesmo personagem, com as mesmas cores e proporções, em todos os quadros em que aparece. Efeitos de magia e de golpe soltos no ar, sem caixa nem fundo.
 ```
 
-### Feiticeiro: especiais · `feiticeiro-especiais.png` · falta
+### Feiticeiro: especiais · `feiticeiro-especiais.png` · feito
 
 ```
 Crie uma sprite sheet de pixel art para um jogo de RPG por turnos visto de lado: os GOLPES ESPECIAIS de um herói que já existe no jogo.
@@ -1533,7 +1533,7 @@ Formato obrigatório:
 Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel, paleta limitada (azul-noite, roxo, dourado, laranja de brasa), luz vindo de cima à esquerda, sem anti-aliasing borrado e sem degradê suave. Mesmo estilo de um cavaleiro de armadura de aço escuro e capa vinho já usado no jogo. O mesmo personagem, com as mesmas cores e proporções, em todos os quadros em que aparece. Efeitos de magia e de golpe soltos no ar, sem caixa nem fundo.
 ```
 
-### Druida: especiais · `druida-especiais.png` · falta
+### Druida: especiais · `druida-especiais.png` · feito
 
 ```
 Crie uma sprite sheet de pixel art para um jogo de RPG por turnos visto de lado: os GOLPES ESPECIAIS de um herói que já existe no jogo.

@@ -83,7 +83,10 @@
   },
   "effects": null,
   "specials": {
-    "KNIGHT": "cavaleiro-especiais"
+    "KNIGHT": "cavaleiro-especiais",
+    "PALADIN": "arqueiro-especiais",
+    "SORCERER": "feiticeiro-especiais",
+    "DRUID": "druida-especiais"
   },
   "effectCells": {
     "Arrow": 0,
