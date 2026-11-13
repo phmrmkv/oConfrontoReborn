@@ -178,7 +178,7 @@ function duelScript(r:DuelRoundRecord,voc:Record<string,string>):Step[]{
     else if(m.action==='DEFEND_SHIELD')s.push({cues:[{who:me,cls:'guard'}],ms:320});
     else{
       const kill=!m.dodged&&m.dealt>0&&target.hp<=0,guard=target.action==='DEFEND_SHIELD';
-      s.push({cues:[{who:me,cls:melee?'lunge':'cast',shot:melee?undefined:shotOf(v)},
+      s.push({cues:[{who:me,cls:melee?'lunge':'cast',shot:melee?undefined:shotOf(v),...(m.stolen?{float:{text:`+${stageNumber(m.stolen)}`,kind:'heal' as const}}:{})},
         m.dodged?{who:you,cls:'dodge late',float:{text:'Esquiva!',kind:'miss'}}
           :{who:you,cls:`hit late${guard?' guard':''}${kill?' dying':''}`,float:{text:`−${stageNumber(m.dealt)}`,kind:m.crit?'crit':'dmg'}}],shake:m.crit&&!m.dodged,ms:kill?900:640});
       if(kill)break;

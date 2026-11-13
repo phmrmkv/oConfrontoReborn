@@ -21,7 +21,7 @@ import { bossLines, GENERIC_RAGE_LINE } from '../../../shared/bosses';
 const dice = (min: number, max: number) => randomInt(min, max + 1);
 // Histórico do combate, turno a turno, guardado no próprio lastLog (JSON). Formato antigo: só a lista de frases do último turno.
 // `effectDamage` e `inflicted` só aparecem nos turnos em que houve efeito de status.
-export interface TurnRecord { turn: number; action: string; dealt: number; crit: boolean; healed: number; received: number; dodged: boolean; foe: FoeMove; heavy: boolean; hp: number; maxHp: number; monsterHp: number; monsterMaxHp: number; effectDamage?: number; inflicted?: StatusKind }
+export interface TurnRecord { turn: number; action: string; dealt: number; crit: boolean; healed: number; received: number; dodged: boolean; foe: FoeMove; heavy: boolean; hp: number; maxHp: number; monsterHp: number; monsterMaxHp: number; effectDamage?: number; stolen?: number; inflicted?: StatusKind }
 // Os efeitos ativos do herói ficam junto do histórico (valem só nesta batalha).
 type StoredLog = { log: string[]; turns: TurnRecord[]; effects: ActiveEffect[] };
 const MAX_TURNS_KEPT = 200;
@@ -120,7 +120,7 @@ export class BattleService {
       const heavy = monsterIntent(b.monster, b.turnVersion).kind === 'HEAVY';
       const record: TurnRecord = { turn: b.turnVersion + 1, action, dealt: result.dealt, crit: result.crit, healed: result.healed, received: result.received, dodged: result.dodged,
         foe: result.foe, heavy, hp: result.hp, maxHp: c.maxHp, monsterHp: result.monsterHp, monsterMaxHp: b.monster.hp,
-        ...(result.effectDamage ? { effectDamage: result.effectDamage } : {}), ...(result.inflicted ? { inflicted: result.inflicted } : {}) };
+        ...(result.effectDamage ? { effectDamage: result.effectDamage } : {}), ...(result.stolen ? { stolen: result.stolen } : {}), ...(result.inflicted ? { inflicted: result.inflicted } : {}) };
       const turns = [...stored.turns, record].slice(-MAX_TURNS_KEPT);
       await tx.character.update({ where: { id: characterId }, data: { hp: result.hp, mana: result.mana, ...levelData, goldInHand: { increment: BigInt(gold) } } });
       if (gold > 0) await recordGold(tx, characterId, BigInt(gold), c.goldInHand + BigInt(gold), 'MONSTER', { type: 'battle', id: battleId });

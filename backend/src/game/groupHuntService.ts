@@ -18,7 +18,7 @@ const dice = (min: number, max: number) => randomInt(min, max + 1);
 const card = { id: true, name: true, level: true, vocation: true, classTier: true, profileAvatar: true, profileEmblem: true } as const;
 const WEEK = 7 * 24 * 3600 * 1000;
 // Força de cada participante, gravada ao começar (equipamento trocado no meio não muda a luta).
-type FighterStats = { name: string; attack: number; defense: number; criticalChance: number; dodgeChance: number };
+type FighterStats = { name: string; attack: number; defense: number; criticalChance: number; dodgeChance: number; critDamage?: number; healPower?: number };
 // `counters` = correntes, encantamento, ilusões ou selos (ver shared/groupHunt). `chains` é o nome antigo (batalhas da fase 1).
 type BattleState = { attack: number; defense: number; counters?: number; chains?: number; freed: boolean; phase?: GroupPhase; choice?: 'SLAY' | 'SLEEP' | null; stats: Record<string, FighterStats> };
 const bossOf = (s: BattleState, hunt: GroupHunt, hp: number, maxHp: number): GroupBoss => ({ hp, maxHp, attack: s.attack, defense: s.defense, mechanic: hunt.mechanic,
@@ -196,7 +196,7 @@ export async function startGroupHunt(accountId: number, characterId: number) {
       if (await tx.battle.findFirst({ where: { characterId: h.id, isFinished: false }, select: { id: true } })) throw new GameError(409, `${h.name} está num combate solo.`);
       const equipment = await tx.inventoryItem.findMany({ where: { characterId: h.id, isEquipped: true }, include: { blueprint: true } });
       const s = combatStats(h, equipment);
-      state.stats[h.id] = { name: h.name, attack: s.attack, defense: s.defense, criticalChance: s.criticalChance, dodgeChance: s.dodgeChance };
+      state.stats[h.id] = { name: h.name, attack: s.attack, defense: s.defense, criticalChance: s.criticalChance, dodgeChance: s.dodgeChance, critDamage: s.critDamage, healPower: s.healPower };
       await tx.character.update({ where: { id: h.id }, data: { energy: { decrement: cost } } });
       fighters.push({ characterId: h.id, vocation: h.vocation, hp: h.hp, maxHp: h.maxHp, mana: h.mana, maxMana: h.maxMana, activeCharacterId: h.id });
     }
@@ -250,7 +250,8 @@ async function resolveRound(tx: Tx, b: LockedBattle) {
   const s = b.state as unknown as BattleState, settings = await loadSettings(tx), hunt = huntByKey(b.huntKey)!;
   const fighters: GroupFighter[] = b.fighters.map(f => ({ characterId: f.characterId, name: s.stats[f.characterId].name, vocation: f.vocation, hp: f.hp, maxHp: f.maxHp,
     mana: f.mana, maxMana: f.maxMana, attack: s.stats[f.characterId].attack, defense: s.stats[f.characterId].defense,
-    criticalChance: s.stats[f.characterId].criticalChance, dodgeChance: s.stats[f.characterId].dodgeChance, action: f.action as GroupAction | null }));
+    criticalChance: s.stats[f.characterId].criticalChance, dodgeChance: s.stats[f.characterId].dodgeChance,
+    critDamage: s.stats[f.characterId].critDamage ?? 0, healPower: s.stats[f.characterId].healPower ?? 0, action: f.action as GroupAction | null }));
   const r = resolveGroupRound(b.round, bossOf(s, hunt, b.bossHp, b.bossMaxHp), fighters, dice, hunt);
   const done = r.outcome !== 'ONGOING';
   for (const f of r.fighters) {

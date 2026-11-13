@@ -55,6 +55,8 @@ export function canChallenge(a: { level: number; vocationChosen: boolean }, b: {
 export interface DuelMove {
   characterId: number; action: DuelAction; auto: boolean; acted: boolean; first: boolean;
   dealt: number; crit: boolean; dodged: boolean; healed: number; interrupted: boolean; hp: number; maxHp: number; mana: number; maxMana: number;
+  /** Vida recuperada pelo roubo de vida do golpe. */
+  stolen?: number;
 }
 export interface DuelRoundRecord { round: number; moves: DuelMove[]; lines: string[] }
 

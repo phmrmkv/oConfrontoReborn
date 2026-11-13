@@ -7,17 +7,18 @@ import { hero, allVocations } from './levelSim';
 import { resolveDuelRound, type DuelFighter } from '../backend/src/game/duelEngine';
 import { duelActionCosts, type DuelAction } from '../shared/pvp';
 import type { BaseVocation } from '../shared/adventure';
+import { defaultSettings } from '../shared/economy';
 
 const arg = (i: number, d: number) => Number(process.argv[i] ?? d);
 const duels = arg(2, 1000), damage = arg(3, 100);
-const tuning = { damagePercent: damage, healPercent: arg(4, 100), defensePercent: arg(5, 100), taken: { KNIGHT: arg(6, 100), PALADIN: arg(7, 100), SORCERER: arg(8, 100), DRUID: arg(9, 100) } };
+const tuning = { damagePercent: damage, healPercent: arg(4, 100), defensePercent: arg(5, 100), lifeStealPercent: defaultSettings()['pvp.lifeStealPercent'], taken: { KNIGHT: arg(6, 100), PALADIN: arg(7, 100), SORCERER: arg(8, 100), DRUID: arg(9, 100) } };
 let seed = 4242; const rng = () => (seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296;
 const dice = (min: number, max: number) => min + Math.floor(rng() * (max - min + 1));
 
 function fighter(id: number, v: BaseVocation, level: number): DuelFighter {
   const h = hero(v, level, items);
   return { characterId: id, name: v, vocation: h.c.vocation, hp: h.maxHp, maxHp: h.maxHp, mana: h.maxMana, maxMana: h.maxMana,
-    attack: h.stats.attack, defense: h.stats.defense, agility: h.c.agility, criticalChance: h.stats.criticalChance, dodgeChance: h.stats.dodgeChance, action: null, missed: 0 };
+    attack: h.stats.attack, defense: h.stats.defense, agility: h.c.agility, criticalChance: h.stats.criticalChance, dodgeChance: h.stats.dodgeChance, critDamage: h.stats.critDamage, lifeSteal: h.stats.lifeSteal, healPower: h.stats.healPower, action: null, missed: 0 };
 }
 // Política simples: cura ferido, às vezes interrompe, usa o golpe mais forte que a mana permite (guardando mana da cura).
 function choose(f: DuelFighter): DuelAction {
