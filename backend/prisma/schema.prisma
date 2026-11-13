@@ -179,6 +179,8 @@ model ItemBlueprint {
   criticalChance Int              @default(0)
   fireResistance Int              @default(0)
   speed          Int              @default(0)
+  // Conjunto das Eras (shared/itemSets.ts); vazio para quem não é de conjunto.
+  setKey           String?        @db.VarChar(16)
   // Atributos secundários (shared/itemStats.ts), em %.
   critDamage       Int            @default(0)
   lifeSteal        Int            @default(0)

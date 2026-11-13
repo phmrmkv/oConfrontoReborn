@@ -3,6 +3,7 @@
 
 - `economy.ts` – motivos de ouro/item (fonte/ralo/transferência), configurações com limites, taxas, preços NPC, regras de melhoria (`upgradeSuccessPercent`, `resolveUpgrade`), `settingsConflict`.
 - `adventure.ts` – vocações, regiões, jornada, promoção de classe.
+- `itemSets.ts` – conjuntos das Eras: nome e bônus de 2 e 4 peças de cada um (`setBonuses`, que `combatStats.ts` usa) e o texto da tela.
 - `binding.ts` – comércio limitado: os três estados do exemplar (livre, vincula ao equipar, vinculado), como chega o que cai (`bindingOnDrop`) e o texto da tela.
 - `itemStats.ts` – atributos secundários dos equipamentos (dano crítico, roubo de vida, poder de cura, resistência a efeitos): nomes, tetos e texto para a tela.
 - `loot.ts` – loot inteligente: quando cai equipamento de outra vocação, qual é o equivalente da vocação de quem caçou (`vocationEquivalent`).

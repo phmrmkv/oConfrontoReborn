@@ -1,6 +1,11 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-conjuntos-das-eras', date: '2026-11-13', title: 'Conjuntos das Eras', items: [
+    'O equipamento de cada Era agora forma um conjunto: Guardião da 1ª Era, Caçador da 2ª Era, Sábio da 3ª Era, Vigia da 4ª Era e Herdeiro de Capriel.',
+    'Vestir 2 peças do mesmo conjunto dá o primeiro bônus e 4 peças, o segundo. Dá para misturar dois conjuntos. O detalhe de cada item mostra o conjunto e quantas peças você veste; o resumo do equipamento mostra os bônus ativos.',
+    'No duelo, os bônus de conjunto valem metade.',
+  ] },
   { id: '2026-11-13-comercio-limitado', date: '2026-11-13', title: 'Comércio limitado: itens vinculados', items: [
     'Equipamentos agora têm três estados. Livre: anda pelo Mercado como sempre (Comum e Incomum, itens da loja e do Ferreiro). Vincula ao equipar: Raro e Épico que caem são livres até você vestir, e aí ficam seus. Vinculado: Lendário e Mítico que caem de chefe, recompensas da Jornada e itens despertados com fragmentos.',
     'Item vinculado não pode ser anunciado no Mercado nem cair no Espólio do duelo. O jogo avisa antes de você vestir um item que vai vincular.',

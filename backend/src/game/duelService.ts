@@ -223,7 +223,7 @@ export async function answerDuel(accountId: number, characterId: number, duelId:
     for (const h of [c, rival].sort((a, b) => a.id - b.id)) {
       const equipment = await tx.inventoryItem.findMany({ where: { characterId: h.id, isEquipped: true }, include: { blueprint: true } });
       // No duelo só parte da vantagem da raridade e da melhoria +N vale (pvp.rarityPercent, pvp.upgradePercent), para o equipamento não decidir sozinho.
-      const s = combatStats(h, equipment, { rarityPercent: settings['pvp.rarityPercent'], upgradePercent: settings['pvp.upgradePercent'] });
+      const s = combatStats(h, equipment, { rarityPercent: settings['pvp.rarityPercent'], upgradePercent: settings['pvp.upgradePercent'], setPercent: settings['pvp.setPercent'] });
       state.stats[h.id] = { name: h.name, attack: s.attack, defense: s.defense, agility: h.agility, criticalChance: s.criticalChance, dodgeChance: s.dodgeChance,
         critDamage: s.critDamage, lifeSteal: s.lifeSteal, healPower: s.healPower };
       // Cópia da vida e mana máximas: o duelo começa com os dois inteiros e não mexe na vida real.
