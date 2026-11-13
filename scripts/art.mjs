@@ -122,6 +122,52 @@ export const effectCells = [
   { shot: 'Stone', look: 'pedra arremessada, cinza, com lascas soltas', spare: true },
 ];
 export const effectRows = { guard: 3, heal: 4, impact: 5 };
+
+// ----- Especiais dos heróis (uma segunda folha por vocação, mesmo formato 4 × 6) -----
+// Os golpes especiais (shared/adventure.ts: TRIPLE_HIT, FIFTH_HIT e INTERRUPT) hoje repetem a linha 3 (ataque comum) da folha do
+// herói. Esta folha traz as poses próprias de cada um e, separado do corpo, o efeito que voa ou estoura.
+// Linhas: 1 especial 1, 2 especial 2, 3 interromper, 4 efeito do especial 1, 5 efeito do especial 2, 6 vitória.
+export const heroSpecials = [
+  { key: 'KNIGHT', base: 'cavaleiro', s1: 'Golpe brutal', s2: 'Fúria berserker',
+    move1: 'Golpe brutal: salta, ergue a espada com as duas mãos acima da cabeça e desce num golpe vertical pesado que bate no chão à frente',
+    move2: 'Fúria berserker: uma aura vermelha acende em volta do corpo, ele gira a espada numa sequência rápida de cortes e termina com a lâmina à frente',
+    interrupt: 'Interromper: avança meio passo e acerta um golpe seco com a borda do escudo, à frente, e recua',
+    fx1: 'onda de impacto no chão: rachadura curta com faíscas e lascas de pedra que se abre da esquerda para a direita e some',
+    fx2: 'arco de corte vermelho-vivo, em meia-lua, que cresce, brilha e se desfaz' },
+  { key: 'PALADIN', base: 'arqueiro', s1: 'Tiro preciso', s2: 'Salva de flechas',
+    move1: 'Tiro preciso: ajoelha, retesa o arco devagar mirando à frente, a ponta da flecha brilha dourada, solta e mantém a pose',
+    move2: 'Salva de flechas: puxa três flechas da aljava, dispara as três em leque para a frente e para o alto em sequência rápida e baixa o arco',
+    interrupt: 'Interromper: gira o corpo e acerta um golpe rápido com a ponta do arco, à frente, e volta à guarda',
+    fx1: 'flecha dourada brilhante, na horizontal e apontando para a DIREITA, com rastro de luz para a esquerda, que pulsa',
+    fx2: 'chuva de flechas descendo em diagonal da esquerda para a direita, três ou quatro de cada vez, com rastros finos' },
+  { key: 'SORCERER', base: 'feiticeiro', s1: 'Explosão', s2: 'Tempestade',
+    move1: 'Explosão: segura o cajado com as duas mãos, a brasa da ponta cresce até virar uma bola de fogo grande e ele a lança para a direita',
+    move2: 'Tempestade: ergue o cajado para o céu, o manto esvoaça, raios azuis descem até a ponta do cajado e ele aponta para a direita',
+    interrupt: 'Interromper: estende a mão livre e solta uma rajada curta de faíscas laranja à frente, e recolhe a mão',
+    fx1: 'explosão de fogo laranja e amarela, redonda, que estoura, abre em chamas e se desfaz em fumaça',
+    fx2: 'raio azul-claro caindo de uma nuvem pequena e escura, com faíscas onde toca o chão' },
+  { key: 'DRUID', base: 'druida', s1: 'Espinhos', s2: 'Fúria natural',
+    move1: 'Espinhos: crava o cajado no chão com as duas mãos, os dreadlocks se erguem com o vento e uma linha de espinhos verdes brota do chão à frente dela',
+    move2: 'Fúria natural: gira o cajado acima da cabeça, folhas e vinhas formam um redemoinho em volta dela, e ela aponta o cajado para a direita',
+    interrupt: 'Interromper: estala uma vinha do cajado como um chicote, à frente, e a recolhe',
+    fx1: 'espinhos verdes e marrons brotando do chão, do menor para o maior, em linha, e afundando de volta',
+    fx2: 'redemoinho de folhas verdes e vinhas girando, que cresce e se desfaz em folhas soltas' },
+];
+export const specialFile = sp => `${sp.base}-especiais`;
+export const specialPrompt = (sp, h) => `Crie uma sprite sheet de pixel art para um jogo de RPG por turnos visto de lado: os GOLPES ESPECIAIS de um herói que já existe no jogo.
+
+Personagem: ${h.look}. É o mesmo personagem da folha ${h.file}.png, que vai anexada: mesmo rosto, roupa, cores, proporções e tamanho. Design próprio, sem copiar nenhum jogo existente.
+
+${format('O personagem', 'Mesmo tamanho de personagem em todos os quadros das linhas 1 a 3 e 6, ocupando cerca de 70% da altura do quadro, com os pés na mesma linha de base e centralizado na horizontal.')}
+- Cada linha é uma animação de 4 quadros em sequência, da esquerda para a direita:
+  Linha 1: ${sp.move1}.
+  Linha 2: ${sp.move2}.
+  Linha 3: ${sp.interrupt}.
+  Linha 4: só o efeito do golpe ${sp.s1}, SEM o personagem, centralizado no quadro: ${sp.fx1}.
+  Linha 5: só o efeito do golpe ${sp.s2}, SEM o personagem, centralizado no quadro: ${sp.fx2}.
+  Linha 6: vitória: ergue a arma, comemora e volta à pose de pé.
+
+${style(h.palette, 'O mesmo personagem').replace('em todos os 24 quadros', 'em todos os quadros em que aparece')} Efeitos de magia e de golpe soltos no ar, sem caixa nem fundo.`;
 const effectLine = (from, to) => effectCells.slice(from, to).map(e => e.look).join('; ');
 export const effectsPrompt = () => `Crie uma folha de efeitos em pixel art para a arena de um jogo de RPG por turnos visto de lado.
 
@@ -201,9 +247,11 @@ async function main() {
   if (uncovered.length) throw new Error(`scripts/art.mjs: projétil sem quadro na folha de efeitos (effectCells): ${uncovered.join(', ')}`);
   const sheets = { heroes: Object.fromEntries(heroes.filter(h => have(h.file)).map(h => [h.key, h.file])), monsters: Object.fromEntries(creatures.filter(m => have(m.file)).map(m => [m.key, m.file])),
     shots: Object.fromEntries(creatures.filter(m => have(m.file) && shots[m.key]).map(m => [m.file, shots[m.key]])),
-    effects: have(effects.file) ? effects.file : null, effectCells: Object.fromEntries(effectCells.map((e, i) => [e.shot, i])), effectRows };
+    effects: have(effects.file) ? effects.file : null,
+    specials: Object.fromEntries(heroSpecials.filter(sp => have(specialFile(sp))).map(sp => [sp.key, specialFile(sp)])), effectCells: Object.fromEntries(effectCells.map((e, i) => [e.shot, i])), effectRows };
   writeText(path.join(root, 'frontend/src/lib/spriteSheets.json'), JSON.stringify(sheets, null, 2) + '\n');
-  const uses = await usedBy(), all = [...heroes, ...creatures, effects], done = all.filter(a => have(a.file)).length;
+  const specials = heroSpecials.map(sp => ({ ...sp, file: specialFile(sp), name: `${heroes.find(h => h.key === sp.key).name}: especiais` }));
+  const uses = await usedBy(), all = [...heroes, ...specials, ...creatures, effects], done = all.filter(a => have(a.file)).length;
   const mark = a => have(a.file) ? 'feito' : 'falta';
   const block = (a, prompt) => `### ${a.name} · \`${a.file}.png\` · ${mark(a)}\n\n\`\`\`\n${prompt}\n\`\`\`\n`;
   const md = `# Arte própria de O Confronto
@@ -243,6 +291,7 @@ Só as folhas novas ou alteradas são refeitas (\`art/web.json\` guarda o que j�
 ${heroes.map(h => `| \`${h.file}.png\` | ${h.name} | Herói | ${mark(h)} | vocação ${h.name} |`).join('\n')}
 ${creatures.map(m => `| \`${m.file}.png\` | ${m.name} | ${m.boss ? 'Chefe' : 'Criatura'} | ${mark(m)} | ${(uses.get(m.key) ?? [m.key]).join(', ')} |`).join('\n')}
 | \`${effects.file}.png\` | ${effects.name} | Efeitos | ${mark(effects)} | projéteis, escudo de guarda, cura e impacto na arena |
+${specials.map(sp => `| \`${sp.file}.png\` | ${sp.name} | Especiais | ${mark(sp)} | ${sp.s1}, ${sp.s2} e Interromper |`).join('\n')}
 
 ## Heróis
 
@@ -252,6 +301,11 @@ ${heroes.map(h => block(h, heroPrompt(h))).join('\n')}
 Os nomes novos são da arte. As criaturas das Eras e do Vale da Perdição usam a mesma folha da criatura original.
 
 ${creatures.map(m => block(m, creaturePrompt(m))).join('\n')}
+## Especiais dos heróis
+
+Uma segunda folha por herói com os golpes especiais, que hoje repetem o ataque comum. **Anexe no ChatGPT a folha atual do herói** (\`art/sprites/<herói>.png\`) junto com o comando, para ele manter o mesmo personagem. Linhas: 1 especial 1, 2 especial 2, 3 Interromper, 4 e 5 o efeito de cada especial sem o personagem, 6 vitória.
+
+${specials.map(sp => block(sp, specialPrompt(sp, heroes.find(h => h.key === sp.key)))).join('\n')}
 ## Efeitos
 
 O que voa num ataque à distância e os brilhos da arena. Com esta folha pronta, a arena deixa de usar os ícones do TibiaWiki para a flecha, as runas que voam e o escudo de guarda, e ganha a cura e o impacto desenhados. Os dois últimos quadros da linha 3 (espinhos e pedra) são reserva: ainda nenhum golpe os usa.

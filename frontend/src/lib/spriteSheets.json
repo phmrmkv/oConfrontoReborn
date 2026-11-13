@@ -82,6 +82,7 @@
     "infernatil": "Great Fireball Rune"
   },
   "effects": null,
+  "specials": {},
   "effectCells": {
     "Arrow": 0,
     "Power Bolt": 1,

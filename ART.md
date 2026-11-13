@@ -2,7 +2,7 @@
 
 > Arquivo gerado por `npm run art` a partir de `scripts/art.mjs`. Para mudar um comando, edite a lista naquele arquivo e rode de novo.
 
-A arena de batalha está trocando os sprites do TibiaWiki por arte própria. Cada personagem vem numa folha só, sempre no mesmo formato. Hoje **59 de 60** folhas estão prontas.
+A arena de batalha está trocando os sprites do TibiaWiki por arte própria. Cada personagem vem numa folha só, sempre no mesmo formato. Hoje **59 de 64** folhas estão prontas.
 
 ## Como usar
 1. Copie o comando inteiro do personagem e cole no ChatGPT (gere um personagem por vez).
@@ -92,6 +92,10 @@ Só as folhas novas ou alteradas são refeitas (`art/web.json` guarda o que já 
 | `verminor.png` | Verminor | Chefe | feito | Verminor (nv. 550) |
 | `apocalypse.png` | Apocalypse | Chefe | feito | Apocalypse (nv. 1000) |
 | `efeitos.png` | Efeitos da arena | Efeitos | falta | projéteis, escudo de guarda, cura e impacto na arena |
+| `cavaleiro-especiais.png` | Cavaleiro: especiais | Especiais | falta | Golpe brutal, Fúria berserker e Interromper |
+| `arqueiro-especiais.png` | Arqueiro: especiais | Especiais | falta | Tiro preciso, Salva de flechas e Interromper |
+| `feiticeiro-especiais.png` | Feiticeiro: especiais | Especiais | falta | Explosão, Tempestade e Interromper |
+| `druida-especiais.png` | Druida: especiais | Especiais | falta | Espinhos, Fúria natural e Interromper |
 
 ## Heróis
 
@@ -1454,6 +1458,102 @@ Formato obrigatório:
   Linha 6: dois quadros levando um golpe e sendo empurrada para trás, depois dois quadros caindo e deitada no chão.
 
 Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel, paleta limitada (negro-arroxeado, vermelho pulsante, azul-branco), luz vindo de cima à esquerda, sem anti-aliasing borrado e sem degradê suave. Mesmo estilo de um cavaleiro de armadura de aço escuro e capa vinho já usado no jogo. A mesma criatura, com as mesmas cores e proporções, em todos os 24 quadros.
+```
+
+## Especiais dos heróis
+
+Uma segunda folha por herói com os golpes especiais, que hoje repetem o ataque comum. **Anexe no ChatGPT a folha atual do herói** (`art/sprites/<herói>.png`) junto com o comando, para ele manter o mesmo personagem. Linhas: 1 especial 1, 2 especial 2, 3 Interromper, 4 e 5 o efeito de cada especial sem o personagem, 6 vitória.
+
+### Cavaleiro: especiais · `cavaleiro-especiais.png` · falta
+
+```
+Crie uma sprite sheet de pixel art para um jogo de RPG por turnos visto de lado: os GOLPES ESPECIAIS de um herói que já existe no jogo.
+
+Personagem: um cavaleiro original, de armadura de aço escuro com detalhes em latão, capa vinho curta, espada longa na mão direita e escudo redondo na esquerda. Rosto visível, cabelo castanho, sem elmo fechado. É o mesmo personagem da folha cavaleiro.png, que vai anexada: mesmo rosto, roupa, cores, proporções e tamanho. Design próprio, sem copiar nenhum jogo existente.
+
+Formato obrigatório:
+- Imagem de 1024 x 1536 pixels, fundo totalmente transparente (PNG), limpo, sem halo colorido nas bordas.
+- Grade exata de 4 colunas por 6 linhas. Cada quadro tem 256 x 256 pixels. Sem linhas de grade, sem bordas, sem texto, sem números, sem sombra no chão.
+- O personagem olha para a DIREITA em todos os quadros.
+- Mesmo tamanho de personagem em todos os quadros das linhas 1 a 3 e 6, ocupando cerca de 70% da altura do quadro, com os pés na mesma linha de base e centralizado na horizontal. Nada pode encostar ou passar da borda do quadro, nem os efeitos de magia.
+- Cada linha é uma animação de 4 quadros em sequência, da esquerda para a direita:
+  Linha 1: Golpe brutal: salta, ergue a espada com as duas mãos acima da cabeça e desce num golpe vertical pesado que bate no chão à frente.
+  Linha 2: Fúria berserker: uma aura vermelha acende em volta do corpo, ele gira a espada numa sequência rápida de cortes e termina com a lâmina à frente.
+  Linha 3: Interromper: avança meio passo e acerta um golpe seco com a borda do escudo, à frente, e recua.
+  Linha 4: só o efeito do golpe Golpe brutal, SEM o personagem, centralizado no quadro: onda de impacto no chão: rachadura curta com faíscas e lascas de pedra que se abre da esquerda para a direita e some.
+  Linha 5: só o efeito do golpe Fúria berserker, SEM o personagem, centralizado no quadro: arco de corte vermelho-vivo, em meia-lua, que cresce, brilha e se desfaz.
+  Linha 6: vitória: ergue a arma, comemora e volta à pose de pé.
+
+Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel, paleta limitada (aço, latão, vinho), luz vindo de cima à esquerda, sem anti-aliasing borrado e sem degradê suave. Mesmo estilo de um cavaleiro de armadura de aço escuro e capa vinho já usado no jogo. O mesmo personagem, com as mesmas cores e proporções, em todos os quadros em que aparece. Efeitos de magia e de golpe soltos no ar, sem caixa nem fundo.
+```
+
+### Arqueiro: especiais · `arqueiro-especiais.png` · falta
+
+```
+Crie uma sprite sheet de pixel art para um jogo de RPG por turnos visto de lado: os GOLPES ESPECIAIS de um herói que já existe no jogo.
+
+Personagem: um arqueiro original, ágil, de couro verde-musgo e marrom, capuz baixado nas costas, braçadeira de couro, arco longo de madeira clara na mão e aljava de flechas nas costas. Rosto visível, cabelo ruivo curto. É o mesmo personagem da folha arqueiro.png, que vai anexada: mesmo rosto, roupa, cores, proporções e tamanho. Design próprio, sem copiar nenhum jogo existente.
+
+Formato obrigatório:
+- Imagem de 1024 x 1536 pixels, fundo totalmente transparente (PNG), limpo, sem halo colorido nas bordas.
+- Grade exata de 4 colunas por 6 linhas. Cada quadro tem 256 x 256 pixels. Sem linhas de grade, sem bordas, sem texto, sem números, sem sombra no chão.
+- O personagem olha para a DIREITA em todos os quadros.
+- Mesmo tamanho de personagem em todos os quadros das linhas 1 a 3 e 6, ocupando cerca de 70% da altura do quadro, com os pés na mesma linha de base e centralizado na horizontal. Nada pode encostar ou passar da borda do quadro, nem os efeitos de magia.
+- Cada linha é uma animação de 4 quadros em sequência, da esquerda para a direita:
+  Linha 1: Tiro preciso: ajoelha, retesa o arco devagar mirando à frente, a ponta da flecha brilha dourada, solta e mantém a pose.
+  Linha 2: Salva de flechas: puxa três flechas da aljava, dispara as três em leque para a frente e para o alto em sequência rápida e baixa o arco.
+  Linha 3: Interromper: gira o corpo e acerta um golpe rápido com a ponta do arco, à frente, e volta à guarda.
+  Linha 4: só o efeito do golpe Tiro preciso, SEM o personagem, centralizado no quadro: flecha dourada brilhante, na horizontal e apontando para a DIREITA, com rastro de luz para a esquerda, que pulsa.
+  Linha 5: só o efeito do golpe Salva de flechas, SEM o personagem, centralizado no quadro: chuva de flechas descendo em diagonal da esquerda para a direita, três ou quatro de cada vez, com rastros finos.
+  Linha 6: vitória: ergue a arma, comemora e volta à pose de pé.
+
+Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel, paleta limitada (verde-musgo, couro marrom, madeira clara), luz vindo de cima à esquerda, sem anti-aliasing borrado e sem degradê suave. Mesmo estilo de um cavaleiro de armadura de aço escuro e capa vinho já usado no jogo. O mesmo personagem, com as mesmas cores e proporções, em todos os quadros em que aparece. Efeitos de magia e de golpe soltos no ar, sem caixa nem fundo.
+```
+
+### Feiticeiro: especiais · `feiticeiro-especiais.png` · falta
+
+```
+Crie uma sprite sheet de pixel art para um jogo de RPG por turnos visto de lado: os GOLPES ESPECIAIS de um herói que já existe no jogo.
+
+Personagem: um feiticeiro original de rosto maduro e expressão firme, com barba curta grisalha e cabelos brancos longos, penteados inteiramente para trás, sem topete nem franja. Usa manto longo azul-noite com bordas roxas e runas douradas, chapéu de aba larga caído para trás e cajado de madeira escura com uma brasa laranja flutuando na ponta. É o mesmo personagem da folha feiticeiro.png, que vai anexada: mesmo rosto, roupa, cores, proporções e tamanho. Design próprio, sem copiar nenhum jogo existente.
+
+Formato obrigatório:
+- Imagem de 1024 x 1536 pixels, fundo totalmente transparente (PNG), limpo, sem halo colorido nas bordas.
+- Grade exata de 4 colunas por 6 linhas. Cada quadro tem 256 x 256 pixels. Sem linhas de grade, sem bordas, sem texto, sem números, sem sombra no chão.
+- O personagem olha para a DIREITA em todos os quadros.
+- Mesmo tamanho de personagem em todos os quadros das linhas 1 a 3 e 6, ocupando cerca de 70% da altura do quadro, com os pés na mesma linha de base e centralizado na horizontal. Nada pode encostar ou passar da borda do quadro, nem os efeitos de magia.
+- Cada linha é uma animação de 4 quadros em sequência, da esquerda para a direita:
+  Linha 1: Explosão: segura o cajado com as duas mãos, a brasa da ponta cresce até virar uma bola de fogo grande e ele a lança para a direita.
+  Linha 2: Tempestade: ergue o cajado para o céu, o manto esvoaça, raios azuis descem até a ponta do cajado e ele aponta para a direita.
+  Linha 3: Interromper: estende a mão livre e solta uma rajada curta de faíscas laranja à frente, e recolhe a mão.
+  Linha 4: só o efeito do golpe Explosão, SEM o personagem, centralizado no quadro: explosão de fogo laranja e amarela, redonda, que estoura, abre em chamas e se desfaz em fumaça.
+  Linha 5: só o efeito do golpe Tempestade, SEM o personagem, centralizado no quadro: raio azul-claro caindo de uma nuvem pequena e escura, com faíscas onde toca o chão.
+  Linha 6: vitória: ergue a arma, comemora e volta à pose de pé.
+
+Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel, paleta limitada (azul-noite, roxo, dourado, laranja de brasa), luz vindo de cima à esquerda, sem anti-aliasing borrado e sem degradê suave. Mesmo estilo de um cavaleiro de armadura de aço escuro e capa vinho já usado no jogo. O mesmo personagem, com as mesmas cores e proporções, em todos os quadros em que aparece. Efeitos de magia e de golpe soltos no ar, sem caixa nem fundo.
+```
+
+### Druida: especiais · `druida-especiais.png` · falta
+
+```
+Crie uma sprite sheet de pixel art para um jogo de RPG por turnos visto de lado: os GOLPES ESPECIAIS de um herói que já existe no jogo.
+
+Personagem: uma druida original: mulher negra, de pele marrom-escura, com dreadlocks longos até a cintura, enfeitados com contas de madeira e anéis dourados, e algumas mechas presas no alto. Veste túnica verde-floresta com manto ocre, colar de sementes e pulseiras de cobre, descalça ou de sandálias de couro. Empunha um cajado de madeira viva, com folhas e uma trepadeira enrolada. Rosto visível, expressão serena e firme. É o mesmo personagem da folha druida.png, que vai anexada: mesmo rosto, roupa, cores, proporções e tamanho. Design próprio, sem copiar nenhum jogo existente.
+
+Formato obrigatório:
+- Imagem de 1024 x 1536 pixels, fundo totalmente transparente (PNG), limpo, sem halo colorido nas bordas.
+- Grade exata de 4 colunas por 6 linhas. Cada quadro tem 256 x 256 pixels. Sem linhas de grade, sem bordas, sem texto, sem números, sem sombra no chão.
+- O personagem olha para a DIREITA em todos os quadros.
+- Mesmo tamanho de personagem em todos os quadros das linhas 1 a 3 e 6, ocupando cerca de 70% da altura do quadro, com os pés na mesma linha de base e centralizado na horizontal. Nada pode encostar ou passar da borda do quadro, nem os efeitos de magia.
+- Cada linha é uma animação de 4 quadros em sequência, da esquerda para a direita:
+  Linha 1: Espinhos: crava o cajado no chão com as duas mãos, os dreadlocks se erguem com o vento e uma linha de espinhos verdes brota do chão à frente dela.
+  Linha 2: Fúria natural: gira o cajado acima da cabeça, folhas e vinhas formam um redemoinho em volta dela, e ela aponta o cajado para a direita.
+  Linha 3: Interromper: estala uma vinha do cajado como um chicote, à frente, e a recolhe.
+  Linha 4: só o efeito do golpe Espinhos, SEM o personagem, centralizado no quadro: espinhos verdes e marrons brotando do chão, do menor para o maior, em linha, e afundando de volta.
+  Linha 5: só o efeito do golpe Fúria natural, SEM o personagem, centralizado no quadro: redemoinho de folhas verdes e vinhas girando, que cresce e se desfaz em folhas soltas.
+  Linha 6: vitória: ergue a arma, comemora e volta à pose de pé.
+
+Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel, paleta limitada (verde-floresta, ocre, cobre, marrom-escuro da pele, madeira), luz vindo de cima à esquerda, sem anti-aliasing borrado e sem degradê suave. Mesmo estilo de um cavaleiro de armadura de aço escuro e capa vinho já usado no jogo. O mesmo personagem, com as mesmas cores e proporções, em todos os quadros em que aparece. Efeitos de magia e de golpe soltos no ar, sem caixa nem fundo.
 ```
 
 ## Efeitos
