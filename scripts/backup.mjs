@@ -22,7 +22,8 @@ export function tableCounts(db, database = db.database) {
   const tables = spawnSync('mysql', [...clientArgs(db), '-N', '-B', '-e', `SHOW TABLES FROM \`${database}\``], { env: clientEnv(db), encoding: 'utf8' });
   if (tables.status !== 0) throw new Error('Falha ao listar tabelas: ' + tables.stderr);
   const counts = {};
-  for (const name of tables.stdout.split('\n').filter(Boolean)) {
+  // No Windows o cliente mysql termina as linhas com \r\n: sem o trim, o nome da tabela leva o \r junto.
+  for (const name of tables.stdout.split(/\r?\n/).map(s => s.trim()).filter(Boolean)) {
     const r = spawnSync('mysql', [...clientArgs(db), '-N', '-B', '-e', `SELECT COUNT(*) FROM \`${database}\`.\`${name}\``], { env: clientEnv(db), encoding: 'utf8' });
     if (r.status !== 0) throw new Error(`Falha ao contar ${name}: ${r.stderr}`);
     counts[name] = Number(r.stdout.trim());

@@ -60,12 +60,12 @@ Só as folhas novas ou alteradas são refeitas (`art/web.json` guarda o que já 
 | `valquiria.png` | Valquíria | Criatura | feito | Valkyrie (nv. 33), Valkyrie da 1ª Era (nv. 283) |
 | `minotauro-mago.png` | Minotauro Mago | Criatura | feito | Minotaur Mage (nv. 35), Minotaur Mage da 3ª Era (nv. 611) |
 | `lider-orc.png` | Líder Orc | Chefe | feito | Orc Leader (nv. 36) |
-| `senhor-dos-dragoes.png` | Senhor dos Dragões | Chefe | feito | Dragon Lord (nv. 40), Dragão Ancião (nv. 236), Dragon Lord da 4ª Era (nv. 831), Senhor dos Dragões da 4ª Era (nv. 850), Dragon Lord de Capriel (nv. 967) |
+| `senhor-dos-dragoes.png` | Senhor dos Dragões | Chefe | feito | Dragon Lord (nv. 40), Dragão Ancião (nv. 236), Dragon Lord da 4ª Era (nv. 831), Senhor dos Dragões da 4ª Era (nv. 850), Dragon Lord da Perdição (nv. 967) |
 | `minotauro-guarda.png` | Minotauro Guarda | Criatura | feito | Minotaur Guard (nv. 41), Minotaur Guard da 1ª Era (nv. 297) |
 | `esqueleto-demoniaco.png` | Esqueleto Demoníaco | Criatura | feito | Demon Skeleton (nv. 46), Demon Skeleton da 1ª Era (nv. 353) |
-| `diabrete-de-fogo.png` | Diabrete de Fogo | Criatura | feito | Fire Devil (nv. 51), Fire Devil da 1ª Era (nv. 367), Fire Devil de Capriel (nv. 939) |
+| `diabrete-de-fogo.png` | Diabrete de Fogo | Criatura | feito | Fire Devil (nv. 51), Fire Devil da 1ª Era (nv. 367), Fire Devil da Perdição (nv. 939) |
 | `elemental-de-fogo.png` | Elemental de Fogo | Criatura | feito | Fire Elemental (nv. 56), Elemental de Fogo Ancestral (nv. 185), Fire Elemental da 3ª Era (nv. 681), Fire Elemental da 4ª Era (nv. 803) |
-| `demonio-do-abismo.png` | Demônio do Abismo | Chefe | feito | Demon (nv. 60), Demon da 1ª Era (nv. 400), Demon da 4ª Era (nv. 817), Demon de Capriel (nv. 981) |
+| `demonio-do-abismo.png` | Demônio do Abismo | Chefe | feito | Demon (nv. 60), Demon da 1ª Era (nv. 400), Demon da 4ª Era (nv. 817), Demon da Perdição (nv. 981) |
 | `troll-do-gelo.png` | Troll do Gelo | Criatura | feito | Frost Troll (nv. 60), Frost Troll da 2ª Era (nv. 405) |
 | `lobo-do-inverno.png` | Lobo do Inverno | Criatura | feito | Winter Wolf (nv. 64), Winter Wolf da 2ª Era (nv. 419) |
 | `urso-polar.png` | Urso Polar | Criatura | feito | Polar Bear (nv. 69), Polar Bear da 2ª Era (nv. 433) |
@@ -73,18 +73,18 @@ Só as folhas novas ou alteradas são refeitas (`art/web.json` guarda o que já 
 | `troll-do-pantano.png` | Troll do Pântano | Criatura | feito | Swamp Troll (nv. 80), Swamp Troll da 2ª Era (nv. 461) |
 | `jacare-matador.png` | Jacaré Matador | Criatura | feito | Killer Caiman (nv. 85), Killer Caiman da 2ª Era (nv. 475) |
 | `bruxa-do-pantano.png` | Bruxa do Pântano | Criatura | feito | Witch (nv. 90), Witch da 2ª Era (nv. 489) |
-| `aranha-gigante.png` | Aranha Gigante | Chefe | feito | Giant Spider (nv. 100), Giant Spider da 4ª Era (nv. 789), Giant Spider de Capriel (nv. 953) |
+| `aranha-gigante.png` | Aranha Gigante | Chefe | feito | Giant Spider (nv. 100), Giant Spider da 4ª Era (nv. 789), Giant Spider da Perdição (nv. 953) |
 | `necromante.png` | Necromante | Criatura | feito | Necromancer (nv. 100), Necromancer da 2ª Era (nv. 517), Necromancer da 4ª Era (nv. 761) |
-| `viuva-lamentosa.png` | Viúva Lamentosa | Criatura | feito | Wailing Widow (nv. 108), Wailing Widow da 2ª Era (nv. 503), Wailing Widow de Capriel (nv. 883) |
-| `cavaleiro-negro.png` | Cavaleiro Negro | Criatura | feito | Black Knight (nv. 116), Black Knight da 2ª Era (nv. 531), Black Knight da 4ª Era (nv. 775), Black Knight de Capriel (nv. 897) |
-| `bruxo-da-cripta.png` | Bruxo da Cripta | Chefe | feito | Warlock (nv. 125), Warlock da 3ª Era (nv. 639), Warlock de Capriel (nv. 925) |
+| `viuva-lamentosa.png` | Viúva Lamentosa | Criatura | feito | Wailing Widow (nv. 108), Wailing Widow da 2ª Era (nv. 503), Wailing Widow da Perdição (nv. 883) |
+| `cavaleiro-negro.png` | Cavaleiro Negro | Criatura | feito | Black Knight (nv. 116), Black Knight da 2ª Era (nv. 531), Black Knight da 4ª Era (nv. 775), Black Knight da Perdição (nv. 897) |
+| `bruxo-da-cripta.png` | Bruxo da Cripta | Chefe | feito | Warlock (nv. 125), Warlock da 3ª Era (nv. 639), Warlock da Perdição (nv. 925) |
 | `assassino.png` | Assassino | Criatura | feito | Assassin (nv. 126), Assassin da 3ª Era (nv. 555) |
 | `elfo-batedor.png` | Elfo Batedor | Criatura | feito | Elf Scout (nv. 133), Elf Scout da 3ª Era (nv. 569) |
-| `elfo-arcanista.png` | Elfo Arcanista | Criatura | feito | Elf Arcanist (nv. 141), Elf Arcanist da 3ª Era (nv. 583), Elf Arcanist de Capriel (nv. 855) |
+| `elfo-arcanista.png` | Elfo Arcanista | Criatura | feito | Elf Arcanist (nv. 141), Elf Arcanist da 3ª Era (nv. 583), Elf Arcanist da Perdição (nv. 855) |
 | `monge-renegado.png` | Monge Renegado | Criatura | feito | Monk (nv. 149), Monk da 3ª Era (nv. 597) |
-| `heroi-caido.png` | Herói Caído | Chefe | feito | Hero (nv. 158), Hero da 3ª Era (nv. 625), Hero de Capriel (nv. 911) |
+| `heroi-caido.png` | Herói Caído | Chefe | feito | Hero (nv. 158), Hero da 3ª Era (nv. 625), Hero da Perdição (nv. 911) |
 | `elemental-de-agua.png` | Elemental de Água | Criatura | feito | Water Elemental (nv. 162), Water Elemental da 3ª Era (nv. 653) |
-| `serpente-marinha.png` | Serpente Marinha | Criatura | feito | Young Sea Serpent (nv. 172), Serpente Abissal (nv. 222), Young Sea Serpent da 3ª Era (nv. 667), Young Sea Serpent de Capriel (nv. 869) |
+| `serpente-marinha.png` | Serpente Marinha | Criatura | feito | Young Sea Serpent (nv. 172), Serpente Abissal (nv. 222), Young Sea Serpent da 3ª Era (nv. 667), Young Sea Serpent da Perdição (nv. 869) |
 | `gosma-primordial.png` | Gosma Primordial | Criatura | feito | Gosma Primordial (nv. 210) |
 | `infernatil.png` | Infernatil | Chefe | feito | Infernatil (nv. 250), Infernatil da 3ª Era (nv. 700) |
 | `verminor.png` | Verminor | Chefe | feito | Verminor (nv. 550) |
@@ -186,7 +186,7 @@ Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel, paleta limitad
 
 ## Criaturas
 
-Os nomes novos são da arte. As criaturas das Eras e de Capriel usam a mesma folha da criatura original.
+Os nomes novos são da arte. As criaturas das Eras e do Vale da Perdição usam a mesma folha da criatura original.
 
 ### Rato do Celeiro · `rato-do-celeiro.png` · feito
 

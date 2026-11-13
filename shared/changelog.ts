@@ -1,6 +1,11 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-criaturas-da-perdicao', date: '2026-11-13', title: 'Criaturas da Perdição', items: [
+    'As dez criaturas do Vale da Perdição deixaram de levar o nome de Capriel e agora levam o da região: Elf Arcanist da Perdição, Hero da Perdição, Warlock da Perdição, Demon da Perdição e as outras. Capriel é a cidade e só dá nome ao que é bom: o Templo, a guarda, os títulos e o equipamento Herdeiro de Capriel.',
+    'A runa do equipamento de Capriel agora é a Soulfire Rune de Capriel, com os mesmos atributos.',
+    'Tarefas, missões e o seu histórico de batalhas já mostram os nomes novos; nada do que você conquistou mudou.',
+  ] },
   { id: '2026-11-13-conjuntos-das-eras', date: '2026-11-13', title: 'Conjuntos das Eras', items: [
     'O equipamento de cada Era agora forma um conjunto: Guardião da 1ª Era, Caçador da 2ª Era, Sábio da 3ª Era, Vigia da 4ª Era e Herdeiro de Capriel.',
     'Vestir 2 peças do mesmo conjunto dá o primeiro bônus e 4 peças, o segundo. Dá para misturar dois conjuntos. O detalhe de cada item mostra o conjunto e quantas peças você veste; o resumo do equipamento mostra os bônus ativos.',
@@ -55,7 +60,7 @@ export const changelog: ChangelogEntry[] = [
     'Pequenos defeitos das artes foram limpos: sobras na borda de alguns quadros e uma névoa clara em volta de alguns personagens.',
   ] },
   { id: '2026-11-12-arte-propria-catalogo', date: '2026-11-12', title: 'Arte própria para todas as criaturas', items: [
-    'As 55 criaturas distintas do catálogo de Caçar agora têm arte própria na arena, com animações de movimento, ataque, defesa e queda. As variantes das Eras e de Capriel usam a folha da criatura original.',
+    'As 55 criaturas distintas do catálogo de Caçar agora têm arte própria na arena, com animações de movimento, ataque, defesa e queda. As variantes das Eras e do Vale da Perdição usam a folha da criatura original.',
   ] },
   { id: '2026-11-12-arqueiro-feiticeiro-arte-propria', date: '2026-11-12', title: 'Arqueiro e Feiticeiro com arte própria', items: [
     'Na arena, o Arqueiro puxa a flecha da aljava e dispara. O Feiticeiro lança fogo com o cajado e se protege com um escudo mágico.',
