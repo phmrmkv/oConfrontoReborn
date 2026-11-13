@@ -8,7 +8,7 @@ function script(t:TurnRecord,vocation:string,foeShot?:string):Step[]{
   const s:Step[]=[],guard=t.action==='DEFEND_SHIELD',melee=vocation==='KNIGHT';
   if(['ATTACK','TRIPLE_HIT','FIFTH_HIT','INTERRUPT'].includes(t.action)){
     const kill=t.monsterHp<=0;
-    s.push({cues:[{who:'hero',cls:melee?'lunge':'cast',shot:melee?undefined:shotOf(vocation)},
+    s.push({cues:[{who:'hero',cls:melee?'lunge':'cast',shot:melee?undefined:shotOf(vocation),...(t.stolen?{float:{text:`+${n(t.stolen)}`,kind:'heal' as const}}:{})},
       {who:'foe',cls:`hit late${kill?' dying':''}`,float:{text:`−${n(t.dealt)}`,kind:t.crit?'crit':'dmg'}}],shake:t.crit||t.action==='FIFTH_HIT',ms:kill?900:620});
   } else if(t.action==='HEAL')s.push({cues:[{who:'hero',cls:'heal',float:{text:`+${n(t.healed)}`,kind:'heal'}}],ms:620});
   else if(guard)s.push({cues:[{who:'hero',cls:'guard'}],ms:320});

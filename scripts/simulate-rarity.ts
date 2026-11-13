@@ -6,7 +6,7 @@
 //  3. Duelo: o mesmo, com o conjunto todo +10 contra todo +0, conforme pvp.upgradePercent.
 import { items } from '../backend/prisma/catalog';
 import { hero, allVocations } from './levelSim';
-import { resolveDuelRound, type DuelFighter } from '../backend/src/game/duelEngine';
+import { resolveDuelRound, duelTuningOf, type DuelFighter } from '../backend/src/game/duelEngine';
 import { duelActionCosts, type DuelAction } from '../shared/pvp';
 import { MAX_RARITY, rarities } from '../shared/rarity';
 import { defaultSettings } from '../shared/economy';
@@ -29,7 +29,7 @@ for (const level of levels) for (const v of allVocations) {
 function fighter(id: number, v: BaseVocation, level: number, rarity: number, rarityPercent: number, tier = 0, upgradePercent = 100): DuelFighter {
   const h = hero(v, level, items, tier, rarity, rarityPercent, upgradePercent);
   return { characterId: id, name: v, vocation: h.c.vocation, hp: h.maxHp, maxHp: h.maxHp, mana: h.maxMana, maxMana: h.maxMana,
-    attack: h.stats.attack, defense: h.stats.defense, agility: h.c.agility, criticalChance: h.stats.criticalChance, dodgeChance: h.stats.dodgeChance, action: null, missed: 0 };
+    attack: h.stats.attack, defense: h.stats.defense, agility: h.c.agility, criticalChance: h.stats.criticalChance, dodgeChance: h.stats.dodgeChance, critDamage: h.stats.critDamage, lifeSteal: h.stats.lifeSteal, healPower: h.stats.healPower, action: null, missed: 0 };
 }
 // Mesma política de duel:simulate.
 function choose(f: DuelFighter): DuelAction {
@@ -48,7 +48,7 @@ function mirror(v: BaseVocation, level: number, rarityPercent: number, strong = 
     let pair: [DuelFighter, DuelFighter] = n % 2 ? [strong(1), weak(2)] : [weak(2), strong(1)];
     for (let round = 1; ; round++) {
       pair = pair.map(f => ({ ...f, action: choose(f) })) as typeof pair;
-      const r = resolveDuelRound(round, pair, dice, 100);
+      const r = resolveDuelRound(round, pair, dice, duelTuningOf(defaultSettings()));
       pair = r.fighters;
       if (r.outcome !== 'ONGOING') { if (r.winnerId === 1) wins++; else if (r.winnerId === 2) losses++; break; }
     }

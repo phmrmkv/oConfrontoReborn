@@ -2,6 +2,7 @@
 // Os dois escolhem em segredo; quem tem mais agilidade age primeiro (empate no dado) e quem cai antes de agir não age.
 // Golpe e cura usam as mesmas fórmulas do combate (strike/healRoll em core/engine.ts); o duelo só escala o resultado pelos ajustes pvp.* (DuelTuning).
 import { healRoll, strike, type Dice } from '../core/engine';
+import { secondaryCap } from '../../../shared/itemStats';
 import { baseVocation } from '../../../shared/adventure';
 import { DUEL_MAX_ROUNDS, DUEL_MISSED_LIMIT, duelActionCosts, duelActionLabels, type DuelAction, type DuelMove, type DuelRoundRecord } from '../../../shared/pvp';
 
@@ -9,6 +10,8 @@ export interface DuelFighter {
   characterId: number; name: string; vocation: string; hp: number; maxHp: number; mana: number; maxMana: number;
   attack: number; defense: number; agility: number; criticalChance: number; dodgeChance: number;
   action: DuelAction | null; missed: number;
+  // Atributos secundários (shared/itemStats.ts); duelos começados antes deles não têm.
+  critDamage?: number; lifeSteal?: number; healPower?: number;
 }
 export type DuelResult = 'ONGOING' | 'VICTORY' | 'FORFEIT' | 'EXPIRED' | 'DRAW';
 const strong = (a: DuelAction) => a === 'TRIPLE_HIT' || a === 'FIFTH_HIT';
@@ -22,13 +25,14 @@ export function effectiveDuelAction(f: Pick<DuelFighter, 'vocation' | 'mana' | '
 
 // Ajustes só do duelo (o combate contra monstros não muda): dano, cura e quanto da defesa do alvo conta.
 // `taken` = dano recebido por vocação base (KNIGHT, PALADIN, SORCERER, DRUID), em %.
-export interface DuelTuning { damagePercent: number; healPercent: number; defensePercent: number; taken?: Partial<Record<string, number>> }
+// `lifeStealPercent`: quanto do roubo de vida dos equipamentos vale no duelo.
+export interface DuelTuning { damagePercent: number; healPercent: number; defensePercent: number; lifeStealPercent?: number; taken?: Partial<Record<string, number>> }
 export function duelTuningOf(s: Record<string, number>): DuelTuning {
-  return { damagePercent: s['pvp.damagePercent'] ?? 100, healPercent: s['pvp.healPercent'] ?? 100, defensePercent: s['pvp.defensePercent'] ?? 100,
+  return { damagePercent: s['pvp.damagePercent'] ?? 100, healPercent: s['pvp.healPercent'] ?? 100, defensePercent: s['pvp.defensePercent'] ?? 100, lifeStealPercent: s['pvp.lifeStealPercent'] ?? 100,
     taken: { KNIGHT: s['pvp.takenKnight'] ?? 100, PALADIN: s['pvp.takenPaladin'] ?? 100, SORCERER: s['pvp.takenSorcerer'] ?? 100, DRUID: s['pvp.takenDruid'] ?? 100 } };
 }
 export function resolveDuelRound(round: number, pair: readonly [DuelFighter, DuelFighter], dice: Dice, tuning: number | DuelTuning = 100) {
-  const { damagePercent, healPercent, defensePercent, taken = {} } = typeof tuning === 'number' ? { damagePercent: tuning, healPercent: 100, defensePercent: 100 } : tuning;
+  const { damagePercent, healPercent, defensePercent, lifeStealPercent = 100, taken = {} } = typeof tuning === 'number' ? { damagePercent: tuning, healPercent: 100, defensePercent: 100 } : tuning;
   const fighters = pair.map(f => ({ ...f })) as [DuelFighter, DuelFighter];
   const chosen = fighters.map(effectiveDuelAction);
   const moves: DuelMove[] = fighters.map((f, i) => ({ characterId: f.characterId, action: chosen[i].action, auto: chosen[i].auto, acted: false, first: false,
@@ -85,6 +89,12 @@ export function resolveDuelRound(round: number, pair: readonly [DuelFighter, Due
     } else {
       foe.hp = Math.max(0, foe.hp - dealt); moves[me].dealt = dealt; moves[me].crit = crit;
       lines.push(`${f.name} usa ${label}: ${dealt.toLocaleString('pt-BR')} de dano${crit ? ' (crítico!)' : ''}.`);
+      // Roubo de vida, com o mesmo teto da caçada e só a parte que vale no duelo (pvp.lifeStealPercent).
+      const steal = Math.min(secondaryCap.lifeSteal, Math.max(0, f.lifeSteal ?? 0)) * lifeStealPercent / 100;
+      if (steal > 0 && f.hp < f.maxHp) {
+        const stolen = Math.min(f.maxHp - f.hp, Math.floor(dealt * steal / 100), Math.floor(f.maxHp * steal / 100));
+        if (stolen > 0) { f.hp += stolen; moves[me].stolen = stolen; lines.push(`${f.name} rouba ${stolen.toLocaleString('pt-BR')} de vida.`); }
+      }
     }
     // Interromper só funciona agindo antes do golpe forte do oponente.
     if (action === 'INTERRUPT' && me === order[0] && strong(chosen[you].action)) {

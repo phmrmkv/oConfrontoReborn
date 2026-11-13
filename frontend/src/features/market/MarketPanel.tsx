@@ -13,7 +13,7 @@ export type Filters={q:string;slot:string;usable:boolean;minTier:number;minRarit
 export type MarketPage=Page<Listing>&{filters?:Filters};
 export const noFilters:Filters={q:'',slot:'',usable:false,minTier:0,minRarity:0};
 export const marketQuery=(f:Filters|undefined,level:number)=>!f?'':`${f.q?`&q=${encodeURIComponent(f.q)}`:''}${f.slot?`&slot=${slotsOf(f.slot).join(',')}`:''}${f.usable?`&maxLevel=${level}`:''}${f.minTier?`&minTier=${f.minTier}`:''}${f.minRarity?`&minRarity=${f.minRarity}`:''}`;
-const statKeys:[keyof Blueprint,string][]=[['attack','ATK'],['magicAttack','Magia'],['defense','DEF'],['armor','ARM'],['criticalChance','Crítico'],['fireResistance','Fogo'],['speed','Esquiva']];
+const statKeys:[keyof Blueprint,string][]=[['attack','ATK'],['magicAttack','Magia'],['defense','DEF'],['armor','ARM'],['criticalChance','Crítico'],['critDamage','Dano crítico'],['lifeSteal','Roubo de vida'],['healPower','Cura'],['statusResistance','Resist. a efeitos'],['fireResistance','Fogo'],['speed','Esquiva']];
 // Diferença dos atributos-base do item anunciado para o equipado no mesmo lugar (sem a melhoria +N, que vale para os dois).
 function compare(hero:Hero,l:Listing){
   if(['LOOT','CONSUMABLE'].includes(l.blueprint.slot))return null;

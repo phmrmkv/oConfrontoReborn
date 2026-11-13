@@ -22,7 +22,7 @@ const card = { id: true, name: true, level: true, vocation: true, classTier: tru
 const DAY = 24 * 3600 * 1000, HOUR = 3600 * 1000;
 const ROUNDS_KEPT = 60;
 // Força de cada lado, gravada no aceite (trocar equipamento no meio do duelo não muda a luta).
-type FighterStats = { name: string; attack: number; defense: number; agility: number; criticalChance: number; dodgeChance: number };
+type FighterStats = { name: string; attack: number; defense: number; agility: number; criticalChance: number; dodgeChance: number; critDamage?: number; lifeSteal?: number; healPower?: number };
 type DuelState = { stats: Record<string, FighterStats> };
 const finishedOutcomes = ['VICTORY', 'FORFEIT', 'EXPIRED', 'DRAW'];
 
@@ -224,7 +224,8 @@ export async function answerDuel(accountId: number, characterId: number, duelId:
       const equipment = await tx.inventoryItem.findMany({ where: { characterId: h.id, isEquipped: true }, include: { blueprint: true } });
       // No duelo só parte da vantagem da raridade e da melhoria +N vale (pvp.rarityPercent, pvp.upgradePercent), para o equipamento não decidir sozinho.
       const s = combatStats(h, equipment, { rarityPercent: settings['pvp.rarityPercent'], upgradePercent: settings['pvp.upgradePercent'] });
-      state.stats[h.id] = { name: h.name, attack: s.attack, defense: s.defense, agility: h.agility, criticalChance: s.criticalChance, dodgeChance: s.dodgeChance };
+      state.stats[h.id] = { name: h.name, attack: s.attack, defense: s.defense, agility: h.agility, criticalChance: s.criticalChance, dodgeChance: s.dodgeChance,
+        critDamage: s.critDamage, lifeSteal: s.lifeSteal, healPower: s.healPower };
       // Cópia da vida e mana máximas: o duelo começa com os dois inteiros e não mexe na vida real.
       fighters.push({ characterId: h.id, vocation: h.vocation, hp: h.maxHp, maxHp: h.maxHp, mana: h.maxMana, maxMana: h.maxMana, activeCharacterId: h.id });
     }
@@ -292,7 +293,9 @@ async function resolveRound(tx: Tx, d: LockedDuel) {
   const s = d.state as unknown as DuelState, settings = await loadSettings(tx);
   const pair = d.fighters.map(f => ({ characterId: f.characterId, name: s.stats[f.characterId].name, vocation: f.vocation, hp: f.hp, maxHp: f.maxHp, mana: f.mana, maxMana: f.maxMana,
     attack: s.stats[f.characterId].attack, defense: s.stats[f.characterId].defense, agility: s.stats[f.characterId].agility,
-    criticalChance: s.stats[f.characterId].criticalChance, dodgeChance: s.stats[f.characterId].dodgeChance, action: f.action as DuelAction | null, missed: f.missed })) as [EngineFighter, EngineFighter];
+    criticalChance: s.stats[f.characterId].criticalChance, dodgeChance: s.stats[f.characterId].dodgeChance,
+    critDamage: s.stats[f.characterId].critDamage ?? 0, lifeSteal: s.stats[f.characterId].lifeSteal ?? 0, healPower: s.stats[f.characterId].healPower ?? 0,
+    action: f.action as DuelAction | null, missed: f.missed })) as [EngineFighter, EngineFighter];
   const r = resolveDuelRound(d.round, pair, dice, duelTuningOf(settings));
   const done = r.outcome !== 'ONGOING';
   for (const f of r.fighters) {
