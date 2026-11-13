@@ -82,7 +82,9 @@
     "infernatil": "Great Fireball Rune"
   },
   "effects": null,
-  "specials": {},
+  "specials": {
+    "KNIGHT": "cavaleiro-especiais"
+  },
   "effectCells": {
     "Arrow": 0,
     "Power Bolt": 1,

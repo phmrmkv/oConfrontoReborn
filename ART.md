@@ -2,7 +2,7 @@
 
 > Arquivo gerado por `npm run art` a partir de `scripts/art.mjs`. Para mudar um comando, edite a lista naquele arquivo e rode de novo.
 
-A arena de batalha usa só arte própria. Cada personagem vem numa folha só, sempre no mesmo formato. Hoje **59 de 64** folhas estão prontas.
+A arena de batalha usa só arte própria. Cada personagem vem numa folha só, sempre no mesmo formato. Hoje **60 de 64** folhas estão prontas.
 
 ## Como usar
 1. Copie o comando inteiro do personagem e cole no ChatGPT (gere um personagem por vez).
@@ -92,7 +92,7 @@ Só as folhas novas ou alteradas são refeitas (`art/web.json` guarda o que já 
 | `verminor.png` | Verminor | Chefe | feito | Verminor (nv. 550) |
 | `apocalypse.png` | Apocalypse | Chefe | feito | Apocalypse (nv. 1000) |
 | `efeitos.png` | Efeitos da arena | Efeitos | falta | projéteis, escudo de guarda, cura e impacto na arena |
-| `cavaleiro-especiais.png` | Cavaleiro: especiais | Especiais | falta | Golpe brutal, Fúria berserker e Interromper |
+| `cavaleiro-especiais.png` | Cavaleiro: especiais | Especiais | feito | Golpe brutal, Fúria berserker e Interromper |
 | `arqueiro-especiais.png` | Arqueiro: especiais | Especiais | falta | Tiro preciso, Salva de flechas e Interromper |
 | `feiticeiro-especiais.png` | Feiticeiro: especiais | Especiais | falta | Explosão, Tempestade e Interromper |
 | `druida-especiais.png` | Druida: especiais | Especiais | falta | Espinhos, Fúria natural e Interromper |
@@ -1464,7 +1464,7 @@ Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel, paleta limitad
 
 Uma segunda folha por herói com os golpes especiais, que hoje repetem o ataque comum. **Anexe no ChatGPT a folha atual do herói** (`art/sprites/<herói>.png`) junto com o comando, para ele manter o mesmo personagem. Linhas: 1 especial 1, 2 especial 2, 3 Interromper, 4 e 5 o efeito de cada especial sem o personagem, 6 vitória.
 
-### Cavaleiro: especiais · `cavaleiro-especiais.png` · falta
+### Cavaleiro: especiais · `cavaleiro-especiais.png` · feito
 
 ```
 Crie uma sprite sheet de pixel art para um jogo de RPG por turnos visto de lado: os GOLPES ESPECIAIS de um herói que já existe no jogo.
