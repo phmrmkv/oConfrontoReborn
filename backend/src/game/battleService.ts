@@ -10,6 +10,7 @@ import { event, awardAchievements } from './adventureService';
 import { addItem, recordGold } from '../economy/economy';
 import { hasRarity, rarityOddsOf, rollRarity } from '../../../shared/rarity';
 import { needsAdapting, vocationEquivalent } from '../../../shared/loot';
+import { bindingOnDrop } from '../../../shared/binding';
 import { loadSettings } from '../core/settings';
 import { scaleInt } from '../../../shared/economy';
 import { vocationAllowed, skillCosts } from '../../../shared/adventure';
@@ -110,7 +111,8 @@ export class BattleService {
             // Equipamento sorteia a raridade do exemplar (shared/rarity.ts); chefe multiplica as chances. Poção e material são sempre Comuns.
             const rarity = hasRarity(loot.blueprint.slot) ? rollRarity(rarityOddsOf(settings), dice(1, 10000), b.monster.isBoss ? settings['rarity.bossBoostPercent'] : 100) : 0;
             const drop = { blueprintId: picked.id, quantity: dice(1, loot.maxAmount), name: picked.name, rarity, ...(adapted ? { adapted } : {}) };
-            await addItem(tx, characterId, drop.blueprintId, drop.quantity, 'LOOT', { type: 'battle', id: battleId }, 0, null, rarity);
+            // Comércio limitado: Raro e Épico vinculam ao equipar; Lendário e Mítico de chefe chegam vinculados.
+            await addItem(tx, characterId, drop.blueprintId, drop.quantity, 'LOOT', { type: 'battle', id: battleId }, 0, null, rarity, bindingOnDrop(rarity, b.monster.isBoss));
             droppedItems.push(drop);
           }
         }

@@ -205,6 +205,9 @@ model InventoryItem {
   rarity       Int           @default(0)
   // Falhas seguidas de melhoria deste exemplar (somam chance à próxima, upgrade.failBonus*); zera no acerto.
   upgradeFails Int           @default(0)
+  // Comércio limitado (shared/binding.ts): vinculado não sai do personagem; vincula ao equipar fica vinculado ao ser vestido.
+  bound        Boolean       @default(false)
+  bindOnEquip  Boolean       @default(false)
   favorite     Boolean       @default(false)
   rareItemId   Int?          @unique
   rareItem     RareItem?     @relation(fields: [rareItemId], references: [id])
@@ -273,6 +276,8 @@ model MarketListing {
   quantity    Int           @default(1)
   upgradeTier Int           @default(0)
   rarity      Int           @default(0)
+  // O exemplar anunciado que ainda vincula ao equipar continua assim para quem comprar (vinculado não pode ser anunciado).
+  bindOnEquip Boolean       @default(false)
   rareItemId  Int?
   rareItem    RareItem?     @relation(fields: [rareItemId], references: [id])
   price       BigInt

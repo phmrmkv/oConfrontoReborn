@@ -136,3 +136,16 @@ test('fragmentos de chefe: despertar custa o dobro a cada degrau', async () => {
   assert.equal(itemReasons.FORGE_AWAKEN_OUT, 'sink'); assert.equal(itemReasons.FORGE_AWAKEN_IN, 'source');
   assert.equal(defaultSettings()['boss.fragmentsPerWin'], 1); assert.equal(defaultSettings()['boss.awakenBaseFragments'], 5);
 });
+
+test('comércio limitado: como chega o que cai e o que fica fora do Espólio', async () => {
+  const { bindingOnDrop, bindingLabel, FREE, BOUND, BIND_ON_EQUIP } = await import('../../../shared/binding');
+  const { lootEligible } = await import('../../../shared/pvp');
+  assert.deepEqual([0, 1].map(r => bindingOnDrop(r, true)), [FREE, FREE], 'Comum e Incomum são livres, até de chefe');
+  assert.deepEqual([2, 3].map(r => bindingOnDrop(r, false)), [BIND_ON_EQUIP, BIND_ON_EQUIP]);
+  assert.deepEqual([4, 5].map(r => bindingOnDrop(r, false)), [BIND_ON_EQUIP, BIND_ON_EQUIP], 'Lendário e Mítico fora de chefe só vinculam ao equipar');
+  assert.deepEqual([4, 5].map(r => bindingOnDrop(r, true)), [BOUND, BOUND]);
+  assert.deepEqual([bindingLabel(FREE), bindingLabel(BOUND), bindingLabel(BIND_ON_EQUIP)], [null, 'Vinculado', 'Vincula ao equipar']);
+  const base = { isEquipped: false, favorite: false, rareItemId: null, upgradeTier: 0, quantity: 1, slot: 'WEAPON' };
+  assert.equal(lootEligible(base, 7), true); assert.equal(lootEligible({ ...base, bound: true }, 7), false); assert.equal(lootEligible({ ...base, bound: false }, 7), true);
+  assert.equal(defaultSettings()['market.rareSaleFeePercent'], 10);
+});

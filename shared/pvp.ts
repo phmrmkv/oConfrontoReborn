@@ -88,9 +88,10 @@ export function arenaFee(pot: bigint, percent: number) {
   return fee > 0n ? fee : 1n;
 }
 // Item que pode cair no espólio: da mochila (não equipado), não favorito, sem item raro, abaixo da melhoria protegida, e não empilhável.
-export interface LootCandidate { isEquipped: boolean; favorite: boolean; rareItemId: number | null; upgradeTier: number; quantity: number; slot: string }
+// Item vinculado (comércio limitado, shared/binding.ts) também nunca cai.
+export interface LootCandidate { isEquipped: boolean; favorite: boolean; rareItemId: number | null; upgradeTier: number; quantity: number; slot: string; bound?: boolean }
 export const lootEligible = (i: LootCandidate, protectTier: number) =>
-  !i.isEquipped && !i.favorite && i.rareItemId === null && i.upgradeTier < protectTier && i.quantity === 1 && !['LOOT', 'CONSUMABLE'].includes(i.slot);
+  !i.isEquipped && !i.favorite && !i.bound && i.rareItemId === null && i.upgradeTier < protectTier && i.quantity === 1 && !['LOOT', 'CONSUMABLE'].includes(i.slot);
 
 // Loja da honra: marcas compram só aparência (títulos e moldura). Nunca itens, ouro ou atributos.
 export const honorCosmetics = [

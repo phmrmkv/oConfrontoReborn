@@ -1,6 +1,12 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-comercio-limitado', date: '2026-11-13', title: 'Comércio limitado: itens vinculados', items: [
+    'Equipamentos agora têm três estados. Livre: anda pelo Mercado como sempre (Comum e Incomum, itens da loja e do Ferreiro). Vincula ao equipar: Raro e Épico que caem são livres até você vestir, e aí ficam seus. Vinculado: Lendário e Mítico que caem de chefe, recompensas da Jornada e itens despertados com fragmentos.',
+    'Item vinculado não pode ser anunciado no Mercado nem cair no Espólio do duelo. O jogo avisa antes de você vestir um item que vai vincular.',
+    'Itens raros numerados (+10) continuam sempre livres, para a história de donos seguir; a taxa de venda deles no Mercado é de 10%.',
+    'Tudo o que você já tinha continua livre.',
+  ] },
   { id: '2026-11-13-fragmentos-de-chefe', date: '2026-11-13', title: 'Fragmentos de chefe: raridade garantida', items: [
     'Em Caçar, cada criatura mostra o que pode deixar e a chance de cada item, em "O que pode deixar".',
     'Cada vitória contra um chefe, na caçada ou em grupo, dá 1 fragmento de chefe.',

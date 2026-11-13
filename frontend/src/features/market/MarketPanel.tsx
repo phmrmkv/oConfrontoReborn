@@ -4,6 +4,7 @@ import {fmt,msg} from '../../lib/format';
 import type {Hero,Listing,GameConfig,Perform,Cmd,Blueprint} from '../../lib/types';
 import Icon from '../../ui/GameIcon';
 import {RarityFrame,RarityTag} from '../../ui/RarityFrame';
+import BindingTag from '../../ui/BindingTag';
 import {rarities} from '../../../../shared/rarity';
 import {Pager,type Page} from '../../ui/Pager';
 import ItemTabs,{slotsOf} from '../../ui/ItemTabs';
@@ -39,7 +40,7 @@ export default function MarketPanel({hero,market,setMarket,config,busy,command}:
       {active&&<button type="button" disabled={busy} onClick={()=>apply(noFilters)}>Limpar filtros</button>}</form>
     <p className="muted">{market.total.toLocaleString('pt-BR')} anúncio(s){active?' com esses filtros':''} · mais recentes primeiro</p>
     {!market.items.length&&<p className="empty">{active?'Nenhum anúncio com esses filtros.':'Ainda não há ofertas. Seu próximo achado pode ser o primeiro.'}</p>}
-    {market.items.map(l=>{const c=compare(hero,l);return <div className="market-row" key={l.id}><RarityFrame rarity={l.rarity}><Icon name={l.blueprint.name} src={l.blueprint.spriteUrl} size={40} tier={l.upgradeTier}/></RarityFrame><div><h3>{l.blueprint.name} +{l.upgradeTier} <small>×{l.quantity}</small> <RarityTag rarity={l.rarity}/></h3><p>{l.seller.name} · Nv. {l.blueprint.minLevel}{describePotion(l.blueprint.name)?` · ${describePotion(l.blueprint.name)}`:''}{l.expiresAt?` · expira ${new Date(l.expiresAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}`:''}</p>
+    {market.items.map(l=>{const c=compare(hero,l);return <div className="market-row" key={l.id}><RarityFrame rarity={l.rarity}><Icon name={l.blueprint.name} src={l.blueprint.spriteUrl} size={40} tier={l.upgradeTier}/></RarityFrame><div><h3>{l.blueprint.name} +{l.upgradeTier} <small>×{l.quantity}</small> <RarityTag rarity={l.rarity}/> <BindingTag item={{bindOnEquip:l.bindOnEquip}}/></h3><p>{l.seller.name} · Nv. {l.blueprint.minLevel}{describePotion(l.blueprint.name)?` · ${describePotion(l.blueprint.name)}`:''}{l.expiresAt?` · expira ${new Date(l.expiresAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}`:''}</p>
       {c&&<p className="compare">{c.label}{c.parts.length?': ':''}{c.parts.map(p=><span key={p.name} className={p.d>0?'up':'down'}>{p.d>0?'▲ +':'▼ '}{p.d} {p.name}</span>)}{c.label!=='Nada equipado aqui'&&!c.parts.length?' (mesmos atributos-base)':''}</p>}</div>
       <b>{fmt(l.price)} ouro</b><button disabled={busy||(l.sellerId!==hero.id&&BigInt(hero.goldInHand)<BigInt(l.price))} onClick={()=>void command(`market/${l.id}/${l.sellerId===hero.id?'cancel':'buy'}`)}>{l.sellerId===hero.id?'Cancelar':'Comprar'}</button></div>;})}
     <Pager page={market.page} pages={market.pages} busy={busy} onPage={p=>void load(p)}/></section>;

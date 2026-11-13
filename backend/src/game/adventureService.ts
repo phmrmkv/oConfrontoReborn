@@ -3,6 +3,7 @@ import { transaction, lockCharacter } from '../core/db';
 import { GameError } from '../core/engine';
 import { gainExperience } from './gameRules';
 import { addItem, recordGold } from '../economy/economy';
+import { BOUND } from '../../../shared/binding';
 import { achievementDefinitions, journey, regions, vocations, type BaseVocation } from '../../../shared/adventure';
 import { BASE_ATTRIBUTE } from '../../../shared/progression';
 type Tx=Prisma.TransactionClient;
@@ -69,7 +70,7 @@ export async function claimJourney(accountId:number,characterId:number,expectedS
     if(expectedStep===0) {
       for(const name of ['Health Potion','Mana Potion']) {
         const bp=await tx.itemBlueprint.findUniqueOrThrow({where:{name}});
-        await addItem(tx,characterId,bp.id,name==='Health Potion'?2:1,'JOURNEY',{type:'journey',id:expectedStep});
+        await addItem(tx,characterId,bp.id,name==='Health Potion'?2:1,'JOURNEY',{type:'journey',id:expectedStep},0,null,0,BOUND);
       }
     }
     await event(tx,characterId,'JOURNEY',step.title,`Etapa concluída. +${step.xp} XP e +${step.gold} ouro.`);
