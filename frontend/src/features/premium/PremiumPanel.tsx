@@ -43,11 +43,11 @@ export default function PremiumPanel({hero,onChanged,go,returning,onReturnSeen}:
   const jump=(key:string)=>{const w=where[key];if(w.tab)go(w.tab);else if(w.anchor)scrollTo(w.anchor);};
   const checkout=()=>void run(async()=>{const r=await api<{url:string}>('/premium/checkout',{});window.location.assign(r.url);});
   return <div className="premium-page">
-    {celebrate&&<section className="panel premium-celebrate" role="status"><Icon name="Crown" size={48}/><div><h2>Premium ativado!</h2><p className="muted">Obrigado por apoiar O Confronto. Seus benefícios já estão liberados abaixo.</p></div><button className="quiet" onClick={()=>setCelebrate(false)}>Fechar</button></section>}
+    {celebrate&&<section className="panel premium-celebrate" role="status"><Icon name="Crown Helmet" size={48}/><div><h2>Premium ativado!</h2><p className="muted">Obrigado por apoiar O Confronto. Seus benefícios já estão liberados abaixo.</p></div><button className="quiet" onClick={()=>setCelebrate(false)}>Fechar</button></section>}
     {watching&&<div className="notice premium-watch" role="status"><i className="premium-spinner" aria-hidden="true"/>{returning==='pendente'?'Pagamento pendente.':'Pagamento recebido.'} Aguardando a confirmação do Mercado Pago. Esta página atualiza sozinha.</div>}
     {!watching&&!celebrate&&returning&&<div className="notice" role="status">{returning==='falhou'?'O pagamento não foi concluído. Você pode tentar de novo quando quiser.':'A confirmação ainda não chegou. Se o pagamento foi aprovado, o Premium é liberado automaticamente; volte em alguns minutos ou fale com o Suporte.'} <button className="link-button" onClick={onReturnSeen}>Fechar</button></div>}
     <section className={`panel premium-hero phase-${phase}`} id="premium-top">
-      <div className="premium-status"><div className="premium-crown"><Icon name="Crown" size={64}/></div><div>
+      <div className="premium-status"><div className="premium-crown"><Icon name="Crown Helmet" size={64}/></div><div>
         <span className="eyebrow">{unlocked?`PREMIUM ATIVO · ${daysLeft} ${daysLeft===1?'DIA RESTANTE':'DIAS RESTANTES'}`:`PASSE DE ${o.days} DIAS`}</span>
         <h2>{headline[phase]}</h2><p className="muted">{statusLine[phase]}</p>
         {unlocked&&<div className="premium-meter"><progress max={o.days} value={Math.min(daysLeft,o.days)} aria-label="Dias restantes do Premium"/><small>até {day(o.until)}</small></div>}

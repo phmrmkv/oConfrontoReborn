@@ -86,7 +86,7 @@ test('MySQL: conta — a aba Ícones recebe o nome, o tipo e o sprite de todos o
   assert.match(process.env.DATABASE_URL ?? '', /\/[^/?]*_test(?:\?|$)/, 'Use uma base dedicada terminada em _test.');
   const tag = randomUUID().slice(0, 8), password = 'Conta-teste-2026!', email = `icones-${tag}@example.invalid`;
   await prisma.account.create({ data: { email, password: await hashPassword(password), characters: { create: { name: `Icones ${tag}` } } } });
-  await prisma.itemBlueprint.create({ data: { name: `Elmo de Teste ${tag}`, slot: 'HELMET', spriteUrl: '/assets/tibia/elmo-de-teste.gif' } });
+  await prisma.itemBlueprint.create({ data: { name: `Elmo de Teste ${tag}`, slot: 'HELMET', spriteUrl: '/assets/items/elmo-de-teste.gif' } });
   const server = createApp().listen(0, '127.0.0.1'); await eventOnce(server, 'listening');
   const address = server.address(); assert(address && typeof address !== 'string');
   const base = `http://127.0.0.1:${address.port}/api`, origin = process.env.APP_ORIGIN ?? 'http://localhost:5173';
@@ -96,7 +96,7 @@ test('MySQL: conta — a aba Ícones recebe o nome, o tipo e o sprite de todos o
     assert.equal((await call('', '/items/names')).status, 401);
     const cookie = (await call('', '/auth/login', { email, password })).headers.get('set-cookie')?.split(';')[0] ?? '';
     const { items } = await (await call(cookie, '/items/names')).json() as { items: Record<string, unknown>[] };
-    assert.deepEqual(items.find(item => item.name === `Elmo de Teste ${tag}`), { name: `Elmo de Teste ${tag}`, slot: 'HELMET', spriteUrl: '/assets/tibia/elmo-de-teste.gif' });
+    assert.deepEqual(items.find(item => item.name === `Elmo de Teste ${tag}`), { name: `Elmo de Teste ${tag}`, slot: 'HELMET', spriteUrl: '/assets/items/elmo-de-teste.gif' });
     // Só nome, tipo e sprite: nada de preço, atributos ou dono sai por esta rota.
     assert.ok(items.every(item => Object.keys(item).sort().join() === 'name,slot,spriteUrl'));
   } finally { await new Promise<void>(resolve => server.close(() => resolve())); await prisma.$disconnect(); }

@@ -1,4 +1,4 @@
-// Poções por faixa de nível (nomes e sprites do TibiaWiki). Cada uma recupera um valor fixo + uma porcentagem do máximo,
+// Poções por faixa de nível (nomes dos itens do jogo). Cada uma recupera um valor fixo + uma porcentagem do máximo,
 // para continuar útil quando a vida/mana cresce; as mais fortes pedem nível mínimo (o mesmo minLevel do item no catálogo).
 export interface Restore { flat: number; pct: number }
 export interface PotionEffect { minLevel: number; hp?: Restore; mana?: Restore }

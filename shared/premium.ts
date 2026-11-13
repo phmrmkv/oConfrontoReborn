@@ -3,8 +3,8 @@ import { honorCosmetics } from './pvp';
 export const premiumBenefits = [
   { key: 'appearance', icon: 'Crown Helmet', title: 'Aparência', description: 'Molduras para o retrato do personagem.' },
   { key: 'presets', icon: 'Golden Armor', title: 'Conjuntos de equipamento', description: 'Salve e troque conjuntos fora de combate.' },
-  { key: 'bag', icon: 'Backpack', title: 'Organização da mochila', description: 'Favoritos, busca e filtros avançados.' },
-  { key: 'diary', icon: 'Strange Talisman', title: 'Diário detalhado', description: 'Estatísticas de caçadas, ganhos e desempenho.' },
+  { key: 'bag', icon: 'Chain Armor', title: 'Organização da mochila', description: 'Favoritos, busca e filtros avançados.' },
+  { key: 'diary', icon: 'Staff', title: 'Diário detalhado', description: 'Estatísticas de caçadas, ganhos e desempenho.' },
   { key: 'profile', icon: 'Mastermind Shield', title: 'Perfil personalizado', description: 'Título, emblema e apresentação.' },
   { key: 'characters', icon: 'Hero', title: 'Mais personagens', description: 'Experimente outras vocações em personagens extras.' },
 ] as const;
@@ -16,7 +16,7 @@ export const profileTitles = [
   { key: 'adventurer', name: 'Aventureiro' }, { key: 'hunter', name: 'Caçador' }, { key: 'blacksmith', name: 'Amigo do Ferreiro' },
   { key: 'explorer', name: 'Explorador' }, { key: 'guardian', name: 'Guardião de Capriel' }, { key: 'dragonbane', name: 'Terror dos Dragões' },
 ] as const;
-export const emblems = ['Sword', 'Mastermind Shield', 'Dragon', 'Demon', 'Cyclops', 'Magic Longsword', 'Backpack', 'Ring of the Sky'] as const;
+export const emblems = ['Sword', 'Mastermind Shield', 'Dragon', 'Demon', 'Cyclops', 'Magic Longsword', 'Winged Helmet', 'Golden Boots'] as const;
 // Títulos da honra (duelo) também aparecem no perfil; só se compram com marcas de honra (shared/pvp.ts).
 export const titleName = (key: string | null | undefined) => profileTitles.find(t => t.key === key)?.name ?? honorCosmetics.find(t => t.key === key && t.kind === 'TITLE')?.name ?? '';
 export const premiumPlan = { source: 'PURCHASE', currency: 'BRL', provider: 'MERCADOPAGO' } as const;

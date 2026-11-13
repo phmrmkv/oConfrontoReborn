@@ -16,18 +16,18 @@ const n=(v:number)=>v.toLocaleString('pt-BR');
 function Life({label,hp,max,kind=''}:{label:string;hp:number;max:number;kind?:string}){return <div className="meter"><div><span>{label}</span><b>{n(hp)} / {n(max)}</b></div><progress className={kind} aria-label={label} max={Math.max(1,max)} value={hp}/></div>;}
 // Habilidades da batalha em três grupos: ataque, suporte e fuga.
 const skillGroups=[
-  {key:'attack',label:'Ataque',icon:'Logout Block Icon',actions:['ATTACK','TRIPLE_HIT','FIFTH_HIT','INTERRUPT']},
+  {key:'attack',label:'Ataque',icon:'Sword',actions:['ATTACK','TRIPLE_HIT','FIFTH_HIT','INTERRUPT']},
   {key:'support',label:'Suporte',icon:'Guardian Shield',actions:['HEAL','DEFEND_SHIELD']},
-  {key:'escape',label:'Fuga',icon:'Haste Icon',actions:['FLEE']},
+  {key:'escape',label:'Fuga',icon:'Boots of Haste',actions:['FLEE']},
 ] as const;
 // Teclas de atalho das habilidades (Fugir fica sem tecla, para ninguém fugir por engano).
 const hotkeys:Record<string,string>={ATTACK:'1',TRIPLE_HIT:'2',FIFTH_HIT:'3',INTERRUPT:'4',HEAL:'5',DEFEND_SHIELD:'6'};
 // Cada golpe tem o seu ícone, conforme a vocação; o que não estiver aqui usa skillIcon ou o ícone da vocação.
 const strikeIcons:Record<string,Record<string,string>>={
   KNIGHT:{ATTACK:'Sword',TRIPLE_HIT:'Giant Sword',FIFTH_HIT:'Warlord Sword'},
-  PALADIN:{ATTACK:'Bow',TRIPLE_HIT:'Burst Arrow',FIFTH_HIT:'Power Bolt'},
-  SORCERER:{ATTACK:'Wand of Vortex',TRIPLE_HIT:'Great Fireball Rune',FIFTH_HIT:'Sudden Death Rune'},
-  DRUID:{ATTACK:'Snakebite Rod',TRIPLE_HIT:'Heavy Magic Missile Rune',FIFTH_HIT:'Poison Bomb Rune'},
+  PALADIN:{ATTACK:'Bow',TRIPLE_HIT:'Crossbow',FIFTH_HIT:'Throwing Star'},
+  SORCERER:{ATTACK:'Wand of Vortex',TRIPLE_HIT:'Skull Staff',FIFTH_HIT:'Fire Sword'},
+  DRUID:{ATTACK:'Snakebite Rod',TRIPLE_HIT:'Staff',FIFTH_HIT:'Terra Hood'},
 };
 const skillIcon:Record<string,string>={HEAL:'Health Potion',DEFEND_SHIELD:'Mastermind Shield',FLEE:'Boots of Haste',INTERRUPT:'Fire Sword'};
 export default function HuntPanel({hero,state,monsters,battle,busy,start,turn,dismiss,goTemple}:{hero:Hero;state:JourneyState|null;monsters:Monster[];battle:Battle|null;busy:boolean;goTemple:()=>void;start:(m:Monster)=>Promise<void>;turn:(a:string)=>Promise<void>;dismiss:()=>void}) {

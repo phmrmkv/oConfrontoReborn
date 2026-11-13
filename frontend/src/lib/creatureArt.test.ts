@@ -1,5 +1,5 @@
 // Folha de efeitos da arena: todo projétil que a arena faz voar precisa de um quadro nela; senão, com a folha pronta, ele
-// voltaria ao ícone do TibiaWiki sem ninguém perceber. A lista dos quadros vem de scripts/art.mjs, gravada em spriteSheets.json.
+// voltaria ao quadrinho com as iniciais sem ninguém perceber. A lista dos quadros vem de scripts/art.mjs, gravada em spriteSheets.json.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import sheets from './spriteSheets.json';

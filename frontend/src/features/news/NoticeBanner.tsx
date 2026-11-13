@@ -25,12 +25,12 @@ export default function NoticeBanner({onOpenNews,onOpenRares}:{onOpenNews?:()=>v
   if(!visible.length&&!showNews&&!feat)return null;
   return <div className="notice-stack">
     {visible.map(n=><div key={n.id} className={`game-notice ${n.kind==='MAINTENANCE'?'maintenance':''}`} role={n.kind==='MAINTENANCE'?'alert':'status'}>
-      <Icon name={n.kind==='MAINTENANCE'?'Torch':'Candelabrum'} size={24}/><p><b>{n.kind==='MAINTENANCE'?'Manutenção: ':'Aviso: '}</b>{n.message}{n.endsAt?` (até ${new Date(n.endsAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})})`:''}</p>
+      <Icon name={n.kind==='MAINTENANCE'?'Steel Helmet':'Winged Helmet'} size={24}/><p><b>{n.kind==='MAINTENANCE'?'Manutenção: ':'Aviso: '}</b>{n.message}{n.endsAt?` (até ${new Date(n.endsAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})})`:''}</p>
       {n.kind!=='MAINTENANCE'&&<button className="link-button" aria-label="Fechar aviso" onClick={()=>hide(n.id)}>Fechar</button>}</div>)}
     {feat&&<div className="game-notice feat" role="status"><Icon name={feat.name} src={feat.spriteUrl} size={24} tier={10}/><p><b>Feito em Capriel: </b>{feat.creator??'um aventureiro anônimo'} levou {feat.name} ao +10{feat.firstOfKind?', o primeiro do tipo':''} (Nº {String(feat.serial).padStart(6,'0')}).</p>
       <button className="link-button" onClick={()=>{hideFeat(feat.id);onOpenRares!();}}>Ver itens raros</button>
       <button className="link-button" aria-label="Fechar anúncio" onClick={()=>hideFeat(feat.id)}>Fechar</button></div>}
-    {showNews&&<div className="game-notice news" role="status"><Icon name="Candelabrum" size={24}/><p><b>Novidade: </b>{latest.title}.</p>
+    {showNews&&<div className="game-notice news" role="status"><Icon name="Winged Helmet" size={24}/><p><b>Novidade: </b>{latest.title}.</p>
       <button className="link-button" onClick={()=>{markNewsSeen();setSeen(latest.id);onOpenNews!();}}>Ver novidades</button>
       <button className="link-button" aria-label="Dispensar" onClick={()=>{markNewsSeen();setSeen(latest.id);}}>Dispensar</button></div>}
   </div>;

@@ -1,6 +1,11 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-so-arte-propria', date: '2026-11-13', title: 'Só arte própria no jogo', items: [
+    'Os sprites do TibiaWiki saíram do jogo: agora tudo o que você vê é arte própria de O Confronto.',
+    'Itens que ainda não têm a arte própria mostram um quadradinho com as iniciais do nome até a figura chegar.',
+    'As imagens de perfil agora usam os retratos próprios das criaturas; quem tinha uma imagem que saiu da galeria vê o quadradinho até escolher outra.',
+  ] },
   { id: '2026-11-13-criaturas-da-perdicao', date: '2026-11-13', title: 'Criaturas da Perdição', items: [
     'As dez criaturas do Vale da Perdição deixaram de levar o nome de Capriel e agora levam o da região: Elf Arcanist da Perdição, Hero da Perdição, Warlock da Perdição, Demon da Perdição e as outras. Capriel é a cidade e só dá nome ao que é bom: o Templo, a guarda, os títulos e o equipamento Herdeiro de Capriel.',
     'A runa do equipamento de Capriel agora é a Soulfire Rune de Capriel, com os mesmos atributos.',

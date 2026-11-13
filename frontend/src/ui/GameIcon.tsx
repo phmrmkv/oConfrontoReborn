@@ -31,7 +31,7 @@ export default function Icon({name,size=32,src,fire=false,tier=0}:{name:string;s
   // Guarda QUAL imagem falhou (e não só "falhou"): a mesma linha pode receber outro item depois.
   const [failed,setFailed]=useState(''),[ownFailed,setOwnFailed]=useState('');
   const still=useSyncExternalStore(watchMotion,motionStill);
-  // "A|B" = tenta A (sprite novo) e cai para B se ainda não foi importado.
+  // "A|B" = tenta A e cai para B se A ainda não tem arte própria.
   const names=name.split('|');const label=names[0];
   const drawn=names.map(n=>itemArt(n)).find(Boolean)??null,own=drawn&&drawn!==ownFailed?drawn:null;
   // Sem GIF de item: o retrato próprio da criatura ou do herói com esse nome; depois `src`, se for arte própria (o banco antigo
@@ -41,7 +41,7 @@ export default function Icon({name,size=32,src,fire=false,tier=0}:{name:string;s
   if(!image||image===failed)return <Placeholder label={label} size={size}/>;
   const burning=fire||tier>=10,glow=!burning&&tier>=9?'glow-strong':!burning&&tier>=7?'glow-soft':'';
   const alt=burning?`${label} (+10, em chamas)`:tier>=7?`${label} (+${tier}, brilhando)`:label;
-  // Se o GIF próprio não carregar (figura ainda fora do servidor), o ícone volta para o sprite antigo em vez de sumir.
+  // Se o GIF próprio não carregar (figura ainda fora do servidor), o ícone mostra o quadrinho com as iniciais em vez de sumir.
   const img=own&&still?<StillFrame src={own} size={size} alt={alt} onError={()=>setOwnFailed(own)}/>
     :<img className={own?'sprite own-art':'sprite'} src={image} width={size} height={size} alt={alt} loading={own?'lazy':undefined} decoding="async" onError={()=>own?setOwnFailed(own):setFailed(image)}/>;
   if(burning)return <span className="fire-icon" title="Item raro +10">{img}</span>;

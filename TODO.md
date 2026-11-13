@@ -8,6 +8,7 @@
 Última atualização: 2026-10-28 (itens raros)
 
 ## ✅ Feito
+- [x] Só arte própria no jogo (pedido do dono em 2026-11-13): nenhum sprite do TibiaWiki (CipSoft) fica no site. `ui/GameIcon.tsx` usa o GIF do item, senão o retrato da criatura, senão um quadrinho com as iniciais; os nomes de ícone da interface (abas, habilidades, Fórum, Premium, Jornada, conquistas) foram trocados por nomes que têm arte própria; as imagens de perfil ficam só com criaturas que têm retrato (grátis 40 → 45, lendárias 10); saíram os créditos TibiaWiki/CipSoft da interface (Termos continuam), a Biblioteca de ícones do TibiaWiki da aba Ícones, o importador (`scripts/import-icons.mjs`, listas `sprites-*.json`, `audit-assets.mjs`, passo [3b] do `iniciar.bat`) e a pasta `frontend/public/assets/tibia`. Itens sem GIF seguem com o quadrinho de iniciais até a arte chegar (lista na aba Ícones).
 **Base e roadmap**
 - [x] Avaliação do código do Codex + `AUDITORIA.md`
 - [x] Extrato de ouro e de itens (`GoldLedger` / `ItemLedger`), idempotência (`Idempotency-Key`), travas de linha

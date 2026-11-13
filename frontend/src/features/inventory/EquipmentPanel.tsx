@@ -4,7 +4,7 @@ import {RarityFrame} from '../../ui/RarityFrame';
 import {raritySuffix} from '../../../../shared/rarity';
 import {vocations,baseVocation} from '../../../../shared/adventure';
 import {describeSecondary} from '../../../../shared/itemStats';
-const slots=[['AMULET','Amuleto','Platinum Amulet'],['HELMET','Elmo','Leather Helmet'],['BACKPACK','Mochila','Backpack'],['WEAPON','Arma','Sword'],['ARMOR','Armadura','Leather Armor'],['SHIELD','Escudo','Wooden Shield'],['RING','Anel','Ring of the Sky'],['LEGS','Pernas','Golden Legs'],['AMMO','Flecha / runa','Arrow'],['BOOTS','Botas','Boots of Haste']];
+const slots=[['AMULET','Amuleto','Platinum Amulet'],['HELMET','Elmo','Leather Helmet'],['BACKPACK','Mochila','Backpack'],['WEAPON','Arma','Sword'],['ARMOR','Armadura','Leather Armor'],['SHIELD','Escudo','Wooden Shield'],['RING','Anel','Ring of the Sky'],['LEGS','Pernas','Golden Legs'],['AMMO','Flecha / runa','Throwing Star'],['BOOTS','Botas','Boots of Haste']];
 // Fora do Inventário, clicar num lugar (ex.: Mochila) abre o Inventário filtrado por aquele tipo.
 // No Inventário, clicar num item equipado guarda ele na mochila; num lugar vazio, filtra a mochila.
 export default function EquipmentPanel({hero,busy,fighting,command,inBag,openSlot}:{hero:Hero;busy:boolean;fighting:boolean;command:Cmd;inBag:boolean;openSlot:(slot:string)=>void}){

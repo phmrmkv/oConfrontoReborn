@@ -40,7 +40,7 @@ export default function TurnLog({turns,log,turnVersion,heroName,heroIcon,monster
           <p className="turn-number">{last.action==='HEAL'?<span className="heal">+{n(last.healed)}</span>:last.action==='FLEE'?<span>Fuga</span>:last.action==='DEFEND_SHIELD'&&!last.dealt?<span>Defesa</span>:<span className="hit">−{n(last.dealt)}</span>}</p>
           <p className="turn-tag">{last.action==='HEAL'?'vida recuperada':last.action==='FLEE'?'você saiu do combate':`na criatura${last.crit?' · crítico!':''}`}</p></div>
       </article>
-      <span className="turn-vs" aria-hidden="true"><Icon name="Logout Block Icon" size={27}/></span>
+      <span className="turn-vs" aria-hidden="true"><Icon name="Sword" size={27}/></span>
       <article className={`turn-side foe-side ${last.foe==='HEAVY'?'heavy':''} ${foeDown(last)?'down':''}`}>
         <CreatureIcon name={monsterName} src={monsterSprite} size={40}/>
         <div><small>Golpe da criatura · {monsterName}</small><b>{last.foe==='HEAVY'?'Golpe pesado':last.foe==='CHARGE'?'Concentração':last.foe==='INTERRUPTED'?'Interrompido':foeDown(last)?'Derrotado!':last.foe==='NONE'?'Ficou para trás':'Ataque'}</b>

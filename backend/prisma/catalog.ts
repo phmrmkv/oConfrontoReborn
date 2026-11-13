@@ -1,5 +1,5 @@
 // Catálogo do jogo (itens e monstros). Lido pelo seed (upsert) e pelos simuladores de nível.
-// Atributos são balanceamento desta adaptação, não cópia automática da wiki. Sprites: TibiaWiki (manifest.json).
+// Atributos são balanceamento desta adaptação, não cópia automática da wiki. Ícones: arte própria do jogo (ver ART.md).
 import type { ItemSlot } from '@prisma/client';
 import { forgeMaterials } from '../../shared/forge';
 import { eraSetKeys } from '../../shared/itemSets';

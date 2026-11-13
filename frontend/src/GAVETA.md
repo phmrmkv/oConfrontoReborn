@@ -4,7 +4,7 @@
 | Pasta | Conteúdo |
 |---|---|
 | `lib/` | `api.ts` (chamadas), `types.ts`, `format.ts` (ouro, datas), `tabs.ts`, `theme.ts`, `itemArt.ts` (qual item tem GIF próprio; a lista `itemArt.json` é escrita por `npm run art`), `creatureArt.ts` (qual criatura ou herói tem arte própria: folha da arena, retrato e projétil; a folha de efeitos da arena e o quadro de cada projétil; a lista `spriteSheets.json` também vem de `npm run art`) |
-| `ui/` | peças sem assunto: `GameIcon` (todo ícone passa por ele: GIF próprio do item, senão sprite do TibiaWiki), `RarityFrame` (moldura e etiqueta coloridas da raridade do exemplar, em volta do ícone), `BindingTag` (etiqueta de vínculo do comércio limitado), `CreatureIcon` (ícone de criatura fora da arena: retrato da arte própria, senão `GameIcon`), `BattleStage` (arena animada; com a folha `efeitos.webp`, projéteis, escudo de guarda, cura e impacto desenhados, senão os ícones do TibiaWiki), `ThemeToggle`, `Feedback` |
+| `ui/` | peças sem assunto: `GameIcon` (todo ícone passa por ele: GIF próprio do item, senão o retrato da criatura, senão um quadrinho com as iniciais), `RarityFrame` (moldura e etiqueta coloridas da raridade do exemplar, em volta do ícone), `BindingTag` (etiqueta de vínculo do comércio limitado), `CreatureIcon` (ícone de criatura fora da arena: retrato da arte própria, senão `GameIcon`), `BattleStage` (arena animada; com a folha `efeitos.webp`, projéteis, escudo de guarda, cura e impacto desenhados, senão uma esfera de luz própria), `ThemeToggle`, `Feedback` |
 | `styles/` | CSS (tema claro/escuro) |
 | `features/auth` | `LoginScreen`, `RecoveryForms` (esqueci/redefinir/verificar e-mail) |
 | `features/adventure` | Jornada, Diário, Caçar (`HuntPanel`), escolha de vocação |
@@ -15,9 +15,9 @@
 | `features/characters` · `premium` · `ledger` · `support` | Personagens/classes, Premium e pagamento, Extrato, Suporte |
 | `features/admin` | Painel da equipe |
 | `features/confrontation` | `AppPanel`: o app Confrontation visto pelo site (progresso que a conta enviou e os rankings do app; só leitura) |
-| `features/atlas` | Biblioteca de ícones: a arte própria dos itens (GIFs), o que ainda falta no lote (itens sem GIF, com o nome do arquivo esperado; `GET /api/items/names`) e os sprites do TibiaWiki |
+| `features/atlas` | Biblioteca de ícones: a arte própria dos itens (GIFs), o que ainda falta no lote (itens sem GIF, com o nome do arquivo esperado; `GET /api/items/names`) |
 
-**Regras:** `lib` não importa ninguém; `ui` só `lib`; uma feature não importa outra (exceções declaradas em `scripts/check-drawers.mjs`: admin→ledger, auth→adventure, characters→adventure). Preços, taxas e chances vêm de `/config`; nunca fixe números de economia aqui. Ações do jogador: `command()`/`perform()` do `App.tsx` (já mandam `Idempotency-Key`). Rótulos em português; sprites do TibiaWiki.
+**Regras:** `lib` não importa ninguém; `ui` só `lib`; uma feature não importa outra (exceções declaradas em `scripts/check-drawers.mjs`: admin→ledger, auth→adventure, characters→adventure). Preços, taxas e chances vêm de `/config`; nunca fixe números de economia aqui. Ações do jogador: `command()`/`perform()` do `App.tsx` (já mandam `Idempotency-Key`). Rótulos em português; só arte própria.
 
 **Testes:** `npm run check` (tipos), `npm run build`, olhar a tela nos dois temas e no celular.
 

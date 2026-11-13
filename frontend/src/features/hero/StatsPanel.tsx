@@ -27,7 +27,7 @@ export default function StatsPanel({hero,config,busy,fighting,command,perform}:{
       <button disabled={blocked} onClick={()=>void perform(async()=>{for(const [stat,n] of plan)await api(`/characters/${hero.id}/stats`,{stat,amount:n},crypto.randomUUID());return `${fmt(planned)} pontos distribuídos como o típico.`;})}>Distribuir como o típico (+{fmt(planned)})</button></div>}
   </section>
   <section className="panel"><div className="section-title"><h2>Seu perfil de atributos</h2></div><AttributeRadar hero={hero}/></section>
-  <section className="panel"><div className="section-title"><h2>Redistribuir pontos</h2><Icon name="Ultimate Healing Rune|Health Potion" size={32}/></div>
+  <section className="panel"><div className="section-title"><h2>Redistribuir pontos</h2><Icon name="Health Potion" size={32}/></div>
     <p className="muted">Devolve todos os pontos que você já distribuiu ({fmt(spent)}) para escolher de novo. A vida e a mana máximas perdem o bônus de Vitalidade e Resistência até você redistribuir.{resetCost!==null&&` Custo no nível ${hero.level}: ${fmt(resetCost.toString())} ouro.`}</p>
     <button disabled={blocked||spent<1||resetCost===null||BigInt(hero.goldInHand)<(resetCost??0n)} onClick={()=>{if(!window.confirm(`Devolver ${fmt(spent)} pontos por ${fmt((resetCost??0n).toString())} ouro? Os atributos voltam a ${BASE_ATTRIBUTE}.`))return;void command('stats/reset',{});}}>Redistribuir · {resetCost!==null?fmt(resetCost.toString()):'…'} ouro</button>
     {spent<1&&<p className="muted">Você ainda não distribuiu pontos.</p>}

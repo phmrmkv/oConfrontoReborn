@@ -11,14 +11,14 @@ export type Float={text:string;kind:'dmg'|'crit'|'heal'|'miss'|'fx'};
 export type Cue={who:string;cls?:string;float?:Float;shot?:string};
 export type Step={cues:Cue[];shake?:boolean;ms:number};
 // `sheet`: folha de sprites própria (4 colunas × 6 linhas, virada para a direita). Com ela o boneco anima quadro a quadro;
-// sem ela, usa o sprite parado do TibiaWiki (`src`) com os movimentos de corpo inteiro.
+// sem ela, usa o retrato parado da criatura com os movimentos de corpo inteiro.
 export type StageFighter={id:string;name:string;src:string;sheet?:string;size?:number;boss?:boolean;rage?:boolean;down?:boolean;gone?:boolean;fx?:string};
 // Figura parada (sem folha): o retrato próprio da criatura ou do herói. Nenhum sprite do TibiaWiki é usado.
 export const spriteOf=(name:string,spritePath?:string)=>portraitUrl(creatureFile(name,spritePath))??'';
 export const heroSpriteOf=(baseVocation:string)=>portraitUrl(heroFile(baseVocation))??'';
 export const shotOf=heroShot;
 // Arte própria do jogo (versão de site em frontend/public/assets/sprites, ver CREDITOS.md lá; originais em art/sprites). Linhas da folha: 1 parado, 2 avançar, 3 atacar,
-// 4 defender, 5 curar, 6 apanhar (2 quadros) e cair (2 quadros). Quem não tem folha continua com o sprite do TibiaWiki.
+// 4 defender, 5 curar, 6 apanhar (2 quadros) e cair (2 quadros). Quem não tem folha usa o retrato parado.
 // A lista do que existe vem de lib/spriteSheets.json, escrito por `npm run art` (o build roda antes): salvar o PNG em art/sprites com o nome do ART.md basta.
 export const heroSheetOf=(baseVocation:string)=>sheetUrl(heroFile(baseVocation));
 // As criaturas das Eras e do Vale da Perdição usam o sprite da original; lib/creatureArt.ts acha a folha pelo sprite, e só depois pelo nome.
@@ -28,7 +28,7 @@ export const SHEET_SCALE=1.5;
 export const stageNumber=(v:number)=>v.toLocaleString('pt-BR');
 
 // Efeitos próprios (folha efeitos.webp, ver lib/creatureArt.ts): com ela, o projétil voa reto e desenhado, o escudo de guarda é o da
-// folha e a cura e o impacto ganham animação; sem ela, a arena fica como sempre foi (ícones do TibiaWiki, que giram no voo).
+// folha e a cura e o impacto ganham animação; sem ela, a arena fica como sempre foi (uma esfera de luz própria, que gira no voo).
 const fxSheet=effectsSheet();
 // Um quadro parado (`cell`, 0 a 11) ou uma linha animada (`row`, 4 quadros) da folha de efeitos.
 function FxCell({cell,row}:{cell?:number;row?:number}){

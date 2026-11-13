@@ -1,14 +1,14 @@
 import Icon from './GameIcon';
 // Abas por tipo de item, usadas no Mercador e no Mercado (até 10 opções, pela regra do site).
 export const itemCategories=[
-  {key:'',label:'Todos',slots:[] as string[],icon:'Gold Coin'},
+  {key:'',label:'Todos',slots:[] as string[],icon:'Golden Helmet'},
   {key:'potions',label:'Poções',slots:['CONSUMABLE'],icon:'Great Health Potion|Health Potion'},
   {key:'weapons',label:'Armas',slots:['WEAPON'],icon:'Fire Sword|Sword'},
-  {key:'ammo',label:'Munição',slots:['AMMO'],icon:'Power Bolt|Arrow'},
+  {key:'ammo',label:'Munição',slots:['AMMO'],icon:'Bow|Crossbow'},
   {key:'armor',label:'Armaduras',slots:['HELMET','ARMOR','LEGS','BOOTS'],icon:'Dragon Scale Mail|Magic Plate Armor'},
   {key:'shields',label:'Escudos',slots:['SHIELD'],icon:'Dragon Shield|Mastermind Shield'},
-  {key:'jewels',label:'Joias',slots:['AMULET','RING'],icon:'Platinum Amulet|Ring of the Sky'},
-  {key:'other',label:'Outros',slots:['BACKPACK','LOOT'],icon:'Backpack'},
+  {key:'jewels',label:'Joias',slots:['AMULET','RING'],icon:'Golden Boots'},
+  {key:'other',label:'Outros',slots:['BACKPACK','LOOT'],icon:'Leather Armor'},
 ] as const;
 export type ItemCategory=typeof itemCategories[number]['key'];
 export const inCategory=(slot:string,key:string)=>!key||(itemCategories.find(c=>c.key===key)?.slots as readonly string[]|undefined)?.includes(slot)===true;

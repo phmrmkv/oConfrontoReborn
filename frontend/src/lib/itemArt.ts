@@ -1,6 +1,6 @@
 // Arte própria dos itens: GIFs animados de 128 px em public/assets/items, ligados pelo nome do arquivo.
 // A lista do que existe (itemArt.json) é escrita por `npm run art`, que o build roda antes: salvar o GIF com o
-// nome do item basta. Quem ainda não tem figura continua com o sprite do TibiaWiki (ui/GameIcon.tsx decide).
+// nome do item basta. Quem ainda não tem figura mostra um quadrinho com as iniciais (ui/GameIcon.tsx decide).
 import art from './itemArt.json';
 
 const files = new Set<string>(art.files);

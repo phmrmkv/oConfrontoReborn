@@ -91,7 +91,7 @@ export const creatures = [
   c('Apocalypse', 'apocalypse', 'Apocalypse', 'o fim de todas as coisas: uma besta colossal de quatro patas, de corpo negro-arroxeado com veios vermelhos pulsando, chifres enormes voltados para a frente, cauda com espinhos e olhos azul-brancos', 'negro-arroxeado, vermelho pulsante, azul-branco', 'investida devastadora (recuar com os veios acendendo, investir de chifres, impacto com onda de choque, recolher)', 'ergue-se e solta um rugido que escurece tudo em volta', true),
 ];
 
-// Criaturas que atacam de longe: o que voa até o herói (ícone do manifesto do TibiaWiki, até os projéteis terem arte própria).
+// Criaturas que atacam de longe: o que voa até o herói (nome do ícone que o projétil substitui, até ele ter arte própria).
 // Na arena elas disparam do lugar; as outras correm até o herói. Tem de bater com o ataque descrito na lista acima.
 export const shots = {
   'Dwarf Soldier': 'Power Bolt', Bonelord: 'Heavy Magic Missile Rune', 'Orc Shaman': 'Sudden Death Rune', Dragon: 'Great Fireball Rune',
@@ -103,7 +103,7 @@ const ranged = m => /para a direita|tiro (de|com)/.test(m.attack);
 
 // ----- Efeitos da arena (uma folha só, no mesmo formato 4 × 6 das outras) -----
 // Linhas 1 a 3: um projétil por quadro, parado e apontando para a direita (a arena faz ele voar e o vira para quem atira da
-// direita), na ordem abaixo. `shot` é o ícone do TibiaWiki que o quadro substitui: o mesmo nome que `shots` (acima) e os heróis
+// direita), na ordem abaixo. `shot` é o nome do ícone que o quadro substitui: o mesmo nome que `shots` (acima) e os heróis
 // da arena (lib/creatureArt.ts) usam. `spare`: quadro de reserva, que ainda nenhum golpe usa.
 // Linhas 4 a 6: animações de 4 quadros, guarda, cura e impacto (`effectRows`, contadas a partir de 0).
 export const effects = { key: 'Efeitos', file: 'efeitos', name: 'Efeitos da arena' };
@@ -258,7 +258,7 @@ async function main() {
 
 > Arquivo gerado por \`npm run art\` a partir de \`scripts/art.mjs\`. Para mudar um comando, edite a lista naquele arquivo e rode de novo.
 
-A arena de batalha está trocando os sprites do TibiaWiki por arte própria. Cada personagem vem numa folha só, sempre no mesmo formato. Hoje **${done} de ${all.length}** folhas estão prontas.
+A arena de batalha usa só arte própria. Cada personagem vem numa folha só, sempre no mesmo formato. Hoje **${done} de ${all.length}** folhas estão prontas.
 
 ## Como usar
 1. Copie o comando inteiro do personagem e cole no ChatGPT (gere um personagem por vez).
@@ -276,7 +276,7 @@ Só as folhas novas ou alteradas são refeitas (\`art/web.json\` guarda o que j�
 ## Formato de toda folha
 - 1024 × 1536 px, fundo transparente, 4 colunas × 6 linhas, quadros de 256 × 256 px, personagem virado para a direita.
 - Linhas: 1 parado, 2 avançar, 3 atacar, 4 defender, 5 curar (heróis) ou gesto especial (criaturas), 6 apanhar (2 quadros) e cair (2 quadros).
-- A folha de efeitos (\`efeitos.png\`) usa a mesma grade: linhas 1 a 3, um projétil parado por quadro, apontando para a direita; linha 4 escudo de guarda, 5 cura e 6 impacto, com 4 quadros cada. Enquanto ela não existe, a arena usa os ícones do TibiaWiki.
+- A folha de efeitos (\`efeitos.png\`) usa a mesma grade: linhas 1 a 3, um projétil parado por quadro, apontando para a direita; linha 4 escudo de guarda, 5 cura e 6 impacto, com 4 quadros cada. Enquanto ela não existe, a arena usa uma esfera de luz própria.
 
 ## Se o GPT errar
 - Grade torta: "refaça mantendo o personagem, mas alinhe a grade em 4 × 6 com quadros de 256 px".
@@ -308,7 +308,7 @@ Uma segunda folha por herói com os golpes especiais, que hoje repetem o ataque 
 ${specials.map(sp => block(sp, specialPrompt(sp, heroes.find(h => h.key === sp.key)))).join('\n')}
 ## Efeitos
 
-O que voa num ataque à distância e os brilhos da arena. Com esta folha pronta, a arena deixa de usar os ícones do TibiaWiki para a flecha, as runas que voam e o escudo de guarda, e ganha a cura e o impacto desenhados. Os dois últimos quadros da linha 3 (espinhos e pedra) são reserva: ainda nenhum golpe os usa.
+O que voa num ataque à distância e os brilhos da arena. Com esta folha pronta, a arena deixa de usar a esfera de luz para a flecha, as runas que voam e o escudo de guarda, e ganha a cura e o impacto desenhados. Os dois últimos quadros da linha 3 (espinhos e pedra) são reserva: ainda nenhum golpe os usa.
 
 ${block(effects, effectsPrompt())}`;
   writeText(path.join(root, 'ART.md'), md);

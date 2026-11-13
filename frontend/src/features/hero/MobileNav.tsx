@@ -30,6 +30,6 @@ export function MobileDrawer({open,onClose,hero,roster,busy,fighting,tabs,tab,on
       {drawerGroups.map(([title,ids])=>{const rows=ids.map(id=>byId.get(id)).filter((r):r is TabRow=>!!r);if(!rows.length)return null;
         return <section key={title} aria-label={title}><span className="eyebrow">{title.toUpperCase()}</span>{rows.map(([id,label,icon])=><button key={id} type="button" className={tab===id?'nav-item active':'nav-item'} aria-current={tab===id?'page':undefined} onClick={()=>go(id)}><Icon name={icon} size={24}/><span>{label}</span>{id==='stats'&&hero.statPoints>0&&<b className="badge">{hero.statPoints}</b>}</button>)}</section>;})}
       <div className="drawer-foot"><ThemeToggle/><button type="button" className="quiet" onClick={()=>{onClose();onLogout();}}>Sair</button></div>
-      <p className="drawer-legal"><a href="https://www.tibiawiki.com.br/" target="_blank" rel="noreferrer">Sprites via TibiaWiki</a><span>Imagens © CipSoft GmbH</span><a href="/legal/termos.html" target="_blank" rel="noreferrer">Termos</a><a href="/legal/privacidade.html" target="_blank" rel="noreferrer">Privacidade</a><a href="/legal/reembolso.html" target="_blank" rel="noreferrer">Reembolso</a></p>
+      <p className="drawer-legal"><a href="/legal/termos.html" target="_blank" rel="noreferrer">Termos</a><a href="/legal/privacidade.html" target="_blank" rel="noreferrer">Privacidade</a><a href="/legal/reembolso.html" target="_blank" rel="noreferrer">Reembolso</a></p>
     </div></div>;
 }

@@ -1,10 +1,10 @@
-// Comunidade: galeria de imagens de perfil (sprites do TibiaWiki), limites de texto e limpeza de mensagens.
+// Comunidade: galeria de imagens de perfil (retratos próprios das criaturas), limites de texto e limpeza de mensagens.
 // Grátis para todos; o Premium libera os "lendários" e uma descrição maior. Nada aqui altera combate.
 export const freeAvatars = [
-  'Hero', 'Amazon', 'Valkyrie', 'Monk', 'Elf Scout', 'Elf Arcanist', 'Dwarf', 'Dwarf Guard', 'Assassin', 'Hunter', 'Bandit', 'Smuggler',
-  'Necromancer', 'Warlock', 'Witch', 'Black Knight', 'Wild Warrior', 'Orc Warrior', 'Orc Shaman', 'Minotaur', 'Minotaur Mage', 'Cyclops',
-  'Dragon', 'Wolf', 'Winter Wolf', 'Polar Bear', 'Bear', 'Lion', 'Panda', 'Deer', 'Rat', 'Spider', 'Snake', 'Mummy', 'Skeleton',
-  'Bonelord', 'Stone Golem', 'Fire Elemental', 'Water Elemental', 'Mammoth',
+  'Hero', 'Amazon', 'Valkyrie', 'Monk', 'Elf Scout', 'Elf Arcanist', 'Dwarf', 'Dwarf Guard', 'Assassin', 'Necromancer', 'Warlock', 'Witch',
+  'Black Knight', 'Orc Warrior', 'Orc Shaman', 'Minotaur', 'Minotaur Mage', 'Cyclops', 'Dragon', 'Wolf', 'Winter Wolf', 'Polar Bear', 'Rat', 'Snake',
+  'Mummy', 'Skeleton', 'Bonelord', 'Stone Golem', 'Fire Elemental', 'Water Elemental', 'Mammoth', 'Bug', 'Rotworm', 'Ghoul', 'Orc', 'Orc Leader',
+  'Dwarf Soldier', 'Orc Spearman', 'Orc Berserker', 'Minotaur Archer', 'Minotaur Guard', 'Frost Troll', 'Swamp Troll', 'Killer Caiman', 'Slime',
 ] as const;
 export const premiumAvatars = ['Demon', 'Dragon Lord', 'Infernatil', 'Verminor', 'Apocalypse', 'Fire Devil', 'Demon Skeleton', 'Giant Spider', 'Young Sea Serpent', 'Wailing Widow'] as const;
 export const isAvatar = (name: string, premium: boolean) => (freeAvatars as readonly string[]).includes(name) || (premium && (premiumAvatars as readonly string[]).includes(name));

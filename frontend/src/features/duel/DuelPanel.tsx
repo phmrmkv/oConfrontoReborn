@@ -38,7 +38,7 @@ const n=(v:number)=>v.toLocaleString('pt-BR');
 const Avatar=({c,size=36}:{c:Card;size?:number})=><Icon name={c.profileAvatar??c.profileEmblem??'Hero'} size={size}/>;
 // Prazo em texto curto: "em 3 h", "em 12 min", "agora".
 function relative(ms:number){if(ms<=0)return 'agora';const m=Math.ceil(ms/60000);if(m<60)return `em ${m} min`;const h=Math.round(m/60);return h<48?`em ${h} h`:`em ${Math.round(h/24)} dias`;}
-const groups=[{key:'attack',label:'Ataque',icon:'Logout Block Icon',actions:['ATTACK','TRIPLE_HIT','FIFTH_HIT','INTERRUPT']},{key:'support',label:'Suporte',icon:'Guardian Shield',actions:['HEAL','DEFEND_SHIELD']}] as const;
+const groups=[{key:'attack',label:'Ataque',icon:'Sword',actions:['ATTACK','TRIPLE_HIT','FIFTH_HIT','INTERRUPT']},{key:'support',label:'Suporte',icon:'Guardian Shield',actions:['HEAL','DEFEND_SHIELD']}] as const;
 const actionIcon:Partial<Record<DuelAction,string>>={HEAL:'Health Potion',DEFEND_SHIELD:'Mastermind Shield',INTERRUPT:'Fire Sword',FLEE:'Boots of Haste'};
 const vocationIcon:Record<string,string>={KNIGHT:'Sword',PALADIN:'Bow',SORCERER:'Wand of Vortex',DRUID:'Snakebite Rod'};
 
@@ -112,7 +112,7 @@ export default function DuelPanel({hero,openProfile}:{hero:Hero;openProfile:(nam
     {!fighting&&!s.eligible&&<section className="panel"><div className="section-title"><h2>Desafiar um amigo</h2><span>{s.today}/{s.rules.dailyLimit} hoje</span></div>
       <p className="muted">Só amigos, de outras contas, com até {s.rules.levelBandPercent}% de diferença de nível. O desafio vale {s.rules.inviteHours} h; cada rodada, {s.rules.roundHours} h (quem não escolhe a tempo defende, e duas rodadas seguidas sem voltar é derrota).</p>
       <div className="duel-modes" role="radiogroup" aria-label="O que está em jogo">{s.rules.modes.map(m=><button key={m} type="button" role="radio" aria-checked={mode===m} className={mode===m?'active-chip':''} onClick={()=>{setMode(m);setLootOk(false);}}>
-        <Icon name={m==='HONOR'?'Warlord Sword':m==='GOLD'?'Gold Coin':'Backpack'} size={22}/><span>{modeLabels[m]}</span></button>)}</div>
+        <Icon name={m==='HONOR'?'Warlord Sword':m==='GOLD'?'Gold Coin':'Chain Armor'} size={22}/><span>{modeLabels[m]}</span></button>)}</div>
       <p className={mode==='HONOR'?'duel-stake':'duel-stake risky'}>{modeHelp[mode]}{mode!=='HONOR'?` Até ${s.rules.pairDailyLimit} duelos assim com o mesmo amigo por dia.`:''}</p>
       {mode==='GOLD'&&<div className="duel-wager">
         <label className="price-label">Aposta proposta (ouro)<input inputMode="numeric" value={wager} maxLength={16} onChange={e=>setWager(e.target.value.replace(/\D/g,''))} placeholder="Quanto quer apostar?"/></label>
@@ -152,7 +152,7 @@ export default function DuelPanel({hero,openProfile}:{hero:Hero;openProfile:(nam
 
     <section className="panel"><div className="section-title"><h2>Loja da honra</h2><span>{n(s.record.marks)} marcas</span></div>
       <p className="muted">Marcas de honra vêm de cada duelo (mais na vitória) e só compram aparência: títulos e moldura. Nunca itens, ouro ou atributos.</p>
-      {s.honorShop.map(h=><div className="market-row" key={h.key}><Icon name={h.kind==='TITLE'?'Warlord Sword':'Crown'} size={32}/><div><h3>{h.name}</h3><p>{h.kind==='TITLE'?'Título no perfil':'Moldura do retrato'} · {n(h.marks)} marcas</p></div>
+      {s.honorShop.map(h=><div className="market-row" key={h.key}><Icon name={h.kind==='TITLE'?'Warlord Sword':'Crown Helmet'} size={32}/><div><h3>{h.name}</h3><p>{h.kind==='TITLE'?'Título no perfil':'Moldura do retrato'} · {n(h.marks)} marcas</p></div>
         {h.using?<span className="tag">EM USO</span>:h.owned?<button disabled={busy} onClick={()=>void act('honor/use',{key:h.key})}>Usar</button>
           :<button className="primary" disabled={busy||s.record.marks<h.marks} onClick={()=>void act('honor/buy',{key:h.key})}>Comprar</button>}</div>)}</section>
   </div>;
@@ -196,7 +196,7 @@ function DuelView({d,hero,left,busy,surrender,setSurrender,choose,forfeit,reload
     <BattleStage scene={d.id} turn={last?.round??0} steps={last?duelScript(last,{[d.me.characterId]:baseVocation(d.me.vocation),[d.foe.characterId]:baseVocation(d.foe.vocation)}):[]}
       left={[{id:String(d.me.characterId),name:d.me.character.name,src:heroSpriteOf(baseVocation(d.me.vocation)),sheet:heroSheetOf(baseVocation(d.me.vocation)),down:!fighting&&d.me.hp<=0,gone:!fighting&&d.me.hp>0&&d.winnerId===d.foe.characterId}]}
       right={[{id:String(d.foe.characterId),name:d.foe.character.name,src:heroSpriteOf(baseVocation(d.foe.vocation)),sheet:heroSheetOf(baseVocation(d.foe.vocation)),down:!fighting&&d.foe.hp<=0,gone:!fighting&&d.foe.hp>0&&d.winnerId===d.me.characterId}]}/>
-    <div className="fighters"><Fighter f={d.me} you openProfile={openProfile}/><div className="versus"><Icon name="Logout Block Icon" size={54}/><span>VS</span></div><Fighter f={d.foe} you={false} openProfile={openProfile}/></div>
+    <div className="fighters"><Fighter f={d.me} you openProfile={openProfile}/><div className="versus"><Icon name="Sword" size={54}/><span>VS</span></div><Fighter f={d.foe} you={false} openProfile={openProfile}/></div>
     {fighting?<>
       {d.me.missed>0&&<p className="notice">Você não escolheu na rodada passada e só defendeu. Mais uma rodada sem escolher é derrota.</p>}
       {pick?<div className="duel-waiting" role="status"><Icon name={actionIcon[pick.key]??vocationIcon[baseVocation(d.me.vocation)]??'Sword'} size={32}/><div><b>Você escolheu {pick.label}.</b>
@@ -208,7 +208,7 @@ function DuelView({d,hero,left,busy,surrender,setSurrender,choose,forfeit,reload
             <span className="skill-icon"><Icon name={actionIcon[key]??vocationIcon[baseVocation(d.me.vocation)]??'Sword'} size={32}/></span><b>{a.label}</b><small className={a.mana?'cost':'cost free'}>{a.mana?`${a.mana} MP`:'Livre'}</small><span className="skill-help">{a.help}</span></button>;})}</div></div>)}</div></>}
       <div className="duel-surrender">{surrender?<><span>Render-se entrega a vitória a {d.foe.character.name}. Tem certeza?</span>
         <button type="button" className="danger-button" disabled={busy} onClick={forfeit}>Sim, me rendo</button><button type="button" disabled={busy} onClick={()=>setSurrender(false)}>Continuar lutando</button></>
-        :<button type="button" disabled={busy} onClick={()=>setSurrender(true)}><Icon name="Haste Icon" size={20}/> Render-se</button>}</div></>
+        :<button type="button" disabled={busy} onClick={()=>setSurrender(true)}><Icon name="Boots of Haste" size={20}/> Render-se</button>}</div></>
     :<div className="battle-result"><h2>{result}</h2><p>{d.winnerId===hero.id?`Você venceu ${d.foe.character.name}.`:d.winnerId===null?`Você e ${d.foe.character.name} terminaram sem vencedor.`:`${d.foe.character.name} venceu o duelo.`} {outcomeLabels[d.outcome]}.</p>
       {d.honorDelta>0&&<p>{d.winnerId===hero.id?`+${d.honorDelta}`:`−${d.honorDelta}`} de honra.</p>}
       {d.mode==='GOLD'&&BigInt(d.stake)>0n&&<p>{d.winnerId===null?`A aposta de ${gold(d.stake)} voltou para cada um.`:d.winnerId===hero.id?`Você levou o pote: +${gold(BigInt(d.stake)*2n-BigInt(d.fee))} de ouro (taxa da arena ${gold(d.fee)}).`:`Você perdeu a aposta de ${gold(d.stake)} de ouro.`}</p>}
@@ -242,6 +242,6 @@ function RoundCard({r,meId,d}:{r:DuelRoundRecord;meId:number;d:Duel}){
     return <article className={`turn-side ${mine?'hero-side':'foe-side'} ${m.crit?'crit':''}`}><Icon name={actionIcon[m.action]??'Sword'} size={40}/>
       <div><small>{who} · {name}{m.first?' · agiu primeiro':''}</small><b>{m.auto?'Defender':label}</b><p className="turn-number">{big}</p><p className="turn-tag">{tag}</p></div></article>;};
   return <div className="turn-log" aria-live="polite"><div className="turn-head"><h3>Última rodada · Rodada {r.round}</h3></div>
-    <div className="turn-duel">{side(me,'Seu golpe',d.me.character.name,true)}<span className="turn-vs" aria-hidden="true"><Icon name="Logout Block Icon" size={27}/></span>{side(foe,'Golpe do oponente',d.foe.character.name,false)}</div>
+    <div className="turn-duel">{side(me,'Seu golpe',d.me.character.name,true)}<span className="turn-vs" aria-hidden="true"><Icon name="Sword" size={27}/></span>{side(foe,'Golpe do oponente',d.foe.character.name,false)}</div>
     {r.lines.length>0&&<div className="battle-log duel-lines">{r.lines.map((l,i)=><p key={i}>{l}</p>)}</div>}</div>;
 }

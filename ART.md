@@ -2,7 +2,7 @@
 
 > Arquivo gerado por `npm run art` a partir de `scripts/art.mjs`. Para mudar um comando, edite a lista naquele arquivo e rode de novo.
 
-A arena de batalha está trocando os sprites do TibiaWiki por arte própria. Cada personagem vem numa folha só, sempre no mesmo formato. Hoje **59 de 64** folhas estão prontas.
+A arena de batalha usa só arte própria. Cada personagem vem numa folha só, sempre no mesmo formato. Hoje **59 de 64** folhas estão prontas.
 
 ## Como usar
 1. Copie o comando inteiro do personagem e cole no ChatGPT (gere um personagem por vez).
@@ -20,7 +20,7 @@ Só as folhas novas ou alteradas são refeitas (`art/web.json` guarda o que já 
 ## Formato de toda folha
 - 1024 × 1536 px, fundo transparente, 4 colunas × 6 linhas, quadros de 256 × 256 px, personagem virado para a direita.
 - Linhas: 1 parado, 2 avançar, 3 atacar, 4 defender, 5 curar (heróis) ou gesto especial (criaturas), 6 apanhar (2 quadros) e cair (2 quadros).
-- A folha de efeitos (`efeitos.png`) usa a mesma grade: linhas 1 a 3, um projétil parado por quadro, apontando para a direita; linha 4 escudo de guarda, 5 cura e 6 impacto, com 4 quadros cada. Enquanto ela não existe, a arena usa os ícones do TibiaWiki.
+- A folha de efeitos (`efeitos.png`) usa a mesma grade: linhas 1 a 3, um projétil parado por quadro, apontando para a direita; linha 4 escudo de guarda, 5 cura e 6 impacto, com 4 quadros cada. Enquanto ela não existe, a arena usa uma esfera de luz própria.
 
 ## Se o GPT errar
 - Grade torta: "refaça mantendo o personagem, mas alinhe a grade em 4 × 6 com quadros de 256 px".
@@ -1558,7 +1558,7 @@ Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel, paleta limitad
 
 ## Efeitos
 
-O que voa num ataque à distância e os brilhos da arena. Com esta folha pronta, a arena deixa de usar os ícones do TibiaWiki para a flecha, as runas que voam e o escudo de guarda, e ganha a cura e o impacto desenhados. Os dois últimos quadros da linha 3 (espinhos e pedra) são reserva: ainda nenhum golpe os usa.
+O que voa num ataque à distância e os brilhos da arena. Com esta folha pronta, a arena deixa de usar a esfera de luz para a flecha, as runas que voam e o escudo de guarda, e ganha a cura e o impacto desenhados. Os dois últimos quadros da linha 3 (espinhos e pedra) são reserva: ainda nenhum golpe os usa.
 
 ### Efeitos da arena · `efeitos.png` · falta
 

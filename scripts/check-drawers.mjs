@@ -25,7 +25,8 @@ for (const file of files) {
   const from = file.split(path.sep);
   for (const target of importsOf(file)) {
     const t = target.split(path.sep);
-    if (t[0] === 'frontend' && t[1] === 'public') continue; // dados estáticos (ex.: manifest de sprites) podem ser lidos pelo seed
+    if (t[0] === 'frontend' && t[1] === 'public') continue; // dados estáticos (ex.: listas de arte) podem ser lidos pelo seed
+    if (from[0] === 'backend' && t[0] === 'frontend' && t[1] === 'src' && t[2] === 'lib' && target.endsWith('.json')) continue; // listas de arte (spriteSheets.json) que o seed lê
     // regras globais
     if (from[0] === 'shared' && (t[0] === 'backend' || t[0] === 'frontend')) problems.push(`${file}: shared não pode importar ${t[0]}`);
     if (from[0] === 'frontend' && t[0] === 'backend') problems.push(`${file}: frontend não pode importar backend (use shared/)`);
