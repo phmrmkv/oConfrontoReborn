@@ -249,3 +249,11 @@ img.sprite.creature-art{image-rendering:auto;object-fit:contain}
 /* Na mochila, todo span filho direto vira a etiqueta do canto (style.css); a moldura volta ao fluxo, como o brilho do +7. No detalhe do item ela não estica. */
 .bag-slot>.rarity-frame{position:relative;right:auto;bottom:auto}
 .item-detail>.rarity-frame{align-self:flex-start;flex:0 0 auto}
+/* Comércio limitado (ui/BindingTag.tsx, shared/binding.ts). */
+.binding-tag{display:inline-block;vertical-align:middle;padding:1px 8px;border-radius:999px;font-family:Inter,"Segoe UI",sans-serif;font-size:12px;font-weight:600;line-height:1.5;white-space:nowrap;border:1px dashed currentColor}
+.binding-tag.bound{color:#e9a96b}
+.binding-tag.on-equip{color:#9fb7c9}
+:root[data-theme="light"] .binding-tag.bound{color:#8a3d0f}
+:root[data-theme="light"] .binding-tag.on-equip{color:#2f5674}
+.bag-slot.is-bound::before{content:"";position:absolute;left:6px;top:6px;width:7px;height:7px;border-radius:2px;background:#e9a96b;box-shadow:0 0 0 1px #0006}
+:root[data-theme="light"] .bag-slot.is-bound::before{background:#8a3d0f}

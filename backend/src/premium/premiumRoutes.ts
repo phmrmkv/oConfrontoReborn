@@ -60,7 +60,7 @@ premiumRoutes.post('/characters/:id/presets/:presetId/apply', asyncRoute(async (
       if (['LOOT', 'CONSUMABLE'].includes(bp.slot) || item.quantity !== 1 || bp.minLevel > c.level || !vocationAllowed(bp.vocations, c.vocation) || usedSlots.has(bp.slot)) { skipped++; continue; }
       usedSlots.add(bp.slot);
       await tx.inventoryItem.updateMany({ where: { characterId, equippedSlot: bp.slot, id: { not: item.id } }, data: { isEquipped: false, equippedSlot: null } });
-      await tx.inventoryItem.update({ where: { id: item.id }, data: { isEquipped: true, equippedSlot: bp.slot } });
+      await tx.inventoryItem.update({ where: { id: item.id }, data: { isEquipped: true, equippedSlot: bp.slot, ...(item.bindOnEquip ? { bound: true, bindOnEquip: false } : {}) } });
       equipped++;
     }
     return { equipped, skipped };

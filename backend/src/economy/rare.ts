@@ -15,7 +15,8 @@ export async function makeRare(tx: Tx, item: { id: number; blueprintId: number; 
   const last = await tx.rareItem.aggregate({ where: { blueprintId: item.blueprintId }, _max: { serial: true } });
   const serial = (last._max.serial ?? 0) + 1;
   const rare = await tx.rareItem.create({ data: { blueprintId: item.blueprintId, serial, creatorId, firstOfKind: serial === 1 } });
-  await tx.inventoryItem.update({ where: { id: item.id }, data: { rareItemId: rare.id } });
+  // Comércio limitado: o raro numerado é sempre livre (shared/binding.ts).
+  await tx.inventoryItem.update({ where: { id: item.id }, data: { rareItemId: rare.id, bound: false, bindOnEquip: false } });
   await tx.rareItemEvent.create({ data: { rareItemId: rare.id, kind: 'CREATED', detail: `Aprimorado até +${RARE_TIER} por ${creatorName}.` } });
   if (rare.firstOfKind) await tx.rareItemEvent.create({ data: { rareItemId: rare.id, kind: 'FIRST', detail: `Primeiro ${RARE_TIER === 10 ? '+10' : ''} deste tipo de equipamento.` } });
   return rare;

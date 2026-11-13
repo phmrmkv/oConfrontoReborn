@@ -125,7 +125,8 @@ export async function awaken(accountId: number, characterId: number, itemId: num
       if (c.bossFragments < cost) throw new GameError(409, `Faltam fragmentos de chefe: despertar para ${rarityName(target)} pede ${cost} e você tem ${c.bossFragments}.`);
       const left = await tx.character.update({ where: { id: characterId }, data: { bossFragments: { decrement: cost } }, select: { bossFragments: true } });
       if (left.bossFragments < 0) throw new GameError(409, 'Fragmentos insuficientes.');
-      await tx.inventoryItem.update({ where: { id: item.id }, data: { rarity: target } });
+      // Fragmentos não são negociáveis; o item despertado fica vinculado (a não ser que seja raro numerado, sempre livre).
+      await tx.inventoryItem.update({ where: { id: item.id }, data: { rarity: target, ...(item.rareItemId ? {} : { bound: true, bindOnEquip: false }) } });
       const ref = { type: 'item', id: item.id };
       await recordItem(tx, characterId, item.blueprintId, -1, 'FORGE_AWAKEN_OUT', ref, item.upgradeTier, item.rarity);
       await recordItem(tx, characterId, item.blueprintId, 1, 'FORGE_AWAKEN_IN', ref, item.upgradeTier, target);

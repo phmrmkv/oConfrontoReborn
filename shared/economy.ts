@@ -29,6 +29,7 @@ export interface SettingDef { default: number; min: number; max: number; label: 
 export const settingDefs = {
   'market.saleFeePercent': { default: 5, min: 0, max: 50, label: 'Taxa sobre vendas no mercado (mínimo 1 de ouro)', unit: '%', group: 'Mercado' },
   'market.listingFeeGold': { default: 10, min: 0, max: 1_000_000, label: 'Taxa fixa para anunciar', unit: 'ouro', group: 'Mercado' },
+  'market.rareSaleFeePercent': { default: 10, min: 0, max: 50, label: 'Taxa sobre a venda de itens raros numerados (+10), que estão sempre livres no comércio limitado', unit: '%', group: 'Mercado' },
   'market.durationHours': { default: 48, min: 1, max: 720, label: 'Duração dos anúncios', unit: 'horas', group: 'Mercado' },
   // Contra contas descartáveis que só existem para passar ouro e itens a uma conta principal.
   'market.minLevel': { default: 5, min: 1, max: 1000, label: 'Nível mínimo para anunciar e comprar no mercado', unit: 'nível', group: 'Mercado' },
