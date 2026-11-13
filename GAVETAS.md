@@ -11,7 +11,7 @@ O projeto é dividido em gavetas: cada pasta tem uma função, regras próprias 
 | Premium e pagamentos | `backend/src/premium` | `features/premium` |
 | perfil, recados, depoimentos, amigos, fórum | `backend/src/community` | `features/profile` |
 | cadastro, login, senha, e-mail, banimento | `backend/src/account` | `features/auth` |
-| app Confrontation (Godot): token, save na nuvem, tetos do idle, rankings | `backend/src/confrontation` | — (a tela é o app) |
+| app Confrontation (Godot): token, save na nuvem, tetos do idle, Prova da Vigília e poder calculados no servidor, rankings | `backend/src/confrontation` | — (a tela é o app) |
 | painel da equipe, punições, suporte | `backend/src/admin` | `features/admin`, `support` |
 | banco, erros, e-mail, monitoramento | `backend/src/core` | — |
 | regras usadas pelos dois lados | `shared/` | — |

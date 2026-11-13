@@ -9,6 +9,7 @@ import { addGold, addItem, assertNotFavorite, recordItem, takeStack } from '../e
 import { event } from './adventureService';
 import { requireIdle } from './gameService';
 import { npcBuyPrice, percentOf, type Settings } from '../../../shared/economy';
+import { rarityName } from '../../../shared/rarity';
 import { vocationAllowed } from '../../../shared/adventure';
 import { forgeMaterials, forgeableSlots, isForgeable, materialForLevel, reforgeKeptTier, salvageReturn } from '../../../shared/forge';
 type Tx = Prisma.TransactionClient;
@@ -76,8 +77,9 @@ export async function reforge(accountId: number, characterId: number, itemId: nu
       await addGold(tx, characterId, -gold, 'FORGE_REFORGE', ref);
       // O mesmo item (mesma linha, mesmo slot se estiver equipado) passa a ser o novo; o extrato registra a troca.
       await tx.inventoryItem.update({ where: { id: item.id }, data: { blueprintId: target.id, upgradeTier: tier } });
-      await recordItem(tx, characterId, item.blueprintId, -1, 'FORGE_REFORGE_OUT', ref, item.upgradeTier);
-      await recordItem(tx, characterId, target.id, 1, 'FORGE_REFORGE_IN', ref, tier);
+      // A raridade é do exemplar: continua a mesma depois de reforjar.
+      await recordItem(tx, characterId, item.blueprintId, -1, 'FORGE_REFORGE_OUT', ref, item.upgradeTier, item.rarity);
+      await recordItem(tx, characterId, target.id, 1, 'FORGE_REFORGE_IN', ref, tier, item.rarity);
       await event(tx, characterId, 'FORGE', `Reforjado: ${item.blueprint.name} → ${target.name}`, `Melhoria +${item.upgradeTier} virou +${tier}. Gastou ${qty} ${material.name} e ${gold} ouro.`);
       return { message: `${item.blueprint.name} virou ${target.name}${tier ? ` +${tier}` : ''}.` };
     });
@@ -94,10 +96,12 @@ export async function salvage(accountId: number, characterId: number, itemId: nu
       if (item.isEquipped || item.equippedSlot !== null) throw new GameError(409, 'Desequipe o item antes de desmontar.');
       if (item.upgradeTier > 0 && !confirmUpgraded)
         throw new GameError(409, `Este item está melhorado (+${item.upgradeTier}). Ao desmontar, a melhoria vira materiais extras e o item some. Confirme para continuar.`);
+      if (item.rarity > 0 && !confirmUpgraded)
+        throw new GameError(409, `Este exemplar é ${rarityName(item.rarity)}. Ao desmontar, ele some e rende o mesmo que um Comum. Confirme para continuar.`);
       const settings = await loadSettings(tx), material = await materialOf(tx, item.blueprint.minLevel);
       const qty = salvageReturn(settings['forge.salvageMaterials'], item.upgradeTier), ref = { type: 'blueprint', id: item.blueprintId };
       await tx.inventoryItem.delete({ where: { id: item.id } });
-      await recordItem(tx, characterId, item.blueprintId, -1, 'FORGE_SALVAGE', ref, item.upgradeTier);
+      await recordItem(tx, characterId, item.blueprintId, -1, 'FORGE_SALVAGE', ref, item.upgradeTier, item.rarity);
       if (qty > 0) await addItem(tx, characterId, material.id, qty, 'FORGE_SALVAGE_MATERIAL', ref);
       await event(tx, characterId, 'FORGE', `Desmontado: ${item.blueprint.name}`, `Recebeu ${qty} ${material.name}.`);
       return { message: `${item.blueprint.name} desmontado: +${qty} ${material.name}.` };

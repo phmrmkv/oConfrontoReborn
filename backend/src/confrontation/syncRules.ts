@@ -12,9 +12,9 @@ export interface Progress {
   items: number;
   /** Fase mais longe alcançada (`furthest`). */
   furthest: number;
-  /** Vigília mais alta (`counters.vigil_best`, ou `vigil` se maior). */
+  /** Andar da Prova da Vigília que a companhia do save alcança, calculado pelo servidor (`trial.ts`). O que o app diz da Vigília não é lido. */
   vigilBest: number;
-  /** Poder da companhia em campo, calculado pelo app com a fórmula do jogo. */
+  /** Poder da companhia em campo, somado pelo servidor com a fórmula do jogo (`trial.ts`). */
   power: bigint;
 }
 export type Metric = keyof Progress;
@@ -38,8 +38,12 @@ const bigFloor = (n: number) => (Number.isFinite(n) && n > 0 ? BigInt(Math.floor
  * Cada número pode crescer no máximo o teto × horas desde o último envio aceito (relógio do servidor).
  * Pode descer à vontade (um jogo novo, por exemplo): o "melhor de sempre" do ranking não desce.
  * `adjusted` lista as métricas cortadas.
+ *
+ * A Vigília e o poder saem da companhia que está em campo, e ela muda de um envio para o outro (um herói
+ * sai em expedição e volta). Por isso o teto dos dois parte do maior entre o último registro e o melhor já
+ * aceito da conta (`best`): voltar aonde já esteve nunca é cortado, só subir além disso.
  */
-export function capProgress(prev: Progress, claimed: Progress, hours: number, caps: Caps): { accepted: Progress; adjusted: Metric[] } {
+export function capProgress(prev: Progress, claimed: Progress, hours: number, caps: Caps, best: Pick<Progress, 'vigilBest' | 'power'> = prev): { accepted: Progress; adjusted: Metric[] } {
   const h = Math.max(0, Number.isFinite(hours) ? hours : 0);
   const adjusted: Metric[] = [];
   const maxStage = caps['confrontation.maxStage'];
@@ -54,11 +58,13 @@ export function capProgress(prev: Progress, claimed: Progress, hours: number, ca
   const xpTotal = clampBig('xpTotal', claimed.xpTotal, prev.xpTotal + bigFloor(perHourAtStage(caps['confrontation.xpPerHour'], growth, stage) * h));
   const items = clampNum('items', claimed.items, prev.items + Math.floor(caps['confrontation.itemsPerHour'] * h));
   // A Vigília só existe depois da última fase da campanha.
-  const vigilLimit = furthest >= maxStage ? prev.vigilBest + Math.floor(caps['confrontation.vigilPerHour'] * h) : prev.vigilBest;
+  const vigilFrom = Math.max(prev.vigilBest, best.vigilBest);
+  const vigilLimit = furthest >= maxStage ? vigilFrom + Math.floor(caps['confrontation.vigilPerHour'] * h) : prev.vigilBest;
   const vigilBest = clampNum('vigilBest', claimed.vigilBest, vigilLimit);
-  // Poder: o maior entre crescer uma porcentagem do último verificado e somar um tanto fixo por hora (para quem parte de pouco).
-  const byPercent = prev.power + bigFloor(Number(prev.power) * caps['confrontation.powerPercentPerHour'] / 100 * h);
-  const byFlat = prev.power + bigFloor(caps['confrontation.powerPerHour'] * h);
+  // Poder: o maior entre crescer uma porcentagem do ponto de partida e somar um tanto fixo por hora (para quem parte de pouco).
+  const powerFrom = prev.power > best.power ? prev.power : best.power;
+  const byPercent = powerFrom + bigFloor(Number(powerFrom) * caps['confrontation.powerPercentPerHour'] / 100 * h);
+  const byFlat = powerFrom + bigFloor(caps['confrontation.powerPerHour'] * h);
   const power = clampBig('power', claimed.power, byPercent > byFlat ? byPercent : byFlat);
   return { accepted: { goldTotal, xpTotal, items, furthest, vigilBest, power }, adjusted };
 }
@@ -79,17 +85,20 @@ export function isConfrontationSave(data: unknown): data is Record<string, unkno
   return isObject(data) && data.v === 1 && Array.isArray(data.members) && isObject(data.counters) && typeof data.gold === 'number';
 }
 
-/** Lê o progresso de um save e do resumo que o app manda junto (só o poder, que depende das fórmulas do jogo). */
-export function progressOf(data: Record<string, unknown>, summary: unknown): Progress {
+/**
+ * Lê o progresso de um save. O poder e a Vigília não vêm do app: são os que o servidor calculou da companhia
+ * do save (`computed`, de `runTrial`). O andar da Prova só conta para quem chegou à última fase da campanha.
+ */
+export function progressOf(data: Record<string, unknown>, computed: { power: number; floor: number }, maxStage: number): Progress {
   const counters = isObject(data.counters) ? data.counters : {};
-  const s = isObject(summary) ? summary : {};
+  const furthest = Math.max(1, int(data.furthest));
   return {
     goldTotal: big(counters.gold),
     xpTotal: big(counters.xp),
     items: int(counters.items),
-    furthest: Math.max(1, int(data.furthest)),
-    vigilBest: Math.max(int(counters.vigil_best), int(data.vigil)),
-    power: big(s.power),
+    furthest,
+    vigilBest: furthest >= maxStage ? int(computed.floor) : 0,
+    power: big(computed.power),
   };
 }
 

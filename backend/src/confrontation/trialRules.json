@@ -1,0 +1,862 @@
+{
+	"version": 1,
+	"stats": [
+		"max_hp",
+		"attack_damage",
+		"attack_speed",
+		"crit_chance",
+		"crit_damage",
+		"armor",
+		"dodge",
+		"block",
+		"range",
+		"move_speed"
+	],
+	"heroes": {
+		"knight": {
+			"class": "Vanguard",
+			"ranged": false,
+			"element": "phys",
+			"promotes": true,
+			"max_hp": 210.0,
+			"attack_damage": 6.0,
+			"attack_speed": 1.0,
+			"crit_chance": 0.05,
+			"crit_damage": 2.0,
+			"armor": 48.0,
+			"dodge": 0.04,
+			"block": 0.18,
+			"range": 28.0,
+			"move_speed": 70.0
+		},
+		"ranger": {
+			"class": "Ranger",
+			"ranged": true,
+			"element": "phys",
+			"promotes": true,
+			"max_hp": 135.0,
+			"attack_damage": 9.0,
+			"attack_speed": 1.15,
+			"crit_chance": 0.1,
+			"crit_damage": 2.0,
+			"armor": 28.0,
+			"dodge": 0.03,
+			"block": 0.04,
+			"range": 200.0,
+			"move_speed": 70.0
+		},
+		"arcanist": {
+			"class": "Arcanist",
+			"ranged": true,
+			"element": "arcane",
+			"promotes": true,
+			"max_hp": 95.0,
+			"attack_damage": 12.0,
+			"attack_speed": 0.8,
+			"crit_chance": 0.06,
+			"crit_damage": 2.0,
+			"armor": 16.0,
+			"dodge": 0.02,
+			"block": 0.0,
+			"range": 240.0,
+			"move_speed": 70.0
+		},
+		"paladin": {
+			"class": "Ranger",
+			"ranged": true,
+			"element": "phys",
+			"promotes": true,
+			"max_hp": 170.0,
+			"attack_damage": 7.0,
+			"attack_speed": 1.0,
+			"crit_chance": 0.05,
+			"crit_damage": 2.0,
+			"armor": 40.0,
+			"dodge": 0.03,
+			"block": 0.1,
+			"range": 160.0,
+			"move_speed": 70.0
+		},
+		"barbarian": {
+			"class": "Vanguard",
+			"ranged": false,
+			"element": "phys",
+			"promotes": true,
+			"max_hp": 230.0,
+			"attack_damage": 9.0,
+			"attack_speed": 0.9,
+			"crit_chance": 0.1,
+			"crit_damage": 2.2,
+			"armor": 35.0,
+			"dodge": 0.02,
+			"block": 0.05,
+			"range": 30.0,
+			"move_speed": 70.0
+		},
+		"druid": {
+			"class": "Arcanist",
+			"ranged": true,
+			"element": "arcane",
+			"promotes": true,
+			"max_hp": 110.0,
+			"attack_damage": 4.0,
+			"attack_speed": 0.9,
+			"crit_chance": 0.05,
+			"crit_damage": 2.0,
+			"armor": 22.0,
+			"dodge": 0.03,
+			"block": 0.02,
+			"range": 200.0,
+			"move_speed": 70.0,
+			"heal": {
+				"every": 4.0,
+				"mult": 3.0
+			}
+		}
+	},
+	"creatures": {
+		"barrowghoul": {
+			"ranged": false,
+			"element": "phys",
+			"aspect": "sino",
+			"undead": false,
+			"max_hp": 210.0,
+			"attack_damage": 36.0,
+			"attack_speed": 0.65,
+			"crit_chance": 0.08,
+			"crit_damage": 1.7,
+			"armor": 19.0,
+			"dodge": 0.02,
+			"block": 0.0,
+			"range": 28.0,
+			"move_speed": 18.0
+		},
+		"gravehorse": {
+			"ranged": false,
+			"element": "phys",
+			"aspect": "sino",
+			"undead": false,
+			"max_hp": 85.0,
+			"attack_damage": 22.0,
+			"attack_speed": 1.05,
+			"crit_chance": 0.08,
+			"crit_damage": 1.5,
+			"armor": 5.0,
+			"dodge": 0.14,
+			"block": 0.0,
+			"range": 24.0,
+			"move_speed": 30.0
+		},
+		"bonespitter": {
+			"ranged": true,
+			"element": "phys",
+			"aspect": "nevoa",
+			"undead": true,
+			"max_hp": 150.0,
+			"attack_damage": 29.0,
+			"attack_speed": 0.7,
+			"crit_chance": 0.1,
+			"crit_damage": 1.6,
+			"armor": 6.0,
+			"dodge": 0.04,
+			"block": 0.0,
+			"range": 200.0,
+			"move_speed": 12.0
+		},
+		"fenrider": {
+			"ranged": false,
+			"element": "phys",
+			"aspect": "nevoa",
+			"undead": false,
+			"max_hp": 160.0,
+			"attack_damage": 29.0,
+			"attack_speed": 0.65,
+			"crit_chance": 0.08,
+			"crit_damage": 1.7,
+			"armor": 18.0,
+			"dodge": 0.02,
+			"block": 0.0,
+			"range": 28.0,
+			"move_speed": 18.0
+		},
+		"shade": {
+			"ranged": false,
+			"element": "phys",
+			"aspect": "sino",
+			"undead": true,
+			"max_hp": 50.0,
+			"attack_damage": 14.0,
+			"attack_speed": 1.05,
+			"crit_chance": 0.08,
+			"crit_damage": 1.5,
+			"armor": 4.0,
+			"dodge": 0.14,
+			"block": 0.0,
+			"range": 24.0,
+			"move_speed": 26.0
+		},
+		"marrowman": {
+			"ranged": false,
+			"element": "phys",
+			"aspect": "nevoa",
+			"undead": true,
+			"max_hp": 100.0,
+			"attack_damage": 15.0,
+			"attack_speed": 0.9,
+			"crit_chance": 0.05,
+			"crit_damage": 1.5,
+			"armor": 9.0,
+			"dodge": 0.03,
+			"block": 0.0,
+			"range": 24.0,
+			"move_speed": 16.0
+		},
+		"belllich": {
+			"ranged": true,
+			"element": "arcane",
+			"aspect": "sino",
+			"undead": false,
+			"max_hp": 6500.0,
+			"attack_damage": 54.0,
+			"attack_speed": 0.65,
+			"crit_chance": 0.08,
+			"crit_damage": 1.6,
+			"armor": 37.0,
+			"dodge": 0.08,
+			"block": 0.0,
+			"range": 240.0,
+			"move_speed": 14.0
+		}
+	},
+	"point_inc": {
+		"armor": 0.3,
+		"attack_damage": 0.01,
+		"attack_speed": 0.002,
+		"block": 0.0001,
+		"crit_chance": 0.0003,
+		"crit_damage": 0.006,
+		"dodge": 0.0002,
+		"max_hp": 0.01,
+		"move_speed": 0.15
+	},
+	"power_weights": {
+		"attack_damage": 10.0,
+		"attack_speed": 200.0,
+		"crit_chance": 200.0,
+		"crit_damage": 25.0,
+		"max_hp": 0.5,
+		"armor": 1.1,
+		"dodge": 210.0,
+		"block": 110.0,
+		"range": 0.0,
+		"move_speed": 0.3
+	},
+	"cap_dodge": 0.6,
+	"cap_block": 0.6,
+	"cap_mitigation": 0.7,
+	"armor_k": 100.0,
+	"hero_resist": 0.25,
+	"enchant_step": 0.03,
+	"refine_step": 0.06,
+	"refine_max": 10,
+	"promote_level": 20,
+	"promote_stats": 0.12,
+	"max_level": 30,
+	"points_per_level": 5,
+	"licences": [
+		[
+			{
+				"type": "stat",
+				"stat": "attack_damage",
+				"value": 0.2,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "attack_speed",
+				"value": 0.04,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "crit_chance",
+				"value": 0.012,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "crit_damage",
+				"value": 0.15,
+				"kind": "flat"
+			},
+			{
+				"type": "stat",
+				"stat": "attack_damage",
+				"value": 0.25,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "crit_chance",
+				"value": 0.015,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "attack_damage",
+				"value": 0.31,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "attack_speed",
+				"value": 0.05,
+				"kind": "percent"
+			}
+		],
+		[
+			{
+				"type": "stat",
+				"stat": "max_hp",
+				"value": 0.12,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "armor",
+				"value": 0.04,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "dodge",
+				"value": 0.012,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "block",
+				"value": 0.012,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "max_hp",
+				"value": 0.15,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "armor",
+				"value": 0.05,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "max_hp",
+				"value": 0.19,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "block",
+				"value": 0.015,
+				"kind": "percent"
+			}
+		],
+		[
+			{
+				"type": "gold",
+				"stat": "",
+				"value": 0.08,
+				"kind": ""
+			},
+			{
+				"type": "gold",
+				"stat": "",
+				"value": 0.1,
+				"kind": ""
+			},
+			{
+				"type": "sell",
+				"stat": "",
+				"value": 0.1,
+				"kind": ""
+			},
+			{
+				"type": "gold",
+				"stat": "",
+				"value": 0.12,
+				"kind": ""
+			},
+			{
+				"type": "sell",
+				"stat": "",
+				"value": 0.12,
+				"kind": ""
+			},
+			{
+				"type": "inventory",
+				"stat": "",
+				"value": 1.0,
+				"kind": ""
+			},
+			{
+				"type": "inventory",
+				"stat": "",
+				"value": 1.0,
+				"kind": ""
+			},
+			{
+				"type": "gold",
+				"stat": "",
+				"value": 0.16,
+				"kind": ""
+			}
+		],
+		[
+			{
+				"type": "xp",
+				"stat": "",
+				"value": 0.07,
+				"kind": ""
+			},
+			{
+				"type": "xp",
+				"stat": "",
+				"value": 0.08,
+				"kind": ""
+			},
+			{
+				"type": "xp",
+				"stat": "",
+				"value": 0.1,
+				"kind": ""
+			},
+			{
+				"type": "offline",
+				"stat": "",
+				"value": 360.0,
+				"kind": ""
+			},
+			{
+				"type": "xp",
+				"stat": "",
+				"value": 0.13,
+				"kind": ""
+			},
+			{
+				"type": "offline",
+				"stat": "",
+				"value": 360.0,
+				"kind": ""
+			},
+			{
+				"type": "stash",
+				"stat": "",
+				"value": 1.0,
+				"kind": ""
+			},
+			{
+				"type": "xp",
+				"stat": "",
+				"value": 0.16,
+				"kind": ""
+			}
+		],
+		[
+			{
+				"type": "drop",
+				"stat": "",
+				"value": 0.07,
+				"kind": ""
+			},
+			{
+				"type": "drop",
+				"stat": "",
+				"value": 0.09,
+				"kind": ""
+			},
+			{
+				"type": "subjugate",
+				"stat": "",
+				"value": 0.007,
+				"kind": ""
+			},
+			{
+				"type": "drop",
+				"stat": "",
+				"value": 0.11,
+				"kind": ""
+			},
+			{
+				"type": "troop",
+				"stat": "",
+				"value": 1.0,
+				"kind": ""
+			},
+			{
+				"type": "subjugate",
+				"stat": "",
+				"value": 0.009,
+				"kind": ""
+			},
+			{
+				"type": "allyhp",
+				"stat": "",
+				"value": 0.1,
+				"kind": ""
+			},
+			{
+				"type": "troop",
+				"stat": "",
+				"value": 1.0,
+				"kind": ""
+			}
+		],
+		[
+			{
+				"type": "stat",
+				"stat": "move_speed",
+				"value": 0.06,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "move_speed",
+				"value": 0.07,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "range",
+				"value": 10.0,
+				"kind": "flat"
+			},
+			{
+				"type": "stat",
+				"stat": "dodge",
+				"value": 0.012,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "move_speed",
+				"value": 0.09,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "range",
+				"value": 12.5,
+				"kind": "flat"
+			},
+			{
+				"type": "stat",
+				"stat": "dodge",
+				"value": 0.015,
+				"kind": "percent"
+			},
+			{
+				"type": "stat",
+				"stat": "move_speed",
+				"value": 0.12,
+				"kind": "percent"
+			}
+		]
+	],
+	"pets": {
+		"wolf": {
+			"bonus": "xp",
+			"amount": 0.15
+		},
+		"unicorn": {
+			"bonus": "life",
+			"amount": 0.1
+		},
+		"eagle": {
+			"bonus": "drop",
+			"amount": 0.1
+		},
+		"dragon": {
+			"bonus": "gold",
+			"amount": 0.15
+		}
+	},
+	"item_stats": {
+		"weapon": {
+			"attack_damage": [
+				4.0,
+				16.0
+			],
+			"crit_chance": [
+				0.012,
+				0.05
+			],
+			"crit_damage": [
+				0.05,
+				0.2
+			]
+		},
+		"offhand": {
+			"block": [
+				0.012,
+				0.048
+			],
+			"armor": [
+				6.75,
+				27.0
+			],
+			"max_hp": [
+				15.4,
+				55.0
+			],
+			"crit_chance": [
+				0.009,
+				0.038
+			]
+		},
+		"armor": {
+			"armor": [
+				9.0,
+				36.0
+			],
+			"max_hp": [
+				28.0,
+				100.0
+			],
+			"block": [
+				0.009,
+				0.036
+			]
+		},
+		"helm": {
+			"max_hp": [
+				22.4,
+				80.0
+			],
+			"armor": [
+				6.3,
+				25.2
+			],
+			"block": [
+				0.011,
+				0.043
+			]
+		},
+		"pants": {
+			"armor": [
+				6.3,
+				25.2
+			],
+			"max_hp": [
+				19.6,
+				70.0
+			],
+			"move_speed": [
+				4.675,
+				20.4
+			]
+		},
+		"boots": {
+			"move_speed": [
+				5.5,
+				24.0
+			],
+			"dodge": [
+				0.009,
+				0.041
+			],
+			"max_hp": [
+				8.4,
+				30.0
+			]
+		},
+		"gloves": {
+			"attack_damage": [
+				1.8,
+				7.2
+			],
+			"crit_chance": [
+				0.01,
+				0.043
+			],
+			"crit_damage": [
+				0.08,
+				0.32
+			]
+		},
+		"necklace": {
+			"attack_damage": [
+				1.2,
+				4.8
+			],
+			"crit_chance": [
+				0.008,
+				0.035
+			],
+			"crit_damage": [
+				0.045,
+				0.18
+			]
+		},
+		"earring": {
+			"crit_chance": [
+				0.008,
+				0.035
+			],
+			"crit_damage": [
+				0.04,
+				0.16
+			]
+		},
+		"ring": {
+			"crit_chance": [
+				0.008,
+				0.035
+			],
+			"crit_damage": [
+				0.053,
+				0.21
+			],
+			"dodge": [
+				0.006,
+				0.025
+			]
+		},
+		"bracelet": {
+			"crit_chance": [
+				0.008,
+				0.035
+			],
+			"crit_damage": [
+				0.053,
+				0.21
+			],
+			"block": [
+				0.006,
+				0.024
+			]
+		},
+		"cape": {
+			"max_hp": [
+				22.4,
+				80.0
+			],
+			"dodge": [
+				0.01,
+				0.045
+			],
+			"armor": [
+				5.4,
+				21.6
+			]
+		}
+	},
+	"rarities": [
+		{
+			"stat": 1.0,
+			"lines": 0
+		},
+		{
+			"stat": 1.35,
+			"lines": 0
+		},
+		{
+			"stat": 1.82,
+			"lines": 1
+		},
+		{
+			"stat": 2.46,
+			"lines": 1
+		},
+		{
+			"stat": 3.32,
+			"lines": 2
+		},
+		{
+			"stat": 4.48,
+			"lines": 2
+		},
+		{
+			"stat": 6.05,
+			"lines": 3
+		},
+		{
+			"stat": 8.17,
+			"lines": 4
+		},
+		{
+			"stat": 11.03,
+			"lines": 5
+		},
+		{
+			"stat": 14.89,
+			"lines": 6
+		}
+	],
+	"mod_roll_high": 1.15,
+	"mod_level_from": 6.0,
+	"mod_level_span": 25.0,
+	"mod_level_cap": 1.5,
+	"item_level_max": 30,
+	"slots": [
+		"weapon",
+		"offhand",
+		"armor",
+		"helm",
+		"pants",
+		"boots",
+		"gloves",
+		"necklace",
+		"earring",
+		"ring1",
+		"bracelet",
+		"cape"
+	],
+	"slot_kind": {
+		"weapon": "weapon",
+		"offhand": "offhand",
+		"armor": "armor",
+		"helm": "helm",
+		"pants": "pants",
+		"boots": "boots",
+		"gloves": "gloves",
+		"necklace": "necklace",
+		"earring": "earring",
+		"ring1": "ring",
+		"bracelet": "bracelet",
+		"cape": "cape"
+	},
+	"elements": {
+		"brasa": "raiz",
+		"raiz": "nevoa",
+		"nevoa": "brasa",
+		"sino": ""
+	},
+	"element_edge": 0.25,
+	"undead_bane": "sino",
+	"trial": {
+		"enemies": [
+			"barrowghoul",
+			"gravehorse",
+			"bonespitter",
+			"fenrider",
+			"shade",
+			"fenrider",
+			"barrowghoul",
+			"fenrider",
+			"barrowghoul",
+			"barrowghoul",
+			"marrowman",
+			"bonespitter",
+			"belllich"
+		],
+		"hp_mult": 38.781,
+		"damage_mult": 4.1562,
+		"base": 1.0,
+		"step": 0.1,
+		"seconds": 120.0,
+		"max_floor": 256
+	}
+}

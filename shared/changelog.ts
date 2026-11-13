@@ -6,6 +6,13 @@ export const changelog: ChangelogEntry[] = [
     'No Fórum e no Perfil, os botões de enviar ficam desligados enquanto uma ação está a caminho.',
     'Denunciar duas vezes o mesmo texto não abre dois atendimentos: o jogo avisa que a equipe já está analisando. Cada conta pode ter até 10 denúncias em análise, contadas à parte dos pedidos de ajuda.',
   ] },
+  { id: '2026-11-12-raridade-dos-equipamentos', date: '2026-11-12', title: 'Equipamentos agora têm raridade', items: [
+    'Cada equipamento que cai pode vir Comum, Incomum, Raro, Épico, Lendário ou Mítico. Quanto mais raro, mais ataque, magia, defesa e armadura o mesmo item entrega (até +40% no Mítico). Chefes têm três vezes mais chance de derrubar exemplares acima de Comum.',
+    'A raridade aparece como uma moldura colorida em volta do ícone e uma etiqueta ao lado do nome: verde, azul, roxo, dourado e vermelho.',
+    'Ela é do exemplar: continua a mesma ao melhorar, reforjar, vender no Mercado ou trocar de dono no Espólio. O Mercado ganhou um filtro por raridade.',
+    'No duelo só metade da vantagem da raridade vale, para o equipamento não decidir a luta sozinho.',
+    'O que você já tinha na mochila continua igual: é Comum. Os itens +10 numerados seguem como antes; a raridade é outra coisa e pode se somar a eles.',
+  ] },
   { id: '2026-11-12-app-no-site', date: '2026-11-12', title: 'O app Confrontation aparece no site', items: [
     'A aba App Confrontation, em Comunidade, mostra o progresso que a sua conta enviou pelo app: fase mais longe, poder da companhia, Vigília, ouro ganho e itens coletados.',
     'Na mesma aba ficam os rankings do app, desta semana e geral, com a sua posição. O ouro do app e o ouro deste jogo continuam separados.',

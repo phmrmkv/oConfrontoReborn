@@ -77,10 +77,27 @@ test('horas pelo relógio do servidor; primeiro envio usa a franquia', () => {
 test('lê o progresso do save e ignora lixo', () => {
   const data = { v: 1, members: [], gold: 50.7, furthest: 4, vigil: 3, counters: { gold: 1234.9, xp: 99, items: 7, vigil_best: 2 } };
   assert(isConfrontationSave(data));
-  assert.deepEqual(progressOf(data, { power: 777.4 }), { goldTotal: 1234n, xpTotal: 99n, items: 7, furthest: 4, vigilBest: 3, power: 777n });
-  assert.deepEqual(progressOf({ v: 1, counters: { gold: -5, xp: 'x', items: Infinity } }, null), freshProgress());
+  // O poder e a Vigília são os que o servidor calculou; o que o save diz da Vigília (vigil, vigil_best) não é lido.
+  assert.deepEqual(progressOf(data, { power: 777.4, floor: 9 }, 20), { goldTotal: 1234n, xpTotal: 99n, items: 7, furthest: 4, vigilBest: 0, power: 777n });
+  assert.deepEqual(progressOf({ ...data, furthest: 20 }, { power: 777.4, floor: 9 }, 20).vigilBest, 9, 'na última fase o andar da Prova conta');
+  assert.deepEqual(progressOf({ v: 1, counters: { gold: -5, xp: 'x', items: Infinity } }, { power: -3, floor: Number.NaN }, 20), freshProgress());
   assert(!isConfrontationSave({ v: 2, members: [], counters: {}, gold: 0 }));
   assert(!isConfrontationSave([]));
+});
+
+test('Vigília e poder: voltar aonde a conta já esteve não é cortado, subir além disso é', () => {
+  // A companhia ficou mais fraca (um herói em expedição) e o registro desceu; o melhor já aceito ficou no ranking.
+  const prev = at({ furthest: 20, vigilBest: 3, power: 23_000n }), best = { vigilBest: 12, power: 28_000n };
+  const back = capProgress(prev, at({ furthest: 20, vigilBest: 12, power: 28_000n }), 0, caps, best);
+  assert.deepEqual(back.adjusted, []); assert.equal(back.accepted.vigilBest, 12); assert.equal(back.accepted.power, 28_000n);
+  const beyond = capProgress(prev, at({ furthest: 20, vigilBest: 40, power: 90_000n }), 0, caps, best);
+  assert.deepEqual(beyond.adjusted, ['vigilBest', 'power']); assert.equal(beyond.accepted.vigilBest, 12); assert.equal(beyond.accepted.power, 28_000n);
+  // Sem o melhor da conta (primeiro envio), o ponto de partida é o último registro, como antes.
+  const plain = capProgress(prev, at({ furthest: 20, vigilBest: 12, power: 28_000n }), 0, caps);
+  assert.deepEqual(plain.adjusted, ['vigilBest', 'power']);
+  // Uma hora depois sobe até o teto da hora, contado a partir do melhor.
+  const hour = capProgress(prev, at({ furthest: 20, vigilBest: 999, power: 28_000n }), 1, caps, best);
+  assert.equal(hour.accepted.vigilBest, 12 + caps['confrontation.vigilPerHour']);
 });
 
 test('ouro cortado sai do ouro em mãos e do total, sem ficar negativo', () => {

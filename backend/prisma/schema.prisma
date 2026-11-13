@@ -194,6 +194,8 @@ model InventoryItem {
   isEquipped   Boolean       @default(false)
   equippedSlot ItemSlot?
   upgradeTier  Int           @default(0)
+  // Raridade do exemplar: 0 Comum … 5 Mítico (shared/rarity.ts). Só equipamento sai acima de Comum.
+  rarity       Int           @default(0)
   favorite     Boolean       @default(false)
   rareItemId   Int?          @unique
   rareItem     RareItem?     @relation(fields: [rareItemId], references: [id])
@@ -261,6 +263,7 @@ model MarketListing {
   blueprint   ItemBlueprint @relation(fields: [blueprintId], references: [id])
   quantity    Int           @default(1)
   upgradeTier Int           @default(0)
+  rarity      Int           @default(0)
   rareItemId  Int?
   rareItem    RareItem?     @relation(fields: [rareItemId], references: [id])
   price       BigInt
@@ -406,6 +409,7 @@ model ItemLedger {
   blueprintId Int
   delta       Int
   upgradeTier Int       @default(0)
+  rarity      Int       @default(0)
   reason      String    @db.VarChar(32)
   refType     String?   @db.VarChar(24)
   refId       Int?
@@ -844,6 +848,7 @@ model DuelLoot {
   inventoryItemId Int
   blueprintId     Int
   upgradeTier     Int           @default(0)
+  rarity          Int           @default(0)
   ransomPrice     BigInt
   status          String        @default("OPEN") @db.VarChar(10)
   expiresAt       DateTime

@@ -25,13 +25,13 @@ economyRoutes.get('/characters/:id/market/history', asyncRoute(async (req, res) 
   if (!await prisma.character.findFirst({ where: { id: characterId, accountId: res.locals.accountId }, select: { id: true } })) throw new GameError(404, 'Personagem não encontrado.');
   const where = { status: { not: 'OPEN' as const }, OR: [{ sellerId: characterId }, { buyerId: characterId }] };
   const [rows, total] = await Promise.all([prisma.marketListing.findMany({ where, include: { blueprint: { select: { name: true, spriteUrl: true } } }, orderBy: { id: 'desc' }, skip, take }), prisma.marketListing.count({ where })]);
-  res.json(paged(rows.map(l => ({ id: l.id, item: l.blueprint, quantity: l.quantity, upgradeTier: l.upgradeTier, price: l.price.toString(), fee: l.fee.toString(), status: l.status,
+  res.json(paged(rows.map(l => ({ id: l.id, item: l.blueprint, quantity: l.quantity, upgradeTier: l.upgradeTier, rarity: l.rarity, price: l.price.toString(), fee: l.fee.toString(), status: l.status,
     role: l.sellerId === characterId ? 'SELLER' : 'BUYER', soldAt: l.soldAt, createdAt: l.createdAt })), total, page));
 }));
 // Preços recentes ajudam a precificar. Sem nomes de jogadores.
 economyRoutes.get('/market/sales', asyncRoute(async (_req, res) => {
   const rows = await prisma.marketListing.findMany({ where: { status: 'SOLD' }, include: { blueprint: { select: { name: true, spriteUrl: true } } }, orderBy: { id: 'desc' }, take: 20 });
-  res.json(rows.map(l => ({ id: l.id, item: l.blueprint, quantity: l.quantity, upgradeTier: l.upgradeTier, price: l.price.toString(), soldAt: l.soldAt })));
+  res.json(rows.map(l => ({ id: l.id, item: l.blueprint, quantity: l.quantity, upgradeTier: l.upgradeTier, rarity: l.rarity, price: l.price.toString(), soldAt: l.soldAt })));
 }));
 
 // ----- Itens raros (equipamentos +10): inspeção para qualquer jogador conectado -----

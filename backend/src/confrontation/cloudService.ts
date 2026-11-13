@@ -1,5 +1,6 @@
 // Save na nuvem do Confrontation e rankings. Um envio passa pelos tetos de `syncRules` dentro de uma
 // transação com a conta travada (`lockAccount`): dois envios ao mesmo tempo nunca gastam a mesma franquia de horas.
+// O poder e a Vigília de cada envio não são lidos do app: o servidor monta a companhia do save e calcula os dois (`trial.ts`).
 import { prisma, lockAccount } from '../core/db';
 import { GameError } from '../core/engine';
 import { loadSettings } from '../core/settings';
@@ -8,6 +9,7 @@ import {
   capProgress, hoursSince, isConfrontationSave, isoWeek, progressJson, progressOf, rankMetrics, withGoldCut,
   type Progress, type RankMetric,
 } from './syncRules';
+import { runTrial } from './trial';
 
 /** Tamanho máximo do save em texto JSON. O corpo da rota aceita um pouco mais (512 KB). */
 export const MAX_SAVE_CHARS = 450_000;
@@ -30,14 +32,18 @@ export async function loadSave(accountId: number) {
 }
 
 // `adjusted`: o que foi cortado — nomes das métricas de `Progress` e 'gold' (só o ouro em mãos, acima do total da vida).
+// `trial`: o que o servidor calculou da companhia deste save — andar da Prova da Vigília, poder e quantas peças vestidas
+// ele não contou (`rejected`: o jogo não poderia tê-las feito). O que entrou no registro, depois dos tetos, está em `verified`.
 export type PutResult =
   | { conflict: true; version: number; savedAt: string }
-  | { conflict: false; version: number; savedAt: string; adjusted: string[]; hours: number; verified: ReturnType<typeof progressJson>; data?: unknown };
+  | { conflict: false; version: number; savedAt: string; adjusted: string[]; hours: number; verified: ReturnType<typeof progressJson>;
+      trial: { floor: number; power: number; rejected: number }; data?: unknown };
 
 /**
  * Guarda um save novo. `baseVersion` é a versão que o app recebeu por último (0 = nunca enviou);
  * se a nuvem tem outra, é conflito (outro aparelho enviou antes), a menos que `force`.
  * Com ou sem `force`, os tetos valem contra o último registro verificado.
+ * O `summary` que versões antigas do app mandam junto (o poder calculado lá) não é mais lido.
  */
 export async function putSave(accountId: number, body: any, now = new Date()): Promise<PutResult> {
   const data = body?.data;
@@ -48,6 +54,8 @@ export async function putSave(accountId: number, body: any, now = new Date()): P
   const force = body?.force === true;
   const clientSavedAt = typeof data.last_seen === 'number' && Number.isFinite(data.last_seen) && data.last_seen > 0
     ? new Date(Math.min(data.last_seen * 1000, now.getTime() + 86_400_000)) : null;
+  // Conta pura e curta (milissegundos): fica fora da transação para a conta não ficar travada à toa.
+  const trial = runTrial(data);
 
   return prisma.$transaction(async tx => {
     await lockAccount(tx, accountId);
@@ -57,8 +65,11 @@ export async function putSave(accountId: number, body: any, now = new Date()): P
     const caps = await loadSettings(tx);
     const prev = existing ? recordOf(existing) : { goldTotal: 0n, xpTotal: 0n, items: 0, furthest: 1, vigilBest: 0, power: 0n };
     const hours = hoursSince(existing?.verifiedAt ?? null, now, caps);
-    const claimed = progressOf(data, body?.summary);
-    const capped = capProgress(prev, claimed, hours, caps);
+    const claimed = progressOf(data, trial, caps['confrontation.maxStage']);
+    // O melhor já aceito da conta (ranking geral): ponto de partida do teto da Vigília e do poder, que sobem e descem com a companhia em campo.
+    const bestRows = existing ? await tx.confrontationRank.findMany({ where: { accountId, period: 'all', metric: { in: ['VIGIL', 'POWER'] } }, select: { metric: true, value: true } }) : [];
+    const best = { vigilBest: Number(bestRows.find(r => r.metric === 'VIGIL')?.value ?? 0n), power: bestRows.find(r => r.metric === 'POWER')?.value ?? 0n };
+    const capped = capProgress(prev, claimed, hours, caps, best);
     const accepted = capped.accepted;
     const cut = withGoldCut(data, claimed, accepted);
     const adjusted: string[] = cut && !capped.adjusted.includes('goldTotal') ? [...capped.adjusted, 'gold'] : capped.adjusted;
@@ -70,7 +81,7 @@ export async function putSave(accountId: number, body: any, now = new Date()): P
       create: { accountId, ...fields, syncs: 1, adjustments: adjusted.length ? 1 : 0 },
       update: { ...fields, syncs: { increment: 1 }, adjustments: { increment: adjusted.length ? 1 : 0 } },
     });
-    await tx.confrontationSync.create({ data: { accountId, version, hours, claimed: progressJson(claimed), accepted: progressJson(accepted), adjusted: adjusted.join(',') } });
+    await tx.confrontationSync.create({ data: { accountId, version, hours, claimed: { ...progressJson(claimed), floor: trial.floor, rejected: trial.rejected }, accepted: progressJson(accepted), adjusted: adjusted.join(',') } });
     // Rankings: o melhor valor verificado, geral e da semana. Empate: quem chegou primeiro fica na frente.
     for (const [metric, field] of Object.entries(rankMetrics) as [RankMetric, keyof Progress][]) {
       const value = BigInt(accepted[field]);
@@ -81,7 +92,8 @@ export async function putSave(accountId: number, body: any, now = new Date()): P
         else if (value > row.value) await tx.confrontationRank.update({ where: { id: row.id }, data: { value, reachedAt: now } });
       }
     }
-    return { conflict: false as const, version, savedAt: now.toISOString(), adjusted, hours, verified: progressJson(accepted), ...(cut ? { data: cut } : {}) };
+    return { conflict: false as const, version, savedAt: now.toISOString(), adjusted, hours, verified: progressJson(accepted),
+      trial: { floor: trial.floor, power: trial.power, rejected: trial.rejected }, ...(cut ? { data: cut } : {}) };
   });
 }
 
