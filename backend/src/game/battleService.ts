@@ -9,6 +9,7 @@ import { regions } from '../../../shared/adventure';
 import { event, awardAchievements } from './adventureService';
 import { addItem, recordGold } from '../economy/economy';
 import { hasRarity, rarityOddsOf, rollRarity } from '../../../shared/rarity';
+import { needsAdapting, vocationEquivalent } from '../../../shared/loot';
 import { loadSettings } from '../core/settings';
 import { scaleInt } from '../../../shared/economy';
 import { vocationAllowed, skillCosts } from '../../../shared/adventure';
@@ -20,7 +21,7 @@ import { bossLines, GENERIC_RAGE_LINE } from '../../../shared/bosses';
 const dice = (min: number, max: number) => randomInt(min, max + 1);
 // Histórico do combate, turno a turno, guardado no próprio lastLog (JSON). Formato antigo: só a lista de frases do último turno.
 // `effectDamage` e `inflicted` só aparecem nos turnos em que houve efeito de status.
-export interface TurnRecord { turn: number; action: string; dealt: number; crit: boolean; healed: number; received: number; dodged: boolean; foe: FoeMove; heavy: boolean; hp: number; maxHp: number; monsterHp: number; monsterMaxHp: number; effectDamage?: number; inflicted?: StatusKind }
+export interface TurnRecord { turn: number; action: string; dealt: number; crit: boolean; healed: number; received: number; dodged: boolean; foe: FoeMove; heavy: boolean; hp: number; maxHp: number; monsterHp: number; monsterMaxHp: number; effectDamage?: number; stolen?: number; inflicted?: StatusKind }
 // Os efeitos ativos do herói ficam junto do histórico (valem só nesta batalha).
 type StoredLog = { log: string[]; turns: TurnRecord[]; effects: ActiveEffect[] };
 const MAX_TURNS_KEPT = 200;
@@ -68,7 +69,7 @@ export class BattleService {
     const action = parseAction(rawAction);
     return transaction(async tx => {
       const c = await lockCharacter(tx, accountId, characterId);
-      const b = await tx.battle.findFirst({ where: { id: battleId, characterId }, include: { monster: { include: { loots: { include: { blueprint: { select: { name: true, slot: true } } } } } } } });
+      const b = await tx.battle.findFirst({ where: { id: battleId, characterId }, include: { monster: { include: { loots: { include: { blueprint: { select: { id: true, name: true, slot: true, vocations: true, minLevel: true, npcPrice: true } } } } } } } });
       if (!b) throw new GameError(404, 'Batalha não encontrada.');
       if (b.isFinished || b.turnVersion !== expectedTurn) throw new GameError(409, 'Esse turno já passou ou a batalha terminou. Atualize a tela.');
       const equipment = await tx.inventoryItem.findMany({ where: { characterId, isEquipped: true }, include: { blueprint: true } });
@@ -87,7 +88,7 @@ export class BattleService {
       const exhausted = fought.status === 'ONGOING' && b.turnVersion + 1 >= BATTLE_MAX_TURNS;
       const result = exhausted ? { ...fought, status: 'FLED' as const, effects: [] as ActiveEffect[], log: [...spoken, `Depois de ${BATTLE_MAX_TURNS} turnos, os dois lados recuam exaustos. Ninguém leva nada.`] } : { ...fought, log: spoken };
       let gold = 0, xpGain = 0;
-      const droppedItems: { blueprintId: number; quantity: number; name: string; rarity: number }[] = [];
+      const droppedItems: { blueprintId: number; quantity: number; name: string; rarity: number; adapted?: boolean }[] = [];
       if (result.status === 'VICTORY') {
         if (b.monster.experience < 0 || b.monster.goldMin < 0 || b.monster.goldMax < b.monster.goldMin)
           throw new GameError(409, 'Recompensa do monstro inválida.');
@@ -98,9 +99,17 @@ export class BattleService {
           if (loot.dropChance < 0 || loot.dropChance > 1 || !Number.isFinite(loot.dropChance) || loot.maxAmount < 1)
             throw new GameError(409, 'Tabela de loot inválida. Use probabilidades entre 0 e 1.');
           if (dice(1, 1000000) <= Math.floor(loot.dropChance * 1000000)) {
+            // Loot inteligente (shared/loot.ts): equipamento de outra vocação pode virar o equivalente da vocação de quem caçou.
+            let picked: { id: number; name: string } = loot.blueprint, adapted = false;
+            if (hasRarity(loot.blueprint.slot) && needsAdapting(loot.blueprint, c.vocation) && dice(1, 100) <= settings['loot.ownVocationPercent']) {
+              const catalog = await tx.itemBlueprint.findMany({ where: { slot: loot.blueprint.slot, minLevel: { lte: loot.blueprint.minLevel } },
+                select: { id: true, name: true, slot: true, vocations: true, minLevel: true, npcPrice: true } });
+              const own = vocationEquivalent(loot.blueprint, c.vocation, catalog);
+              if (own) { picked = own; adapted = true; }
+            }
             // Equipamento sorteia a raridade do exemplar (shared/rarity.ts); chefe multiplica as chances. Poção e material são sempre Comuns.
             const rarity = hasRarity(loot.blueprint.slot) ? rollRarity(rarityOddsOf(settings), dice(1, 10000), b.monster.isBoss ? settings['rarity.bossBoostPercent'] : 100) : 0;
-            const drop = { blueprintId: loot.blueprintId, quantity: dice(1, loot.maxAmount), name: loot.blueprint.name, rarity };
+            const drop = { blueprintId: picked.id, quantity: dice(1, loot.maxAmount), name: picked.name, rarity, ...(adapted ? { adapted } : {}) };
             await addItem(tx, characterId, drop.blueprintId, drop.quantity, 'LOOT', { type: 'battle', id: battleId }, 0, null, rarity);
             droppedItems.push(drop);
           }
@@ -111,7 +120,7 @@ export class BattleService {
       const heavy = monsterIntent(b.monster, b.turnVersion).kind === 'HEAVY';
       const record: TurnRecord = { turn: b.turnVersion + 1, action, dealt: result.dealt, crit: result.crit, healed: result.healed, received: result.received, dodged: result.dodged,
         foe: result.foe, heavy, hp: result.hp, maxHp: c.maxHp, monsterHp: result.monsterHp, monsterMaxHp: b.monster.hp,
-        ...(result.effectDamage ? { effectDamage: result.effectDamage } : {}), ...(result.inflicted ? { inflicted: result.inflicted } : {}) };
+        ...(result.effectDamage ? { effectDamage: result.effectDamage } : {}), ...(result.stolen ? { stolen: result.stolen } : {}), ...(result.inflicted ? { inflicted: result.inflicted } : {}) };
       const turns = [...stored.turns, record].slice(-MAX_TURNS_KEPT);
       await tx.character.update({ where: { id: characterId }, data: { hp: result.hp, mana: result.mana, ...levelData, goldInHand: { increment: BigInt(gold) } } });
       if (gold > 0) await recordGold(tx, characterId, BigInt(gold), c.goldInHand + BigInt(gold), 'MONSTER', { type: 'battle', id: battleId });

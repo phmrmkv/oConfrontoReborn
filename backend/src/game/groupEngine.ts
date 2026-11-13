@@ -1,11 +1,14 @@
 // Rodada da caçada em grupo. Função pura: não consulta banco e não concede recompensas (quem faz isso é groupHuntService).
 import type { Dice } from '../core/engine';
+import { secondaryCap } from '../../../shared/itemStats';
 import { baseVocation, vocations } from '../../../shared/adventure';
 import { actionsFor, CHOICE_AT, groupActions, groupIntent, MAX_ROUNDS, type GroupAction, type GroupHunt, type GroupPhase, type Mechanic } from '../../../shared/groupHunt';
 
 export interface GroupFighter {
   characterId: number; name: string; vocation: string; hp: number; maxHp: number; mana: number; maxMana: number;
   attack: number; defense: number; criticalChance: number; dodgeChance: number; action: GroupAction | null;
+  // Atributos secundários (shared/itemStats.ts) que valem no grupo; caçadas começadas antes deles não têm.
+  critDamage?: number; healPower?: number;
 }
 // `counters`: correntes (chains), camadas do encantamento (enchant), ilusões (mist) ou selos (dragon).
 // `freed`: o grupo cumpriu o objetivo da mecânica (libertou a fera / desfez o encantamento) e ganha bônus.
@@ -56,7 +59,7 @@ export function resolveGroupRound(round: number, bossIn: GroupBoss, fightersIn: 
     const a = acts.get(f.characterId)!;
     if (a === 'DEFEND') continue;
     if (a === 'HEAL_ALL') {
-      const power = vocations[baseVocation(f.vocation)].healing;
+      const power = vocations[baseVocation(f.vocation)].healing * (1 + Math.min(secondaryCap.healPower, Math.max(0, f.healPower ?? 0)) / 100);
       for (const ally of alive()) ally.hp += Math.min(ally.maxHp - ally.hp, dice(Math.floor(ally.maxHp * .1 * power), Math.floor(ally.maxHp * .18 * power)));
       log.push(`${f.name} cura o grupo.`);
       continue;
@@ -69,7 +72,7 @@ export function resolveGroupRound(round: number, bossIn: GroupBoss, fightersIn: 
       // Quebrar selo é magia: ignora a defesa.
       const base = Math.max(2, f.attack * mult - (a === 'BREAK_SEAL' ? 0 : boss.defense * .5));
       let dealt = dice(Math.floor(base * .8), Math.ceil(base * 1.2));
-      if (dice(1, 100) <= f.criticalChance) dealt = Math.floor(dealt * 1.5);
+      if (dice(1, 100) <= f.criticalChance) dealt = Math.floor(dealt * (1.5 + Math.min(secondaryCap.critDamage, Math.max(0, f.critDamage ?? 0)) / 100));
       if (boss.mechanic === 'enchant' && boss.counters > 0) dealt = Math.max(1, Math.floor(dealt / 2));
       boss.hp = Math.max(0, boss.hp - dealt);
       log.push(`${f.name} ${a === 'AIM' ? 'acerta o ponto fraco' : a === 'BREAK_SEAL' ? 'lança a magia' : 'ataca'}: ${dealt} de dano.`);

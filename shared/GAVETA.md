@@ -3,6 +3,8 @@
 
 - `economy.ts` – motivos de ouro/item (fonte/ralo/transferência), configurações com limites, taxas, preços NPC, regras de melhoria (`upgradeSuccessPercent`, `resolveUpgrade`), `settingsConflict`.
 - `adventure.ts` – vocações, regiões, jornada, promoção de classe.
+- `itemStats.ts` – atributos secundários dos equipamentos (dano crítico, roubo de vida, poder de cura, resistência a efeitos): nomes, tetos e texto para a tela.
+- `loot.ts` – loot inteligente: quando cai equipamento de outra vocação, qual é o equivalente da vocação de quem caçou (`vocationEquivalent`).
 - `rarity.ts` – raridade do exemplar (Comum a Mítico): orçamento de atributos de cada uma, quem tem raridade, sorteio do drop (`rollRarity`) e quanto vale no duelo.
 - `forge.ts` – materiais do Ferreiro por faixa de nível, o que pode ser forjado, melhoria guardada ao reforjar e retorno ao desmontar.
 - `progression.ts` – teto de nível (`MAX_LEVEL`), ganhos por nível, curva de XP do personagem (`expForLevel`) e curva-alvo de XP dos monstros. Ver `PLANO-NIVEIS.md`.

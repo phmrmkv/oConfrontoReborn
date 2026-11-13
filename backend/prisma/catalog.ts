@@ -4,7 +4,9 @@ import type { ItemSlot } from '@prisma/client';
 import { forgeMaterials } from '../../shared/forge';
 
 export interface CatalogItem { name: string; slot: ItemSlot; attack: number; defense: number; armor: number; npcPrice: number; minLevel: number;
-  vocations?: string; magicAttack?: number; criticalChance?: number; fireResistance?: number; speed?: number; sprite?: string }
+  vocations?: string; magicAttack?: number; criticalChance?: number; fireResistance?: number; speed?: number; sprite?: string;
+  // Atributos secundários (shared/itemStats.ts), em %.
+  critDamage?: number; lifeSteal?: number; healPower?: number; statusResistance?: number }
 const item = (name: string, slot: ItemSlot, minLevel: number, attack: number, defense: number, armor: number, npcPrice: number, extra: Partial<CatalogItem> = {}): CatalogItem =>
   ({ name, slot, attack, defense, armor, npcPrice, minLevel, ...extra });
 // Preço de loja dos equipamentos novos: cresce com o quadrado do nível (≈ 20–90 lutas da própria faixa).
@@ -18,8 +20,8 @@ export const items: CatalogItem[] = [
   item('Demon Helmet', 'HELMET', 30, 0, 0, 10, 40000), item('Magic Plate Armor', 'ARMOR', 40, 0, 0, 17, 90000, { fireResistance: 25 }),
   item('Golden Legs', 'LEGS', 25, 0, 0, 9, 30000), item('Boots of Haste', 'BOOTS', 20, 0, 0, 2, 30000, { speed: 8 }),
   item('Mastermind Shield', 'SHIELD', 30, 0, 37, 0, 50000, { fireResistance: 20 }), item('Magic Longsword', 'WEAPON', 50, 55, 40, 0, 150000),
-  item('Fire Sword', 'WEAPON', 15, 35, 20, 0, 4000, { criticalChance: 2 }), item('Platinum Amulet', 'AMULET', 10, 0, 0, 2, 2500, { fireResistance: 15 }),
-  item('Ring of the Sky', 'RING', 20, 0, 0, 1, 30000, { criticalChance: 8 }), item('Health Potion', 'CONSUMABLE', 1, 0, 0, 0, 50),
+  item('Fire Sword', 'WEAPON', 15, 35, 20, 0, 4000, { criticalChance: 2 }), item('Platinum Amulet', 'AMULET', 10, 0, 0, 2, 2500, { fireResistance: 15, statusResistance: 10 }),
+  item('Ring of the Sky', 'RING', 20, 0, 0, 1, 30000, { criticalChance: 8, critDamage: 5 }), item('Health Potion', 'CONSUMABLE', 1, 0, 0, 0, 50),
   item('Mana Potion', 'CONSUMABLE', 1, 0, 0, 0, 60),
   // Poções por faixa (efeito em shared/potions.ts; o nível mínimo aqui é o mesmo de lá).
   item('Strong Health Potion', 'CONSUMABLE', 50, 0, 0, 0, 200), item('Great Health Potion', 'CONSUMABLE', 100, 0, 0, 0, 450),
@@ -28,7 +30,7 @@ export const items: CatalogItem[] = [
   item('Ultimate Mana Potion', 'CONSUMABLE', 250, 0, 0, 0, 900),
   item('Great Spirit Potion', 'CONSUMABLE', 100, 0, 0, 0, 600), item('Ultimate Spirit Potion', 'CONSUMABLE', 250, 0, 0, 0, 1500), item('Pedra de Proteção', 'LOOT', 1, 0, 0, 0, 0, { sprite: 'Magic Wall Rune' }), item('Gold Coin', 'LOOT', 1, 0, 0, 0, 0),
   item('Bow', 'WEAPON', 1, 12, 0, 0, 80, { criticalChance: 3, speed: 3 }), item('Wand of Vortex', 'WEAPON', 1, 0, 0, 0, 80, { magicAttack: 12 }),
-  item('Snakebite Rod', 'WEAPON', 1, 0, 0, 0, 80, { magicAttack: 10 }),
+  item('Snakebite Rod', 'WEAPON', 1, 0, 0, 0, 80, { magicAttack: 10, healPower: 5 }),
   // Fase 1 (níveis até 100). Armas novas têm vocação para dar identidade a cada classe.
   item('Longsword', 'WEAPON', 6, 20, 12, 0, price(6), KNIGHT), item('Spike Sword', 'WEAPON', 25, 42, 20, 0, price(25), KNIGHT),
   item('Dragon Lance', 'WEAPON', 35, 50, 14, 0, price(35), { ...KNIGHT, criticalChance: 3 }), item('Giant Sword', 'WEAPON', 60, 66, 22, 0, price(60), KNIGHT),
@@ -51,9 +53,9 @@ export const items: CatalogItem[] = [
   item('Studded Legs', 'LEGS', 5, 0, 0, 2, price(5)), item('Plate Legs', 'LEGS', 15, 0, 0, 5, price(15)), item('Knight Legs', 'LEGS', 40, 0, 0, 10, price(40)),
   item('Crown Legs', 'LEGS', 55, 0, 0, 11, price(55)), item('Dragon Scale Legs', 'LEGS', 85, 0, 0, 14, price(85), { fireResistance: 10 }),
   item('Leather Boots', 'BOOTS', 3, 0, 0, 1, price(3)), item('Steel Boots', 'BOOTS', 35, 0, 0, 4, price(35)), item('Golden Boots', 'BOOTS', 80, 0, 0, 6, price(80), { speed: 4 }),
-  item('Dragon Necklace', 'AMULET', 15, 0, 0, 0, price(15), { fireResistance: 10 }), item('Strange Talisman', 'AMULET', 30, 0, 0, 0, price(30), { ...MAGE, magicAttack: 8 }),
-  item('Stone Skin Amulet', 'AMULET', 45, 0, 0, 3, price(45)), item('Crystal Necklace', 'AMULET', 70, 0, 0, 3, price(70), { criticalChance: 4 }),
-  item('Crystal Ring', 'RING', 60, 0, 0, 0, price(60), { criticalChance: 10, speed: 2 }),
+  item('Dragon Necklace', 'AMULET', 15, 0, 0, 0, price(15), { fireResistance: 10, statusResistance: 10 }), item('Strange Talisman', 'AMULET', 30, 0, 0, 0, price(30), { ...MAGE, magicAttack: 8, healPower: 10 }),
+  item('Stone Skin Amulet', 'AMULET', 45, 0, 0, 3, price(45), { statusResistance: 15 }), item('Crystal Necklace', 'AMULET', 70, 0, 0, 3, price(70), { criticalChance: 4, critDamage: 5 }),
+  item('Crystal Ring', 'RING', 60, 0, 0, 0, price(60), { criticalChance: 10, speed: 2, critDamage: 8 }),
   // Munição / foco (equipamento permanente, não empilha): flechas e virotes para o Arqueiro, runas de foco para os magos.
   item('Arrow', 'AMMO', 20, 8, 0, 0, price(20), PALADIN), item('Poison Arrow', 'AMMO', 45, 16, 0, 0, price(45), { ...PALADIN, criticalChance: 2 }),
   item('Bolt', 'AMMO', 80, 26, 0, 0, price(80), PALADIN), item('Burst Arrow', 'AMMO', 120, 40, 0, 0, price(120), { ...PALADIN, criticalChance: 3 }),
@@ -77,7 +79,7 @@ export const items: CatalogItem[] = [
   item('Crusader Helmet', 'HELMET', 150, 0, 0, 20, price(150)), item('Legion Helmet', 'HELMET', 175, 0, 0, 22, price(175)),
   item('Dark Helmet', 'HELMET', 200, 0, 0, 24, price(200)), item('Viking Helmet', 'HELMET', 225, 0, 0, 26, price(225), { criticalChance: 2 }),
   item('Worn Firewalker Boots', 'BOOTS', 140, 0, 0, 8, price(140), { fireResistance: 15 }), item('Worn Soft Boots', 'BOOTS', 190, 0, 0, 9, price(190), { speed: 6 }),
-  item('Golden Amulet', 'AMULET', 150, 0, 0, 4, price(150), { criticalChance: 5 }),
+  item('Golden Amulet', 'AMULET', 150, 0, 0, 4, price(150), { criticalChance: 5, lifeSteal: 1 }),
   ...[250, 400, 550, 700, 850].flatMap(eraGear),
   // Materiais do Ferreiro (shared/forge.ts): só caem de monstros e são trocados no Mercado; o NPC não compra nem vende.
   ...forgeMaterials.map(m => item(m.name, 'LOOT', 1, 0, 0, 0, 0, { sprite: m.sprite })),
@@ -90,20 +92,22 @@ function eraGear(level: number, index: number): CatalogItem[] {
   const era = (base: string, slot: ItemSlot, attack: number, defense: number, armor: number, extra: Partial<CatalogItem> = {}) =>
     item(base + suffix, slot, level, attack, defense, armor, price(level), { sprite: base, ...extra });
   const r = (x: number) => Math.round(x);
+  // Atributos secundários crescem um pouco a cada Era (shared/itemStats.ts).
+  const step = (values: number[]) => values[Math.min(index, values.length - 1)];
   return [
-    era(pick(['Magic Longsword', 'Warlord Sword', 'Fiery Barbarian Axe', 'Guardian Halberd', 'Fire Sword']), 'WEAPON', r(.85 * level + 10), r(.15 * level), 0, { ...KNIGHT, criticalChance: 5 }),
-    era(pick(['Crossbow', 'Throwing Star']), 'WEAPON', r(.55 * level), 0, 0, { ...PALADIN, criticalChance: 6, speed: 3 }),
-    era(pick(['Power Bolt', 'Burst Arrow']), 'AMMO', r(.32 * level), 0, 0, { ...PALADIN, criticalChance: 6 }),
-    era(pick(['Skull Staff', 'Wand of Vortex', 'Snakebite Rod']), 'WEAPON', 0, r(.04 * level), 0, { ...MAGE, magicAttack: r(.3 * level) }),
-    era(pick(['Sudden Death Rune', 'Soulfire Rune']), 'AMMO', 0, 0, 0, { ...MAGE, magicAttack: r(.27 * level) }),
-    era(pick(['Royal Scale Robe', 'Red Robe']), 'ARMOR', 0, 0, r(.1 * level), { ...MAGE, magicAttack: r(.2 * level) }),
-    era(pick(['Magic Plate Armor', 'Royal Draken Mail', 'Dragon Scale Mail', 'Golden Armor', 'Crown Armor']), 'ARMOR', 0, 0, r(.16 * level + 12), { fireResistance: 15 }),
+    era(pick(['Magic Longsword', 'Warlord Sword', 'Fiery Barbarian Axe', 'Guardian Halberd', 'Fire Sword']), 'WEAPON', r(.85 * level + 10), r(.15 * level), 0, { ...KNIGHT, criticalChance: 5, lifeSteal: step([1, 1, 2, 2, 3]) }),
+    era(pick(['Crossbow', 'Throwing Star']), 'WEAPON', r(.55 * level), 0, 0, { ...PALADIN, criticalChance: 6, speed: 3, critDamage: step([6, 8, 10, 12, 15]) }),
+    era(pick(['Power Bolt', 'Burst Arrow']), 'AMMO', r(.32 * level), 0, 0, { ...PALADIN, criticalChance: 6, critDamage: step([4, 5, 6, 8, 10]) }),
+    era(pick(['Skull Staff', 'Wand of Vortex', 'Snakebite Rod']), 'WEAPON', 0, r(.04 * level), 0, { ...MAGE, magicAttack: r(.3 * level), healPower: step([5, 7, 10, 12, 15]) }),
+    era(pick(['Sudden Death Rune', 'Soulfire Rune']), 'AMMO', 0, 0, 0, { ...MAGE, magicAttack: r(.27 * level), critDamage: step([4, 5, 6, 8, 10]) }),
+    era(pick(['Royal Scale Robe', 'Red Robe']), 'ARMOR', 0, 0, r(.1 * level), { ...MAGE, magicAttack: r(.2 * level), statusResistance: step([5, 8, 10, 12, 15]) }),
+    era(pick(['Magic Plate Armor', 'Royal Draken Mail', 'Dragon Scale Mail', 'Golden Armor', 'Crown Armor']), 'ARMOR', 0, 0, r(.16 * level + 12), { fireResistance: 15, statusResistance: step([10, 12, 15, 18, 20]) }),
     era(pick(['Demon Helmet', 'Royal Helmet', 'Golden Helmet', 'Crown Helmet', 'Winged Helmet']), 'HELMET', 0, 0, r(.1 * level + 4)),
     era(pick(['Golden Legs', 'Dragon Scale Legs', 'Crown Legs', 'Knight Legs', 'Plate Legs']), 'LEGS', 0, 0, r(.09 * level + 5)),
     era(pick(['Boots of Haste', 'Golden Boots', 'Steel Boots', 'Worn Soft Boots']), 'BOOTS', 0, 0, r(.04 * level + 2), { speed: 6 }),
     era(pick(['Mastermind Shield', 'Guardian Shield', 'Great Shield', 'Tower Shield', 'Dragon Shield']), 'SHIELD', 0, r(.5 * level + 10), 0),
-    era(pick(['Platinum Amulet', 'Golden Amulet', 'Crystal Necklace', 'Dragon Necklace', 'Stone Skin Amulet']), 'AMULET', 0, 0, r(.02 * level + 2), { criticalChance: 6, fireResistance: 10 }),
-    era(pick(['Ring of the Sky', 'Crystal Ring']), 'RING', 0, 0, 0, { criticalChance: 12, speed: 3 }),
+    era(pick(['Platinum Amulet', 'Golden Amulet', 'Crystal Necklace', 'Dragon Necklace', 'Stone Skin Amulet']), 'AMULET', 0, 0, r(.02 * level + 2), { criticalChance: 6, fireResistance: 10, statusResistance: 10 }),
+    era(pick(['Ring of the Sky', 'Crystal Ring']), 'RING', 0, 0, 0, { criticalChance: 12, speed: 3, critDamage: step([5, 6, 8, 10, 12]) }),
   ];
 }
 

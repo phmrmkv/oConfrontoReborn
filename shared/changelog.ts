@@ -1,6 +1,19 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-atributos-secundarios', date: '2026-11-13', title: 'Equipamentos com atributos novos', items: [
+    'Anéis, amuletos e o equipamento das Eras agora trazem atributos novos: dano crítico (o crítico bate mais forte), roubo de vida (parte do dano volta como vida), poder de cura (a cura recupera mais) e resistência a efeitos (chance de evitar veneno, queimadura e lentidão).',
+    'Eles aparecem no detalhe de cada item, na comparação do Mercado e no resumo do seu equipamento. Na arena, o roubo de vida aparece como um número verde no seu personagem.',
+    'No duelo, o roubo de vida vale 60% do que vale na caçada.',
+  ] },
+  { id: '2026-11-13-duelo-melhoria-comprimida', date: '2026-11-13', title: 'Duelo mais justo com equipamento melhorado', items: [
+    'No duelo, a melhoria +N do equipamento vale metade do que vale na caçada: um item +10, que dobra os atributos contra criaturas, vale +50% contra outro jogador. Junto com a raridade, isso evita que o equipamento decida o duelo sozinho.',
+    'Na caçada e na Caçada em grupo nada mudou.',
+  ] },
+  { id: '2026-11-13-loot-da-sua-vocacao', date: '2026-11-13', title: 'O equipamento que cai serve para você', items: [
+    'Quando uma criatura derruba um equipamento de outra vocação, na maior parte das vezes ele chega como o equivalente da sua: mesmo tipo e nível parecido. O resultado da batalha avisa quando isso acontece.',
+    'Itens que servem a todas as vocações continuam caindo como sempre.',
+  ] },
   { id: '2026-11-13-forum-nao-perde-texto', date: '2026-11-13', title: 'O Fórum não perde mais o que você escreveu', items: [
     'Se o envio de um comentário ou de uma resposta falhar (por exemplo, pelo intervalo de 10 segundos entre comentários), o texto continua no campo para você tentar de novo.',
     'No Fórum e no Perfil, os botões de enviar ficam desligados enquanto uma ação está a caminho.',

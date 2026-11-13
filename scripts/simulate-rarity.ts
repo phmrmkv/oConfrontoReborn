@@ -3,9 +3,10 @@
 //  1. Caçada: quanto o ataque e a defesa sobem com o conjunto todo em cada raridade.
 //  2. Duelo: taxa de vitória de quem veste o conjunto todo Mítico contra o MESMO herói todo Comum, conforme
 //     pvp.rarityPercent (quanto da vantagem da raridade vale no duelo). Espelhado, para isolar o equipamento da vocação.
+//  3. Duelo: o mesmo, com o conjunto todo +10 contra todo +0, conforme pvp.upgradePercent.
 import { items } from '../backend/prisma/catalog';
 import { hero, allVocations } from './levelSim';
-import { resolveDuelRound, type DuelFighter } from '../backend/src/game/duelEngine';
+import { resolveDuelRound, duelTuningOf, type DuelFighter } from '../backend/src/game/duelEngine';
 import { duelActionCosts, type DuelAction } from '../shared/pvp';
 import { MAX_RARITY, rarities } from '../shared/rarity';
 import { defaultSettings } from '../shared/economy';
@@ -25,10 +26,10 @@ for (const level of levels) for (const v of allVocations) {
   console.log(String(level).padEnd(7) + v.padEnd(10) + cells.join(''));
 }
 
-function fighter(id: number, v: BaseVocation, level: number, rarity: number, rarityPercent: number): DuelFighter {
-  const h = hero(v, level, items, 0, rarity, rarityPercent);
+function fighter(id: number, v: BaseVocation, level: number, rarity: number, rarityPercent: number, tier = 0, upgradePercent = 100): DuelFighter {
+  const h = hero(v, level, items, tier, rarity, rarityPercent, upgradePercent);
   return { characterId: id, name: v, vocation: h.c.vocation, hp: h.maxHp, maxHp: h.maxHp, mana: h.maxMana, maxMana: h.maxMana,
-    attack: h.stats.attack, defense: h.stats.defense, agility: h.c.agility, criticalChance: h.stats.criticalChance, dodgeChance: h.stats.dodgeChance, action: null, missed: 0 };
+    attack: h.stats.attack, defense: h.stats.defense, agility: h.c.agility, criticalChance: h.stats.criticalChance, dodgeChance: h.stats.dodgeChance, critDamage: h.stats.critDamage, lifeSteal: h.stats.lifeSteal, healPower: h.stats.healPower, action: null, missed: 0 };
 }
 // Mesma política de duel:simulate.
 function choose(f: DuelFighter): DuelAction {
@@ -40,13 +41,14 @@ function choose(f: DuelFighter): DuelAction {
   if (f.mana >= c.TRIPLE_HIT + c.HEAL) return 'TRIPLE_HIT';
   return 'ATTACK';
 }
-function mirror(v: BaseVocation, level: number, rarityPercent: number) {
+// `strong` e `weak`: como montar o herói melhor equipado (id 1) e o outro (id 2).
+function mirror(v: BaseVocation, level: number, rarityPercent: number, strong = (id: number) => fighter(id, v, level, MAX_RARITY, rarityPercent), weak = (id: number) => fighter(id, v, level, 0, rarityPercent)) {
   let wins = 0, losses = 0;
   for (let n = 0; n < duels; n++) {
-    let pair: [DuelFighter, DuelFighter] = n % 2 ? [fighter(1, v, level, MAX_RARITY, rarityPercent), fighter(2, v, level, 0, rarityPercent)] : [fighter(2, v, level, 0, rarityPercent), fighter(1, v, level, MAX_RARITY, rarityPercent)];
+    let pair: [DuelFighter, DuelFighter] = n % 2 ? [strong(1), weak(2)] : [weak(2), strong(1)];
     for (let round = 1; ; round++) {
       pair = pair.map(f => ({ ...f, action: choose(f) })) as typeof pair;
-      const r = resolveDuelRound(round, pair, dice, 100);
+      const r = resolveDuelRound(round, pair, dice, duelTuningOf(defaultSettings()));
       pair = r.fighters;
       if (r.outcome !== 'ONGOING') { if (r.winnerId === 1) wins++; else if (r.winnerId === 2) losses++; break; }
     }
@@ -63,3 +65,13 @@ for (const level of levels) for (const v of allVocations) {
 }
 console.log('pior caso'.padEnd(17) + percents.map(p => pct(worst[p]).padStart(11)).join(''));
 console.log(`\nPadrão de pvp.rarityPercent: ${defaultSettings()['pvp.rarityPercent']}%. Com 0% a raridade não conta no duelo (referência: perto de 50%).`);
+
+console.log(`\n3. Duelo espelhado: vitória do conjunto todo +10 contra o mesmo herói todo +0, ambos Comuns (${duels} duelos por célula)`);
+console.log('nível'.padEnd(7) + 'vocação'.padEnd(10) + percents.map(p => `vale ${p}%`.padStart(11)).join(''));
+const worstUp: Record<number, number> = {};
+for (const level of levels) for (const v of allVocations) {
+  const cells = percents.map(p => { const w = mirror(v, level, 100, id => fighter(id, v, level, 0, 100, 10, p), id => fighter(id, v, level, 0, 100, 0, p)); worstUp[p] = Math.max(worstUp[p] ?? 0, w); return pct(w).padStart(11); });
+  console.log(String(level).padEnd(7) + v.padEnd(10) + cells.join(''));
+}
+console.log('pior caso'.padEnd(17) + percents.map(p => pct(worstUp[p]).padStart(11)).join(''));
+console.log(`\nPadrão de pvp.upgradePercent: ${defaultSettings()['pvp.upgradePercent']}%.`);

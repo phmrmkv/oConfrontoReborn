@@ -1,5 +1,6 @@
 import { skillCosts, vocations, baseVocation } from '../../../shared/adventure';
 import { GENERIC_RAGE_LINE } from '../../../shared/bosses';
+import { secondaryCap } from '../../../shared/itemStats';
 import { statusEffects, STATUS_CHANCE, STATUS_BOSS_CHANCE, SLOW_ATTACK_PERCENT, bossPhase, bossRage, type ActiveEffect, type StatusKind } from '../../../shared/statusEffects';
 import { expForLevel } from '../../../shared/progression';
 export const actions = ['ATTACK', 'TRIPLE_HIT', 'FIFTH_HIT', 'HEAL', 'DEFEND_SHIELD', 'INTERRUPT', 'FLEE'] as const;
@@ -20,7 +21,9 @@ export function getExpForLevel(level: number): bigint {
   return expForLevel(integer(level));
 }
 // `effects` = efeitos de status ativos no herói (veneno, queimadura, lentidão). `status` = o que a criatura causa quando acerta.
-export interface Fighter { hp: number; maxHp: number; mana: number; attack: number; defense: number; agility?: number; vocation?:string; criticalChance?:number;fireResistance?:number;dodgeChance?:number; effects?: ActiveEffect[] }
+// Atributos secundários (shared/itemStats.ts), em %: zero ou ausente não muda nada e não rola dado a mais.
+export interface Fighter { hp: number; maxHp: number; mana: number; attack: number; defense: number; agility?: number; vocation?:string; criticalChance?:number;fireResistance?:number;dodgeChance?:number; effects?: ActiveEffect[];
+  critDamage?:number; lifeSteal?:number; healPower?:number; statusResistance?:number }
 // `maxHp` (vida cheia da criatura) permite saber a fase do chefe; sem ele, não há fase 2.
 export interface Enemy { hp: number; attack: number; defense: number; isBoss?:boolean; turn?:number;element?:string; status?: StatusKind | null; maxHp?: number }
 export function monsterIntent(monster:Enemy, turn=monster.turn??0) {
@@ -37,18 +40,20 @@ export const skillMultiplier = (action: Action) => action === 'TRIPLE_HIT' ? 1.8
 export function strike(attacker: Fighter, targetDefense: number, action: Action, dice: Dice) {
   const base = Math.max(2, attacker.attack * skillMultiplier(action) - targetDefense*.5);
   let dealt = dice(Math.floor(base*.8), Math.ceil(base*1.2)), crit = false;
-  if (dice(1, 100) <= (attacker.criticalChance??Math.min(30, 10 + Math.floor((attacker.agility ?? 20)/4)))) { dealt = Math.floor(dealt*1.5); crit = true; }
+  // Crítico: 1,5 vez o golpe, mais o dano crítico dos equipamentos.
+  if (dice(1, 100) <= (attacker.criticalChance??Math.min(30, 10 + Math.floor((attacker.agility ?? 20)/4)))) { dealt = Math.floor(dealt*(1.5+Math.min(secondaryCap.critDamage,Math.max(0,attacker.critDamage??0))/100)); crit = true; }
   return { dealt, crit };
 }
-export function healRoll(f: Pick<Fighter, 'maxHp' | 'vocation'>, dice: Dice) {
-  const profile = vocations[baseVocation(f.vocation ?? 'KNIGHT')];
-  return dice(Math.floor(f.maxHp*.25*profile.healing), Math.floor(f.maxHp*.45*profile.healing));
+export function healRoll(f: Pick<Fighter, 'maxHp' | 'vocation' | 'healPower'>, dice: Dice) {
+  // Poder de cura dos equipamentos aumenta a cura da vocação.
+  const healing = vocations[baseVocation(f.vocation ?? 'KNIGHT')].healing * (1 + Math.min(secondaryCap.healPower, Math.max(0, f.healPower ?? 0)) / 100);
+  return dice(Math.floor(f.maxHp*.25*healing), Math.floor(f.maxHp*.45*healing));
 }
 // Função pura: não consulta banco e não concede recompensas.
 export function resolveTurn(player: Fighter, monster: Enemy, action: Action, dice: Dice) {
   if (player.hp <= 0 || monster.hp <= 0) throw new GameError(409, 'Combate encerrado.');
   let hp = player.hp, mana = player.mana, monsterHp = monster.hp;
-  let dealt = 0, received = 0, healed = 0, crit = false, dodged = false;
+  let dealt = 0, received = 0, healed = 0, crit = false, dodged = false, stolen = 0;
   const log: string[] = [];
   // Efeitos de status: copiados para não alterar a entrada; sem efeitos e sem `monster.status`, nada muda e nenhum dado extra é rolado.
   let effects: ActiveEffect[] = (player.effects ?? []).filter(e => e.turns > 0).map(e => ({ ...e })), effectDamage = 0, inflicted: StatusKind | null = null;
@@ -71,9 +76,9 @@ export function resolveTurn(player: Fighter, monster: Enemy, action: Action, dic
       effects = [...effects.filter(e => e.kind !== applied), { kind: applied, turns: statusEffects[applied].turns }];
       log.push(`A criatura deixa você ${statusEffects[applied].active.toLowerCase()} por ${statusEffects[applied].turns} turnos.`);
     }
-    return { hp, mana, monsterHp, dealt, received, healed, crit, dodged, foe, effects, effectDamage, inflicted: applied, phase, status: hp === 0 ? 'DEFEAT' as const : 'ONGOING' as const, log };
+    return { hp, mana, monsterHp, dealt, received, healed, crit, dodged, stolen, foe, effects, effectDamage, inflicted: applied, phase, status: hp === 0 ? 'DEFEAT' as const : 'ONGOING' as const, log };
   };
-  if (action === 'FLEE') return { hp, mana, monsterHp, dealt, received, healed, crit, dodged, foe: 'NONE' as FoeMove, effects: [] as ActiveEffect[], effectDamage, inflicted, phase: 1 as 1 | 2, status: 'FLED' as const, log: ['Você bate em retirada.'] };
+  if (action === 'FLEE') return { hp, mana, monsterHp, dealt, received, healed, crit, dodged, stolen, foe: 'NONE' as FoeMove, effects: [] as ActiveEffect[], effectDamage, inflicted, phase: 1 as 1 | 2, status: 'FLED' as const, log: ['Você bate em retirada.'] };
   const costs = skillCosts(player.vocation??'KNIGHT');
   // Política explícita: mana insuficiente rejeita o turno inteiro.
   if (mana < costs[action]) throw new GameError(409, 'Mana insuficiente.');
@@ -89,8 +94,15 @@ export function resolveTurn(player: Fighter, monster: Enemy, action: Action, dic
     if (slowed) dealt = Math.max(1, Math.floor(dealt * SLOW_ATTACK_PERCENT / 100));
     monsterHp = Math.max(0, monsterHp - dealt);
     log.push(`Seu golpe causa ${dealt} de dano.`);
+    // Roubo de vida: parte do dano volta como vida, até a mesma porcentagem da vida máxima por golpe
+    // (as criaturas têm muito mais vida que o herói; sem esse teto, o roubo curaria demais).
+    const steal = Math.min(secondaryCap.lifeSteal, Math.max(0, player.lifeSteal ?? 0));
+    if (steal > 0 && dealt > 0 && hp < player.maxHp) {
+      stolen = Math.min(player.maxHp - hp, Math.floor(dealt * steal / 100), Math.floor(player.maxHp * steal / 100));
+      if (stolen > 0) { hp += stolen; log.push(`Roubo de vida: você recupera ${stolen}.`); }
+    }
   }
-  if (monsterHp === 0) return { hp, mana, monsterHp, dealt, received, healed, crit, dodged, foe: 'NONE' as FoeMove, effects: [] as ActiveEffect[], effectDamage, inflicted, phase: 1 as 1 | 2, status: 'VICTORY' as const, log };
+  if (monsterHp === 0) return { hp, mana, monsterHp, dealt, received, healed, crit, dodged, stolen, foe: 'NONE' as FoeMove, effects: [] as ActiveEffect[], effectDamage, inflicted, phase: 1 as 1 | 2, status: 'VICTORY' as const, log };
   // Fase do chefe depois do seu golpe: abaixo de metade da vida ele entra em fúria (avisa uma vez, na virada).
   const phase = bossPhase({ isBoss: monster.isBoss, hp: monsterHp, maxHp: monster.maxHp });
   if (phase === 2 && bossPhase(monster) === 1) log.push(GENERIC_RAGE_LINE);
@@ -110,5 +122,8 @@ export function resolveTurn(player: Fighter, monster: Enemy, action: Action, dic
   log.push(`A criatura revida: ${received} de dano.`);
   // Golpe que acertou pode deixar um efeito; erguer a guarda no turno impede.
   if (monster.status && received > 0 && hp > 0 && action !== 'DEFEND_SHIELD' && dice(1, 100) <= (monster.isBoss ? STATUS_BOSS_CHANCE : STATUS_CHANCE)) inflicted = monster.status;
+  // Resistência a efeitos dos equipamentos: chance de o efeito não pegar.
+  const resist = Math.min(secondaryCap.statusResistance, Math.max(0, player.statusResistance ?? 0));
+  if (inflicted && resist > 0 && dice(1, 100) <= resist) { log.push(`Você resiste: ${statusEffects[inflicted].name.toLowerCase()} não pega.`); inflicted = null; }
   return endTurn(intent.kind as FoeMove);
 }

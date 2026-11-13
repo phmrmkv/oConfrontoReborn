@@ -177,6 +177,11 @@ model ItemBlueprint {
   criticalChance Int              @default(0)
   fireResistance Int              @default(0)
   speed          Int              @default(0)
+  // Atributos secundários (shared/itemStats.ts), em %.
+  critDamage       Int            @default(0)
+  lifeSteal        Int            @default(0)
+  healPower        Int            @default(0)
+  statusResistance Int            @default(0)
   inventoryItems InventoryItem[]
   monsterLoots   MonsterLoot[]
   marketListings MarketListing[]
