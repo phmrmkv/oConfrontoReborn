@@ -13,3 +13,13 @@
 .battle-result .battle-result-actions{align-items:center;margin-top:18px}.battle-result .battle-result-actions .primary{margin-top:0}
 .region-icon{flex-shrink:0;display:inline-block;filter:drop-shadow(0 2px 2px #0003)}
 .region-grid button{grid-template-columns:44px 1fr}.region-grid .region-icon{grid-row:span 2}.intro-banner>.region-icon{filter:drop-shadow(0 10px 12px #0006)}@media(max-width:760px){.intro-banner>.region-icon{width:64px;height:64px}}
+/* Caçar: o que a criatura pode deixar (HuntPanel, LootList). */
+.monster-loot{margin:4px 0 10px;font-size:12px;text-align:left}
+.monster-loot summary{cursor:pointer;color:#a7b8ad;list-style-position:inside}
+.monster-loot ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:4px}
+.monster-loot li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px}
+.monster-loot li small{display:block;font-size:12px}
+.monster-loot li b{font-variant-numeric:tabular-nums}
+.monster-loot .boss-fragment{grid-template-columns:1fr auto;color:#e0c078}
+:root[data-theme="light"] .monster-loot summary{color:#745927}
+:root[data-theme="light"] .monster-loot .boss-fragment{color:#7a4a12}
