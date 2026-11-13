@@ -15,6 +15,11 @@ O PNG que sai do gerador pesa cerca de 1,6 MB e vem com pequenos defeitos. `npm 
 - apaga a ponta de chifre, chama ou arma do quadro vizinho que vaza na borda de cima ou de baixo do quadro;
 - sobe a folha quando os pés estão abaixo da linha das outras (para ninguém afundar no chão da arena).
 
+De cada folha sai também o retrato de 128 px usado fora da arena: o parado em `assets/sprites/retratos/` e o vivo em `assets/sprites/vivos/` (WebP animado com os 4 quadros da linha 1, parado e respirando), que as listas mostram enquanto as animações estão ligadas.
+
+## Ícones com movimento (regiões e poderes)
+Os ícones dos locais de caça e dos poderes da luta são pinturas próprias (PNG de 512 px, fundo transparente) em `art/regions/<chave>.png` e `art/powers/<nome>.png`. O build (`scripts/art-motion.mjs`) grava a versão de site como WebP animado de 128 px em `assets/regions/` e `assets/powers/`: a pintura fica parada e ganha movimento por cima (o redemoinho do portal da 4ª Era gira, chamas tremem, brasas sobem, neve cai, orbes e tochas pulsam, névoa e fumaça andam). As posições de cada efeito ficam em `regionMotion`, naquele arquivo; os poderes usam a cor do próprio desenho. Com as animações desligadas, a tela mostra o primeiro quadro. Só o que mudou é refeito (`art/motion.json`); para refazer tudo: `node scripts/art-motion.mjs --refazer`.
+
 Só as folhas novas ou alteradas são refeitas (`art/web.json` guarda o que já foi feito). Para refazer todas: `node scripts/art-web.mjs --refazer`. Para ver o que a limpeza faria, sem gravar: `node scripts/art-web.mjs --conferir`.
 
 ## Formato de toda folha

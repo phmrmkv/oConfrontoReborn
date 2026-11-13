@@ -1,6 +1,11 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-icones-animados', date: '2026-11-13', title: 'Ícones com vida', items: [
+    'Os locais de caça ganharam ícones novos, pintados e animados: o portal do Abismo da 4ª Era gira, as fogueiras tremem e soltam brasas, cai neve nas Terras Geladas e há vaga-lumes no Pântano Sombrio.',
+    'As criaturas e os heróis agora respiram nas listas do jogo (Caçar, missões, Bestiário e outras), não só na arena.',
+    'Os ícones dos poderes da luta também se mexem. Quem desliga as animações em Configurações continua vendo tudo parado.',
+  ] },
   { id: '2026-11-13-ranking', date: '2026-11-13', title: 'Ranking', items: [
     'Nova aba Ranking, em Comunidade: os aventureiros de nível mais alto e os de mais honra no Duelo.',
     'Dá para filtrar por vocação (Cavaleiro, Arqueiro, Feiticeiro, Druida) e por classe, da que ainda não tem classe até a 8ª.',
