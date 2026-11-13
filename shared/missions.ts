@@ -57,7 +57,7 @@ const missions: Record<string, Mission> = {
   // Cripta Esquecida
   Necromancer: m('Os que erguem os mortos', 'Sacerdotisa Lyra, do Templo de Capriel', 'Necromantes se esconderam na Cripta Esquecida e erguem mortos todas as noites. Quebre o ciclo pela raiz.'),
   'Wailing Widow': m('O choro na escuridão', 'Coveiro Anselmo', 'Ouve-se um choro vindo da cripta, e quem segue o som não volta. Não é uma viúva de verdade. Vá armado.'),
-  'Black Knight': m('A armadura vazia', 'Comandante Vargas', 'Um cavaleiro de armadura negra guarda os salões da cripta. Dizem que ele foi o melhor de Capriel, antes de cair.'),
+  'Black Knight': m('A armadura vazia', 'Comandante Vargas', 'Um cavaleiro de armadura negra guarda os salões da cripta. Dizem que um dia ele foi um cavaleiro de honra, antes de cair.'),
   Warlock: m('O bruxo do último salão', 'Sábio Elandor', 'O Bruxo comanda os necromantes e guarda o último salão da cripta. Ele concentra o golpe antes de lançar: aproveite o instante.'),
   // Cidadela dos Renegados
   Assassin: m('Lâminas na sombra', 'Capitão Brennan, da guarda de Capriel', 'Assassinos da cidadela estão marcando nomes da guarda de Capriel. Encontre-os antes que eles encontrem mais alguém.'),
@@ -87,7 +87,7 @@ const eras = [
   { giver: 'Arquivista Mirela', intro: 'A 1ª Era despertou e trouxe de volta as criaturas que você já conhecia, agora séculos mais fortes.' },
   { giver: 'Lenhador Haakon', intro: 'O gelo da 2ª Era cobriu o mundo, e o que vive nele ficou cruel e resistente.' },
   { giver: 'Comandante Vargas', intro: 'A cidadela da 3ª Era se ergueu das ruínas, defendida por guerreiros de um tempo esquecido.' },
-  { giver: 'Sábio Elandor', intro: 'O abismo da 4ª Era se abriu sob os pés de Capriel, e dele sobe o que havia de pior.' },
+  { giver: 'Sábio Elandor', intro: 'O abismo da 4ª Era se abriu nos confins do mundo, e dele sobe o que havia de pior.' },
   { giver: 'Sacerdotisa Lyra, do Templo de Capriel', intro: 'No Vale da Perdição, tudo o que já existiu luta em sua forma final. Poucos voltam.' },
 ];
 const firstSentence = (text: string) => text.match(/^[^.!?]+[.!?]/)?.[0] ?? text;
@@ -95,8 +95,9 @@ const firstSentence = (text: string) => text.match(/^[^.!?]+[.!?]/)?.[0] ?? text
 export function missionFor(monsterName: string): Mission {
   const own = missions[monsterName];
   if (own) return own;
-  const era = monsterName.match(/^(.+) da (\d)ª Era$/), capriel = monsterName.match(/^(.+) de Capriel$/);
-  const baseName = era?.[1] ?? capriel?.[1], index = era ? Number(era[2]) - 1 : capriel ? 4 : -1;
+  // As criaturas do Vale da Perdição se chamam "<criatura> da Perdição" (nunca "de Capriel": Capriel só dá nome ao que é bom).
+  const era = monsterName.match(/^(.+) da (\d)ª Era$/), vale = monsterName.match(/^(.+) da Perdição$/);
+  const baseName = era?.[1] ?? vale?.[1], index = era ? Number(era[2]) - 1 : vale ? 4 : -1;
   const base = baseName ? missions[baseName] : undefined;
   if (base && eras[index]) return m(`${base.title} (${index < 4 ? `${index + 1}ª Era` : 'Vale da Perdição'})`, eras[index].giver, `${eras[index].intro} ${firstSentence(base.story)}`);
   return m(`Caçada: ${monsterName}`, 'Mural de missões de Capriel', `Há relatos de ${monsterName} atacando viajantes. Capriel paga bem a quem resolver o problema.`);

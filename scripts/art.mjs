@@ -31,7 +31,7 @@ export const heroes = [
     special: 'cura (ergue as duas mãos, os dreadlocks se movem com o vento, brilho verde forte e solto ao redor do corpo com folhas subindo, sem caixa nem fundo, e volta à pose)' },
 ];
 
-// ----- Criaturas: `key` é o sprite que a criatura usa hoje no catálogo (várias criaturas das Eras e de Capriel usam o mesmo). -----
+// ----- Criaturas: `key` é o sprite que a criatura usa hoje no catálogo (várias criaturas das Eras e do Vale da Perdição usam o mesmo). -----
 const c = (key, file, name, look, palette, attack, special, boss = false) => ({ key, file, name, look, palette, attack, special, boss });
 export const creatures = [
   c('Rat', 'rato-do-celeiro', 'Rato do Celeiro', 'um rato grande e magro, de pelo marrom sujo, dentes amarelos à mostra e rabo comprido sem pelos', 'marrom, bege, rosa do rabo', 'mordida (agachar, saltar, morder, recolher)', 'guincho ameaçador, de pé nas patas traseiras, depois volta à pose'),
@@ -201,7 +201,7 @@ ${creatures.map(m => `| \`${m.file}.png\` | ${m.name} | ${m.boss ? 'Chefe' : 'Cr
 ${heroes.map(h => block(h, heroPrompt(h))).join('\n')}
 ## Criaturas
 
-Os nomes novos são da arte. As criaturas das Eras e de Capriel usam a mesma folha da criatura original.
+Os nomes novos são da arte. As criaturas das Eras e do Vale da Perdição usam a mesma folha da criatura original.
 
 ${creatures.map(m => block(m, creaturePrompt(m))).join('\n')}`;
   writeText(path.join(root, 'ART.md'), md);

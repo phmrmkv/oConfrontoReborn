@@ -11,6 +11,10 @@ const original = new Set(['Rat', 'Wolf', 'Guardião da Pedreira', 'Rotworm', 'Or
 async function main() {
   const missing = [...items.map(i => i.sprite ?? i.name), ...monsters.map(m => m.sprite ?? m.name)].filter(n => !sprite(n));
   if (missing.length) throw new Error(`Sem sprite no manifest.json: ${missing.join(', ')}. Importe com npm run icons antes do seed.`);
+  // O seed só grava por nome e nunca renomeia: nomes antigos saem por migração (ex.: 202611130006_capriel_positive_names).
+  // Se a base ainda tem os nomes de antes, o seed criaria cópias das criaturas e das tarefas; pare e rode as migrações primeiro.
+  const stale = await prisma.monster.count({ where: { name: { endsWith: ' de Capriel' } } }) + await prisma.itemBlueprint.count({ where: { name: 'Sudden Death Rune de Capriel' } });
+  if (stale) throw new Error('A base ainda tem nomes antigos do Vale da Perdição. Rode npm run db:deploy antes do seed.');
   for (const { sprite: spriteName, ...i } of items) {
     const data = { magicAttack: 0, criticalChance: 0, fireResistance: 0, speed: 0, vocations: 'ALL', ...i, spriteUrl: sprite(spriteName ?? i.name) };
     await prisma.itemBlueprint.upsert({ where: { name: i.name }, update: data, create: data });
