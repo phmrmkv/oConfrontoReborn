@@ -6,7 +6,15 @@ import {creatureShot} from '../../lib/creatureArt';
 // `foeShot`: o que voa quando a criatura ataca de longe; com ele, ela dispara do lugar em vez de correr até o herói.
 function script(t:TurnRecord,vocation:string,foeShot?:string):Step[]{
   const s:Step[]=[],guard=t.action==='DEFEND_SHIELD',melee=vocation==='KNIGHT';
-  if(['ATTACK','TRIPLE_HIT','FIFTH_HIT','INTERRUPT'].includes(t.action)){
+  // Poderes (shared/powers.ts): golpe com efeito (Flecha envenenada, Raio congelante) entra como ataque; o resto tem cena própria.
+  const power=t.power;
+  if(power==='WAR_CRY')s.push({cues:[{who:'hero',cls:'charge',float:{text:'Grito de guerra!',kind:'fx'}}],ms:620});
+  else if(power==='MEDITATE')s.push({cues:[{who:'hero',cls:'heal',float:{text:'Meditando',kind:'fx'}}],ms:620});
+  else if(power==='ROOTS')s.push({cues:[{who:'hero',cls:'cast'},{who:'foe',cls:'stagger late',float:{text:'Presa!',kind:'miss'}}],ms:620});
+  else if(power==='POISON_ARROW'||power==='FROST_BOLT'){const kill=t.monsterHp<=0;
+    s.push({cues:[{who:'hero',cls:'cast',shot:power==='POISON_ARROW'?'Arrow':'Heavy Magic Missile Rune'},
+      {who:'foe',cls:`hit late${kill?' dying':''}`,float:{text:`−${n(t.dealt)}`,kind:t.crit?'crit':'dmg'}}],ms:kill?900:620});}
+  else if(['ATTACK','TRIPLE_HIT','FIFTH_HIT','INTERRUPT'].includes(t.action)){
     const kill=t.monsterHp<=0;
     s.push({cues:[{who:'hero',cls:melee?'lunge':'cast',shot:melee?undefined:shotOf(vocation),special:specialOf(t.action),...(t.stolen?{float:{text:`+${n(t.stolen)}`,kind:'heal' as const}}:{})},
       {who:'foe',cls:`hit late${kill?' dying':''}`,float:{text:`−${n(t.dealt)}`,kind:t.crit?'crit':'dmg'}}],shake:t.crit||t.action==='FIFTH_HIT',ms:kill?900:620});
@@ -19,7 +27,8 @@ function script(t:TurnRecord,vocation:string,foeShot?:string):Step[]{
       t.dodged?{who:'hero',cls:'dodge late',float:{text:'Esquiva!',kind:'miss'}}
         :{who:'hero',cls:guard?'hit late guard':'hit late',float:{text:`−${n(t.received)}`,kind:heavy?'crit':'dmg'}}],shake:heavy&&!t.dodged,ms:640});
   } else if(t.foe==='CHARGE')s.push({cues:[{who:'foe',cls:'charge',float:{text:'Concentrando…',kind:'fx'}}],ms:620});
-  else if(t.foe==='INTERRUPTED')s.push({cues:[{who:'foe',cls:'stagger',float:{text:'Interrompido!',kind:'miss'}}],ms:560});
+  else if(t.foe==='INTERRUPTED'&&power!=='ROOTS')s.push({cues:[{who:'foe',cls:'stagger',float:{text:'Interrompido!',kind:'miss'}}],ms:560});
+  if(t.foeEffectDamage)s.push({cues:[{who:'foe',cls:'hit',float:{text:`−${n(t.foeEffectDamage)}`,kind:'fx'}}],ms:460});
   if(t.effectDamage)s.push({cues:[{who:'hero',cls:'hit',float:{text:`−${n(t.effectDamage)}`,kind:'fx'}}],ms:460});
   return s;
 }

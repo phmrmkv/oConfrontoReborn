@@ -18,19 +18,25 @@ import { defeatAdvice, type DefeatAdvice } from './defeatAdvice';
 import { inGroupBattle } from './groupHuntService';
 import { healthPotionNames } from '../../../shared/potions';
 import { BATTLE_MAX_TURNS, bossPhase, monsterStatus, statusEffects, type ActiveEffect, type StatusKind } from '../../../shared/statusEffects';
+import { powers, type Buff, type FoeEffect, type PowerKey } from '../../../shared/powers';
 import { bossLines, GENERIC_RAGE_LINE } from '../../../shared/bosses';
 const dice = (min: number, max: number) => randomInt(min, max + 1);
 // Histórico do combate, turno a turno, guardado no próprio lastLog (JSON). Formato antigo: só a lista de frases do último turno.
 // `effectDamage` e `inflicted` só aparecem nos turnos em que houve efeito de status.
-export interface TurnRecord { turn: number; action: string; dealt: number; crit: boolean; healed: number; received: number; dodged: boolean; foe: FoeMove; heavy: boolean; hp: number; maxHp: number; monsterHp: number; monsterMaxHp: number; effectDamage?: number; stolen?: number; inflicted?: StatusKind }
-// Os efeitos ativos do herói ficam junto do histórico (valem só nesta batalha).
-type StoredLog = { log: string[]; turns: TurnRecord[]; effects: ActiveEffect[] };
+export interface TurnRecord { turn: number; action: string; dealt: number; crit: boolean; healed: number; received: number; dodged: boolean; foe: FoeMove; heavy: boolean; hp: number; maxHp: number; monsterHp: number; monsterMaxHp: number; effectDamage?: number; stolen?: number; inflicted?: StatusKind; foeEffectDamage?: number; power?: PowerKey }
+// Os efeitos ativos do herói ficam junto do histórico (valem só nesta batalha), e também o estado dos poderes (shared/powers.ts):
+// o que o herói pôs na criatura, o Grito de guerra e os turnos de espera.
+type StoredLog = { log: string[]; turns: TurnRecord[]; effects: ActiveEffect[]; foeEffects: FoeEffect[]; buffs: Buff[]; cooldowns: Partial<Record<PowerKey, number>> };
+const foeKinds = ['POISON', 'SLOW', 'ROOT'], powerKeys = Object.keys(powers);
 const MAX_TURNS_KEPT = 200;
 function readLog(value: unknown): StoredLog {
-  if (Array.isArray(value)) return { log: value as string[], turns: [], effects: [] };
+  if (Array.isArray(value)) return { log: value as string[], turns: [], effects: [], foeEffects: [], buffs: [], cooldowns: {} };
   const v = value as Partial<StoredLog> | null;
   const effects = Array.isArray(v?.effects) ? v.effects.filter(e => e && Object.prototype.hasOwnProperty.call(statusEffects, e.kind) && Number.isInteger(e.turns) && e.turns > 0) : [];
-  return { log: v?.log ?? [], turns: v?.turns ?? [], effects };
+  const foeEffects = Array.isArray(v?.foeEffects) ? v.foeEffects.filter(e => e && foeKinds.includes(e.kind) && Number.isInteger(e.turns) && e.turns > 0) : [];
+  const buffs = Array.isArray(v?.buffs) ? v.buffs.filter(b => b && b.kind === 'WAR_CRY' && Number.isInteger(b.turns) && b.turns > 0) : [];
+  const cooldowns = Object.fromEntries(Object.entries(v?.cooldowns ?? {}).filter(([k, n]) => powerKeys.includes(k) && Number.isInteger(n) && (n as number) > 0)) as Partial<Record<PowerKey, number>>;
+  return { log: v?.log ?? [], turns: v?.turns ?? [], effects, foeEffects, buffs, cooldowns };
 }
 
 export class BattleService {
@@ -61,7 +67,8 @@ export class BattleService {
       return { battleId: b.id, turnVersion: b.turnVersion, hp: c.hp, maxHp: c.maxHp, mana: c.mana,
         monsterHp: b.monsterHp, monsterMaxHp: b.monster.hp, monsterName: b.monster.name,
         monsterSprite: b.monster.spriteUrl, status: b.outcome, log: readLog(b.lastLog).log, turns: readLog(b.lastLog).turns,isBoss:b.monster.isBoss,intent:monsterIntent(b.monster,b.turnVersion),
-        effects: b.isFinished ? [] : readLog(b.lastLog).effects, monsterStatus: monsterStatus(b.monster), phase: bossPhase({ isBoss: b.monster.isBoss, hp: b.monsterHp, maxHp: b.monster.hp }) };
+        effects: b.isFinished ? [] : readLog(b.lastLog).effects, monsterStatus: monsterStatus(b.monster), maxMana: c.maxMana,
+        ...(b.isFinished ? { foeEffects: [], buffs: [], cooldowns: {} } : { foeEffects: readLog(b.lastLog).foeEffects, buffs: readLog(b.lastLog).buffs, cooldowns: readLog(b.lastLog).cooldowns }), phase: bossPhase({ isBoss: b.monster.isBoss, hp: b.monsterHp, maxHp: b.monster.hp }) };
     });
   }
 
@@ -82,8 +89,8 @@ export class BattleService {
       }
       const stats=combatStats(c,equipment), stored = readLog(b.lastLog);
       const fought = resolveTurn({ hp: c.hp, maxHp: c.maxHp, mana: c.mana,
-        ...stats,agility:c.agility,vocation:c.vocation,effects:stored.effects },
-        { hp: b.monsterHp, attack: b.monster.attack, defense: b.monster.defense,isBoss:b.monster.isBoss,turn:b.turnVersion,element:b.monster.element,status:monsterStatus(b.monster),maxHp:b.monster.hp }, action, dice);
+        ...stats,agility:c.agility,vocation:c.vocation,effects:stored.effects,maxMana:c.maxMana,buffs:stored.buffs,cooldowns:stored.cooldowns },
+        { hp: b.monsterHp, attack: b.monster.attack, defense: b.monster.defense,isBoss:b.monster.isBoss,turn:b.turnVersion,element:b.monster.element,status:monsterStatus(b.monster),maxHp:b.monster.hp,foeEffects:stored.foeEffects }, action, dice);
       // Fala própria do chefe na virada de fase, e limite de duração: no último turno, sem vencedor, a luta termina como retirada.
       const line = bossLines[b.monster.name]?.rage, spoken = line ? fought.log.map(l => l === GENERIC_RAGE_LINE ? line : l) : fought.log;
       const exhausted = fought.status === 'ONGOING' && b.turnVersion + 1 >= BATTLE_MAX_TURNS;
@@ -124,13 +131,13 @@ export class BattleService {
       const heavy = monsterIntent(b.monster, b.turnVersion).kind === 'HEAVY';
       const record: TurnRecord = { turn: b.turnVersion + 1, action, dealt: result.dealt, crit: result.crit, healed: result.healed, received: result.received, dodged: result.dodged,
         foe: result.foe, heavy, hp: result.hp, maxHp: c.maxHp, monsterHp: result.monsterHp, monsterMaxHp: b.monster.hp,
-        ...(result.effectDamage ? { effectDamage: result.effectDamage } : {}), ...(result.stolen ? { stolen: result.stolen } : {}), ...(result.inflicted ? { inflicted: result.inflicted } : {}) };
+        ...(result.effectDamage ? { effectDamage: result.effectDamage } : {}), ...(result.foeEffectDamage ? { foeEffectDamage: result.foeEffectDamage } : {}), ...(result.power ? { power: result.power } : {}), ...(result.stolen ? { stolen: result.stolen } : {}), ...(result.inflicted ? { inflicted: result.inflicted } : {}) };
       const turns = [...stored.turns, record].slice(-MAX_TURNS_KEPT);
       await tx.character.update({ where: { id: characterId }, data: { hp: result.hp, mana: result.mana, ...levelData, goldInHand: { increment: BigInt(gold) }, ...(fragments ? { bossFragments: { increment: fragments } } : {}) } });
       if (gold > 0) await recordGold(tx, characterId, BigInt(gold), c.goldInHand + BigInt(gold), 'MONSTER', { type: 'battle', id: battleId });
       await tx.battle.update({ where: { id: battleId }, data: { monsterHp: result.monsterHp,
         isFinished: result.status !== 'ONGOING', activeCharacterId: result.status === 'ONGOING' ? characterId : null,
-        turnVersion: { increment: 1 }, outcome: result.status, lastLog: { log: result.log, turns, effects: result.status === 'ONGOING' ? result.effects : [] } as unknown as Prisma.InputJsonValue,
+        turnVersion: { increment: 1 }, outcome: result.status, lastLog: { log: result.log, turns, effects: result.status === 'ONGOING' ? result.effects : [], ...(result.status === 'ONGOING' ? { foeEffects: result.foeEffects, buffs: result.buffs, cooldowns: result.cooldowns } : {}) } as unknown as Prisma.InputJsonValue,
         rewardGold:BigInt(gold),rewardExperience:xpGain,rewardRecorded:result.status!=='ONGOING' } });
       let defeat: DefeatAdvice | null = null;
       if (result.status === 'DEFEAT') {

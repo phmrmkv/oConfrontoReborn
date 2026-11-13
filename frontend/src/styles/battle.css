@@ -280,3 +280,6 @@
 .battle-stage .fx-burst.special.late .fx-cell{opacity:0;animation:fx-late .4s steps(4,jump-none) .24s forwards}
 /* Ícones próprios dos poderes (ui/PowerIcon.tsx): pintura detalhada, desenhada suave e um pouco maior que o sprite de item. */
 .skill-icon .power-art{image-rendering:auto;width:40px!important;height:40px!important;filter:drop-shadow(0 1px 2px #000a)}
+/* Poderes (shared/powers.ts): criatura presa por raízes e botão de poder recarregando. */
+.status-effects li.root{border-color:#a07a45;color:#d9b98a}
+.skill.cooling{opacity:.55}

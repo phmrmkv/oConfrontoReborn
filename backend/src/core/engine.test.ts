@@ -97,3 +97,39 @@ test('chefe abaixo de metade da vida entra em fúria: avisa na virada e bate 10%
   assert.equal(resolveTurn(strong, { ...boss, isBoss: false }, 'ATTACK', min).phase, 1);
   assert.equal(resolveTurn(strong, { ...monster, isBoss: true, turn: 0, hp: 20, attack: 100 }, 'ATTACK', min).phase, 1);
 });
+
+// Poderes da caçada solo (shared/powers.ts, PODERES.md).
+test('Grito de guerra: não ataca, cobra mana, reforça o dano nos turnos seguintes e entra em espera', () => {
+  const cry = resolveTurn(player, monster, 'POWER', min);
+  assert.equal(cry.dealt, 0); assert.equal(cry.mana, 35); assert.deepEqual(cry.buffs, [{ kind: 'WAR_CRY', turns: 2 }]); assert.equal(cry.cooldowns.WAR_CRY, 4);
+  const plain = resolveTurn(player, monster, 'ATTACK', min), boosted = resolveTurn({ ...player, buffs: cry.buffs }, monster, 'ATTACK', min);
+  assert.equal(boosted.dealt, Math.floor(plain.dealt * 1.3));
+  assert.ok(boosted.received <= plain.received);
+  assert.throws(() => resolveTurn({ ...player, cooldowns: cry.cooldowns }, monster, 'POWER', min), /recarregando/);
+});
+test('Flecha envenenada: golpe mais fraco e veneno que tira vida da criatura no fim do turno', () => {
+  const archer = { ...player, vocation: 'PALADIN' };
+  const r = resolveTurn(archer, { ...monster, maxHp: 100 }, 'POWER', min);
+  assert.deepEqual(r.foeEffects, [{ kind: 'POISON', turns: 2 }]); assert.equal(r.foeEffectDamage, 3); assert.equal(r.mana, 38);
+  const boss = resolveTurn(archer, { ...monster, maxHp: 100, isBoss: true, turn: 0 }, 'POWER', min);
+  assert.deepEqual(boss.foeEffects, [{ kind: 'POISON', turns: 1 }]);
+  const lastTick = resolveTurn(archer, { ...monster, hp: 30, maxHp: 1000, foeEffects: [{ kind: 'POISON', turns: 1 }] }, 'DEFEND_SHIELD', min);
+  assert.equal(lastTick.status, 'VICTORY'); assert.equal(lastTick.monsterHp, 0);
+});
+test('Raio congelante: deixa a criatura lenta, que bate mais fraco', () => {
+  const mage = { ...player, vocation: 'SORCERER', defense: 0 }, foe = { ...monster, attack: 40 };
+  const frozen = resolveTurn(mage, foe, 'POWER', min), normal = resolveTurn(mage, foe, 'ATTACK', min);
+  assert.ok(frozen.received < normal.received); assert.deepEqual(frozen.foeEffects, [{ kind: 'SLOW', turns: 1 }]);
+});
+test('Raízes: a criatura não ataca, menos o golpe pesado anunciado do chefe', () => {
+  const druid = { ...player, vocation: 'DRUID' };
+  const r = resolveTurn(druid, monster, 'POWER', min);
+  assert.equal(r.received, 0); assert.equal(r.foe, 'INTERRUPTED'); assert.equal(r.dealt, 0);
+  const heavy = resolveTurn(druid, { ...monster, isBoss: true, turn: 2 }, 'POWER', min);
+  assert.ok(heavy.received > 0); assert.equal(heavy.foe, 'HEAVY');
+});
+test('Meditar: recupera 25% da mana máxima, defende melhor e não repete no turno seguinte', () => {
+  const r = resolveTurn({ ...player, mana: 10, maxMana: 100 }, monster, 'MEDITATE', min);
+  assert.equal(r.mana, 35); assert.equal(r.dealt, 0);
+  assert.throws(() => resolveTurn({ ...player, maxMana: 100, cooldowns: r.cooldowns }, monster, 'MEDITATE', min), /recarregando/);
+});

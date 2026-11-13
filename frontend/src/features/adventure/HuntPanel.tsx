@@ -13,16 +13,18 @@ import type {Hero,JourneyState,Monster,Battle} from '../../lib/types';
 import {baseVocation,vocations,skillCosts,skillLabels,regions} from '../../../../shared/adventure';
 import {BATTLE_MAX_TURNS,bossRage,statusEffects,statusWarning} from '../../../../shared/statusEffects';
 import {bossLines} from '../../../../shared/bosses';
+import {powers,vocationPower,foeEffectNames} from '../../../../shared/powers';
 const n=(v:number)=>v.toLocaleString('pt-BR');
 function Life({label,hp,max,kind=''}:{label:string;hp:number;max:number;kind?:string}){return <div className="meter"><div><span>{label}</span><b>{n(hp)} / {n(max)}</b></div><progress className={kind} aria-label={label} max={Math.max(1,max)} value={hp}/></div>;}
 // Habilidades da batalha em três grupos: ataque, suporte e fuga.
 const skillGroups=[
   {key:'attack',label:'Ataque',icon:'Sword',actions:['ATTACK','TRIPLE_HIT','FIFTH_HIT','INTERRUPT']},
   {key:'support',label:'Suporte',icon:'Guardian Shield',actions:['HEAL','DEFEND_SHIELD']},
+  {key:'power',label:'Poderes',icon:'Crown Helmet',actions:['POWER','MEDITATE']},
   {key:'escape',label:'Fuga',icon:'Boots of Haste',actions:['FLEE']},
 ] as const;
 // Teclas de atalho das habilidades (Fugir fica sem tecla, para ninguém fugir por engano).
-const hotkeys:Record<string,string>={ATTACK:'1',TRIPLE_HIT:'2',FIFTH_HIT:'3',INTERRUPT:'4',HEAL:'5',DEFEND_SHIELD:'6'};
+const hotkeys:Record<string,string>={ATTACK:'1',TRIPLE_HIT:'2',FIFTH_HIT:'3',INTERRUPT:'4',HEAL:'5',DEFEND_SHIELD:'6',POWER:'7',MEDITATE:'8'};
 // Cada golpe tem o seu ícone, conforme a vocação; o que não estiver aqui usa skillIcon ou o ícone da vocação.
 const strikeIcons:Record<string,Record<string,string>>={
   KNIGHT:{ATTACK:'Sword',TRIPLE_HIT:'Giant Sword',FIFTH_HIT:'Warlord Sword'},
@@ -38,13 +40,18 @@ export default function HuntPanel({hero,state,monsters,battle,busy,start,turn,di
   useEffect(()=>{if(!state||chose.current)return;const open=(k:string)=>!!state.regions.find(r=>r.key===k)?.unlocked;
     if(state.step===4&&open('quarry')){setRegion('quarry');return;}
     const top=regions.filter(r=>open(r.key)).sort((a,b)=>b.minLevel-a.minLevel)[0];if(top)setRegion(top.key);},[state]);
-  const profile=vocations[baseVocation(hero.vocation)],costs=skillCosts(hero.vocation),labels=skillLabels(hero.vocation);
+  // POWER = o poder da vocação e MEDITATE = Meditar (shared/powers.ts): custo, nome, ajuda e espera vêm de lá.
+  const own=vocationPower(hero.vocation),powerKey=(a:string)=>a==='POWER'?own:a==='MEDITATE'?'MEDITATE' as const:null;
+  const costs={...skillCosts(hero.vocation),POWER:powers[own].mana,MEDITATE:powers.MEDITATE.mana},labels={...skillLabels(hero.vocation),POWER:powers[own].name,MEDITATE:powers.MEDITATE.name};
+  const profile=vocations[baseVocation(hero.vocation)];
+  const waitFor=(a:string)=>{const k=powerKey(a);return k?battle?.cooldowns?.[k]??0:0;};
   // Atalhos 1 a 6 durante a batalha; ignorados enquanto a pessoa digita em algum campo ou segura Ctrl/Alt.
   const live=useRef({battle,busy,turn,costs});live.current={battle,busy,turn,costs};
   useEffect(()=>{const onKey=(e:KeyboardEvent)=>{
     const {battle:b,busy:wait,turn:act,costs:c}=live.current;if(!b||b.status!=='ONGOING'||wait||e.ctrlKey||e.altKey||e.metaKey||e.repeat)return;
     const el=e.target as HTMLElement|null;if(el&&(['INPUT','TEXTAREA','SELECT'].includes(el.tagName)||el.isContentEditable))return;
     const action=Object.keys(hotkeys).find(a=>hotkeys[a]===e.key);if(!action||b.mana<c[action as keyof typeof c])return;
+    const k=action==='POWER'||action==='MEDITATE';if(k&&(b.cooldowns?.[action==='MEDITATE'?'MEDITATE':vocationPower(hero.vocation)]??0)>0)return;
     e.preventDefault();void act(action);};
     window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey);},[]);
   const rematch=battle?monsters.find(m=>m.name===battle.monsterName)??null:null;
@@ -53,11 +60,13 @@ export default function HuntPanel({hero,state,monsters,battle,busy,start,turn,di
     <BattleStage battle={battle} heroName={hero.name} vocation={baseVocation(hero.vocation)}/>
     <div className="fighters staged"><div><h3>{hero.name}</h3><Life label="Sua vida" hp={battle.hp} max={battle.maxHp}/><Life label="Sua mana" kind="mana" hp={battle.mana} max={Math.max(hero.maxMana,battle.mana)}/>{ongoing&&!!battle.effects?.length&&<ul className="status-effects" aria-label="Efeitos ativos">{battle.effects.map(e=><li key={e.kind} className={e.kind.toLowerCase()} title={statusEffects[e.kind].help}><b>{statusEffects[e.kind].active}</b> · {e.turns} {e.turns===1?'turno':'turnos'}</li>)}</ul>}<p>{profile.name}</p></div>
       <div className="versus"><span>VS</span></div>
-      <div><h3>{battle.monsterName}</h3><Life label="Vida do monstro" hp={battle.monsterHp} max={battle.monsterMaxHp}/>{ongoing&&battle.monsterStatus&&<p className="status-warning" title={`${statusEffects[battle.monsterStatus].help} Defender no turno impede.`}>{statusWarning[battle.monsterStatus]}</p>}</div></div>
+      <div><h3>{battle.monsterName}</h3><Life label="Vida do monstro" hp={battle.monsterHp} max={battle.monsterMaxHp}/>{ongoing&&!!battle.foeEffects?.length&&<ul className="status-effects" aria-label="Efeitos na criatura">{battle.foeEffects.map(e=><li key={e.kind} className={e.kind.toLowerCase()}><b>{foeEffectNames[e.kind]}</b> · {e.turns} turno{e.turns===1?'':'s'}</li>)}</ul>}
+      {ongoing&&!!battle.buffs?.length&&<p className="status-warning" role="status">Grito de guerra: mais dano e defesa por {battle.buffs[0].turns} turno{battle.buffs[0].turns===1?'':'s'}</p>}
+      {ongoing&&battle.monsterStatus&&<p className="status-warning" title={`${statusEffects[battle.monsterStatus].help} Defender no turno impede.`}>{statusWarning[battle.monsterStatus]}</p>}</div></div>
     {ongoing?<>{battle.isBoss&&<div className={`boss-phase ${battle.phase===2?'rage':''}`} role="status">{battle.phase===2?`Fase 2 · Em fúria: os golpes dele estão ${bossRage.attackPercent-100}% mais fortes`:`Fase 1 · Abaixo de ${bossRage.atPercent}% de vida ele entra em fúria`}</div>}{battle.isBoss&&battle.phase!==2&&bossLines[battle.monsterName]&&<p className="boss-line">{bossLines[battle.monsterName].intro}</p>}{ongoing&&battle.turnVersion+1>BATTLE_MAX_TURNS-10&&<p className="notice" role="status">Restam {BATTLE_MAX_TURNS-battle.turnVersion} turnos. Sem vencedor até lá, os dois recuam e ninguém leva nada.</p>}{battle.isBoss&&<div className={`boss-intent ${battle.intent?.warning?'warning':''}`} role="status">{battle.intent?.label}</div>}
       <h2 className="arena-title">Habilidades</h2>
       <div className="skill-groups">{skillGroups.map(g=><div key={g.key} role="group" aria-label={g.label} className={`skill-group ${g.key}`}><div className="skill-head"><span>{g.label}</span></div>
-        <div className="skill-grid">{g.actions.map(a=><button key={a} type="button" className={`skill ${battle.mana<costs[a]?'no-mana':''}`} disabled={busy||battle.mana<costs[a]} onClick={()=>void turn(a)} title={battle.mana<costs[a]?`Mana insuficiente: precisa de ${costs[a]}.`:a==='INTERRUPT'?'Cancela um golpe pesado anunciado pelo chefe.':'Age neste turno.'}>{hotkeys[a]&&<kbd aria-hidden="true">{hotkeys[a]}</kbd>}<span className="skill-icon"><PowerIcon vocation={baseVocation(hero.vocation)} action={a} fallback={`${strikeIcons[baseVocation(hero.vocation)]?.[a]??skillIcon[a]??profile.icon}|${profile.icon}`}/></span><b>{labels[a]}</b><small className={costs[a]?'cost':'cost free'}>{costs[a]?`${costs[a]} MP`:'Livre'}</small></button>)}</div></div>)}</div></>
+        <div className="skill-grid">{g.actions.map(a=><button key={a} type="button" className={`skill ${battle.mana<costs[a]?'no-mana':''} ${waitFor(a)?'cooling':''}`} disabled={busy||battle.mana<costs[a]||waitFor(a)>0} onClick={()=>void turn(a)} title={battle.mana<costs[a]?`Mana insuficiente: precisa de ${costs[a]}.`:waitFor(a)?`Recarregando: volta em ${waitFor(a)} turno(s).`:powerKey(a)?powers[powerKey(a)!].help:a==='INTERRUPT'?'Cancela um golpe pesado anunciado pelo chefe.':'Age neste turno.'}>{hotkeys[a]&&<kbd aria-hidden="true">{hotkeys[a]}</kbd>}<span className="skill-icon"><PowerIcon vocation={baseVocation(hero.vocation)} action={a} fallback={`${strikeIcons[baseVocation(hero.vocation)]?.[a]??skillIcon[a]??profile.icon}|${profile.icon}`}/></span><b>{labels[a]}</b><small className={costs[a]?'cost':'cost free'}>{costs[a]?`${costs[a]} MP`:'Livre'}</small></button>)}</div></div>)}</div></>
     :<div className="battle-result"><h2>{{VICTORY:'Vitória!',DEFEAT:'Você tombou em batalha.',FLED:'Você bateu em retirada.'}[battle.status]??'A batalha terminou'}</h2>{battle.rewards&&battle.status==='VICTORY'&&<div className="battle-rewards"><p>{battle.rewards.xpGained!==undefined&&<>+{battle.rewards.xpGained} XP · </>}+{battle.rewards.gold} ouro</p>{battle.rewards.leveledUp&&<p className="success">Você subiu para o nível {battle.rewards.level}! Distribua seus pontos em Atributos.</p>}{(battle.rewards.fragments??0)>0&&<p>+{battle.rewards.fragments} fragmento(s) de chefe. No Ferreiro, em Despertar, eles sobem a raridade de um equipamento.</p>}{battle.rewards.droppedItems.length>0&&<p>Encontrou: {battle.rewards.droppedItems.map((d,n)=><span key={n}>{n>0?', ':''}{d.quantity}× {d.name??'item'}{(d.rarity??0)>0&&<> <RarityTag rarity={d.rarity}/></>}{d.adapted&&<small className="muted" title="Caiu um equipamento de outra vocação e ele virou o equivalente da sua."> (feito para a sua vocação)</small>}</span>)}</p>}</div>}{battle.status==='DEFEAT'&&battle.defeat&&<div className="defeat-advice"><h3>Como a batalha foi perdida</h3><ul>{battle.defeat.reasons.map(r=><li key={r}>{r}</li>)}</ul><h3>Conselhos para a revanche</h3><ul>{battle.defeat.tips.map(t=><li key={t}>{t}</li>)}</ul></div>}<div className="inline-actions battle-result-actions">{battle.status==='DEFEAT'&&(hero.hp<=0?<button className="primary" onClick={goTemple}>Buscar cura no Templo de Capriel</button>:rematch&&<button className="primary" disabled={busy} onClick={()=>{const m=rematch;dismiss();void start(m);}}>Revanche contra {rematch.name}</button>)}<button className={battle.status==='DEFEAT'?'':'primary'} onClick={dismiss}>Partir para nova caçada</button></div></div>}
     <TurnLog turns={battle.turns??[]} log={battle.log} turnVersion={battle.turnVersion} heroName={hero.name} heroIcon={profile.icon} monsterName={battle.monsterName} monsterSprite={battle.monsterSprite} labels={labels}/></section>;}
   const selected=regions.find(r=>r.key===region)??regions[0];

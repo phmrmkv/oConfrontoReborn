@@ -3,7 +3,9 @@ import { GENERIC_RAGE_LINE } from '../../../shared/bosses';
 import { secondaryCap } from '../../../shared/itemStats';
 import { statusEffects, STATUS_CHANCE, STATUS_BOSS_CHANCE, SLOW_ATTACK_PERCENT, bossPhase, bossRage, type ActiveEffect, type StatusKind } from '../../../shared/statusEffects';
 import { expForLevel } from '../../../shared/progression';
-export const actions = ['ATTACK', 'TRIPLE_HIT', 'FIFTH_HIT', 'HEAL', 'DEFEND_SHIELD', 'INTERRUPT', 'FLEE'] as const;
+import { powers, powerOf, powerTuning, type Buff, type FoeEffect, type PowerKey } from '../../../shared/powers';
+// POWER = o poder próprio da vocação e MEDITATE = Meditar (shared/powers.ts): só na caçada solo.
+export const actions = ['ATTACK', 'TRIPLE_HIT', 'FIFTH_HIT', 'HEAL', 'DEFEND_SHIELD', 'INTERRUPT', 'FLEE', 'POWER', 'MEDITATE'] as const;
 export type Action = typeof actions[number];
 export class GameError extends Error {
   constructor(public status: number, message: string) { super(message); }
@@ -23,9 +25,12 @@ export function getExpForLevel(level: number): bigint {
 // `effects` = efeitos de status ativos no herói (veneno, queimadura, lentidão). `status` = o que a criatura causa quando acerta.
 // Atributos secundários (shared/itemStats.ts), em %: zero ou ausente não muda nada e não rola dado a mais.
 export interface Fighter { hp: number; maxHp: number; mana: number; attack: number; defense: number; agility?: number; vocation?:string; criticalChance?:number;fireResistance?:number;dodgeChance?:number; effects?: ActiveEffect[];
-  critDamage?:number; lifeSteal?:number; healPower?:number; statusResistance?:number }
+  critDamage?:number; lifeSteal?:number; healPower?:number; statusResistance?:number;
+  // Poderes (shared/powers.ts): mana máxima (para Meditar), reforço ativo do Grito de guerra e turnos de espera de cada poder.
+  maxMana?: number; buffs?: Buff[]; cooldowns?: Partial<Record<PowerKey, number>> }
 // `maxHp` (vida cheia da criatura) permite saber a fase do chefe; sem ele, não há fase 2.
-export interface Enemy { hp: number; attack: number; defense: number; isBoss?:boolean; turn?:number;element?:string; status?: StatusKind | null; maxHp?: number }
+// `foeEffects` = o que o herói pôs na criatura (veneno, lentidão, raízes; shared/powers.ts).
+export interface Enemy { hp: number; attack: number; defense: number; isBoss?:boolean; turn?:number;element?:string; status?: StatusKind | null; maxHp?: number; foeEffects?: FoeEffect[] }
 export function monsterIntent(monster:Enemy, turn=monster.turn??0) {
   if(!monster.isBoss)return {kind:'ATTACK',label:'Ataque comum',warning:false};
   if(turn%3===1)return {kind:'CHARGE',label:'Vai preparar um golpe poderoso. Aproveite para atacar ou curar.',warning:false};
@@ -37,8 +42,9 @@ export type Dice = (min: number, max: number) => number;
 export type FoeMove = 'ATTACK' | 'HEAVY' | 'CHARGE' | 'INTERRUPTED' | 'NONE';
 // Fórmulas do golpe e da cura do herói, usadas no combate contra monstros e no duelo (backend/src/game/duelEngine.ts).
 export const skillMultiplier = (action: Action) => action === 'TRIPLE_HIT' ? 1.85 : action === 'FIFTH_HIT' ? 2.75 : action === 'DEFEND_SHIELD' ? .5 : action === 'INTERRUPT' ? .65 : 1;
-export function strike(attacker: Fighter, targetDefense: number, action: Action, dice: Dice) {
-  const base = Math.max(2, attacker.attack * skillMultiplier(action) - targetDefense*.5);
+// `multiplier` substitui o da ação (poderes com golpe próprio, como a Flecha envenenada).
+export function strike(attacker: Fighter, targetDefense: number, action: Action, dice: Dice, multiplier = skillMultiplier(action)) {
+  const base = Math.max(2, attacker.attack * multiplier - targetDefense*.5);
   let dealt = dice(Math.floor(base*.8), Math.ceil(base*1.2)), crit = false;
   // Crítico: 1,5 vez o golpe, mais o dano crítico dos equipamentos.
   if (dice(1, 100) <= (attacker.criticalChance??Math.min(30, 10 + Math.floor((attacker.agility ?? 20)/4)))) { dealt = Math.floor(dealt*(1.5+Math.min(secondaryCap.critDamage,Math.max(0,attacker.critDamage??0))/100)); crit = true; }
@@ -58,6 +64,11 @@ export function resolveTurn(player: Fighter, monster: Enemy, action: Action, dic
   // Efeitos de status: copiados para não alterar a entrada; sem efeitos e sem `monster.status`, nada muda e nenhum dado extra é rolado.
   let effects: ActiveEffect[] = (player.effects ?? []).filter(e => e.turns > 0).map(e => ({ ...e })), effectDamage = 0, inflicted: StatusKind | null = null;
   const slowed = effects.some(e => e.kind === 'SLOW');
+  // Poderes: o que já estava na criatura, o reforço do herói e os turnos de espera (cópias; sem poderes, nada muda).
+  let foeEffects: FoeEffect[] = (monster.foeEffects ?? []).filter(e => e.turns > 0).map(e => ({ ...e }));
+  let buffs: Buff[] = (player.buffs ?? []).filter(b => b.turns > 0).map(b => ({ ...b }));
+  const cooldowns: Partial<Record<PowerKey, number>> = { ...(player.cooldowns ?? {}) };
+  let foeEffectDamage = 0;
   // Fim do turno enquanto a luta continua: os efeitos que já estavam ativos causam dano e perdem um turno; só depois entra o efeito novo.
   const endTurn = (foe: FoeMove) => {
     for (const e of effects) {
@@ -71,27 +82,65 @@ export function resolveTurn(player: Fighter, monster: Enemy, action: Action, dic
       e.turns--;
     }
     effects = effects.filter(e => e.turns > 0);
+    // Veneno na criatura tira vida no fim do turno; os efeitos dela, o reforço e as esperas perdem um turno.
+    for (const e of foeEffects) {
+      if (e.kind === 'POISON' && hp > 0 && monsterHp > 0) {
+        const d = Math.min(monsterHp, Math.max(1, Math.floor((monster.maxHp ?? monster.hp) * powerTuning.poisonArrow.damagePercent / 100)));
+        monsterHp -= d; foeEffectDamage += d; log.push(`Veneno: a criatura perde ${d} de vida.`);
+      }
+      e.turns--;
+    }
+    foeEffects = foeEffects.filter(e => e.turns > 0);
+    for (const b of buffs) b.turns--;
+    buffs = buffs.filter(b => b.turns > 0);
+    for (const k of Object.keys(cooldowns) as PowerKey[]) { cooldowns[k] = Math.max(0, (cooldowns[k] ?? 0) - 1); if (!cooldowns[k]) delete cooldowns[k]; }
     const applied = hp > 0 ? inflicted : null;
     if (applied) {
       effects = [...effects.filter(e => e.kind !== applied), { kind: applied, turns: statusEffects[applied].turns }];
       log.push(`A criatura deixa você ${statusEffects[applied].active.toLowerCase()} por ${statusEffects[applied].turns} turnos.`);
     }
-    return { hp, mana, monsterHp, dealt, received, healed, crit, dodged, stolen, foe, effects, effectDamage, inflicted: applied, phase, status: hp === 0 ? 'DEFEAT' as const : 'ONGOING' as const, log };
+    const status = hp === 0 ? 'DEFEAT' as const : monsterHp === 0 ? 'VICTORY' as const : 'ONGOING' as const;
+    return { hp, mana, monsterHp, dealt, received, healed, crit, dodged, stolen, foe, effects: status === 'ONGOING' ? effects : [], effectDamage, inflicted: applied, phase, status, log,
+      foeEffects: status === 'ONGOING' ? foeEffects : [], buffs: status === 'ONGOING' ? buffs : [], cooldowns: status === 'ONGOING' ? cooldowns : {}, foeEffectDamage, power };
   };
-  if (action === 'FLEE') return { hp, mana, monsterHp, dealt, received, healed, crit, dodged, stolen, foe: 'NONE' as FoeMove, effects: [] as ActiveEffect[], effectDamage, inflicted, phase: 1 as 1 | 2, status: 'FLED' as const, log: ['Você bate em retirada.'] };
+  const power = powerOf(action, player.vocation ?? 'KNIGHT');
+  const ended = { foeEffects: [] as FoeEffect[], buffs: [] as Buff[], cooldowns: {} as Partial<Record<PowerKey, number>>, foeEffectDamage: 0 };
+  if (action === 'FLEE') return { hp, mana, monsterHp, dealt, received, healed, crit, dodged, stolen, foe: 'NONE' as FoeMove, effects: [] as ActiveEffect[], effectDamage, inflicted, phase: 1 as 1 | 2, status: 'FLED' as const, log: ['Você bate em retirada.'], ...ended, power };
   const costs = skillCosts(player.vocation??'KNIGHT');
-  // Política explícita: mana insuficiente rejeita o turno inteiro.
-  if (mana < costs[action]) throw new GameError(409, 'Mana insuficiente.');
-  mana -= costs[action];
-  if (action === 'HEAL') {
+  // Política explícita: mana insuficiente rejeita o turno inteiro; poder em espera também.
+  const cost = power ? powers[power].mana : costs[action as keyof typeof costs];
+  if (power && (cooldowns[power] ?? 0) > 0) throw new GameError(409, `${powers[power].name} ainda está recarregando (${cooldowns[power]} turno(s)).`);
+  if (mana < cost) throw new GameError(409, 'Mana insuficiente.');
+  mana -= cost;
+  if (power) cooldowns[power] = powers[power].cooldown + 1; // +1: o fim deste turno já desconta um
+  const crying = buffs.some(b => b.kind === 'WAR_CRY');
+  let guardPercent = 100, rooted = false;
+  if (power === 'WAR_CRY') {
+    buffs = [...buffs.filter(b => b.kind !== 'WAR_CRY'), { kind: 'WAR_CRY', turns: powerTuning.warCry.turns }];
+    log.push('Seu grito de guerra ecoa: você bate e aguenta mais por 3 turnos.');
+  } else if (power === 'MEDITATE') {
+    const gain = Math.min(Math.max(0, (player.maxMana ?? mana) - mana), Math.ceil((player.maxMana ?? 0) * powerTuning.meditate.manaPercent / 100));
+    mana += gain; guardPercent = powerTuning.meditate.defensePercent;
+    log.push(`Você medita e recupera ${gain} de mana.`);
+  } else if (power === 'ROOTS') {
+    rooted = true; foeEffects = [...foeEffects.filter(e => e.kind !== 'ROOT'), { kind: 'ROOT', turns: 1 }];
+    log.push('Raízes sobem do chão e prendem a criatura.');
+  } else if (action === 'HEAL') {
     healed = Math.min(player.maxHp - hp, healRoll(player, dice));
     hp += healed;
     log.push(`Você recupera ${healed} de vida.`);
     // A cura do Druida também limpa os efeitos de status.
     if (effects.length && baseVocation(player.vocation ?? 'KNIGHT') === 'DRUID') { effects = []; log.push('Sua cura purifica o corpo: os efeitos somem.'); }
   } else {
-    ({ dealt, crit } = strike(player, monster.defense, action, dice));
+    const multiplier = power === 'POISON_ARROW' ? powerTuning.poisonArrow.strikePercent / 100 : power === 'FROST_BOLT' ? powerTuning.frostBolt.strikePercent / 100 : skillMultiplier(action);
+    ({ dealt, crit } = strike(player, monster.defense, action, dice, multiplier));
     if (slowed) dealt = Math.max(1, Math.floor(dealt * SLOW_ATTACK_PERCENT / 100));
+    if (crying || buffs.some(b => b.kind === 'WAR_CRY')) dealt = Math.floor(dealt * powerTuning.warCry.damagePercent / 100);
+    // Efeito do poder na criatura (reaplicar só renova; chefe resiste a parte da duração).
+    if (power === 'POISON_ARROW' || power === 'FROST_BOLT') {
+      const kind = power === 'POISON_ARROW' ? 'POISON' as const : 'SLOW' as const, t = power === 'POISON_ARROW' ? powerTuning.poisonArrow : powerTuning.frostBolt;
+      foeEffects = [...foeEffects.filter(e => e.kind !== kind), { kind, turns: monster.isBoss ? t.bossTurns : t.turns }];
+    }
     monsterHp = Math.max(0, monsterHp - dealt);
     log.push(`Seu golpe causa ${dealt} de dano.`);
     // Roubo de vida: parte do dano volta como vida, até a mesma porcentagem da vida máxima por golpe
@@ -102,17 +151,21 @@ export function resolveTurn(player: Fighter, monster: Enemy, action: Action, dic
       if (stolen > 0) { hp += stolen; log.push(`Roubo de vida: você recupera ${stolen}.`); }
     }
   }
-  if (monsterHp === 0) return { hp, mana, monsterHp, dealt, received, healed, crit, dodged, stolen, foe: 'NONE' as FoeMove, effects: [] as ActiveEffect[], effectDamage, inflicted, phase: 1 as 1 | 2, status: 'VICTORY' as const, log };
+  if (monsterHp === 0) return { hp, mana, monsterHp, dealt, received, healed, crit, dodged, stolen, foe: 'NONE' as FoeMove, effects: [] as ActiveEffect[], effectDamage, inflicted, phase: 1 as 1 | 2, status: 'VICTORY' as const, log, ...ended, power };
   // Fase do chefe depois do seu golpe: abaixo de metade da vida ele entra em fúria (avisa uma vez, na virada).
   const phase = bossPhase({ isBoss: monster.isBoss, hp: monsterHp, maxHp: monster.maxHp });
   if (phase === 2 && bossPhase(monster) === 1) log.push(GENERIC_RAGE_LINE);
   const intent=monsterIntent(monster);
+  // Raízes prendem a criatura neste turno, menos o golpe pesado anunciado do chefe.
+  if (rooted && intent.kind !== 'HEAVY') { log.push('Presa pelas raízes, a criatura não ataca.'); return endTurn('INTERRUPTED'); }
+  if (rooted) log.push('O chefe arrebenta as raízes: o golpe pesado só se interrompe.');
   if(intent.kind==='CHARGE'||(intent.kind==='HEAVY'&&action==='INTERRUPT')) {
     log.push(intent.kind==='CHARGE'?'O chefe concentra forças para um golpe pesado!':'Você interrompe o golpe pesado do chefe!');
     return endTurn((intent.kind==='CHARGE'?'CHARGE':'INTERRUPTED') as FoeMove);
   }
-  const defense = player.defense * (action === 'DEFEND_SHIELD' ? 2.5 : 1);
-  const base = Math.max(1, monster.attack*(intent.kind==='HEAVY'?1.8:1)*(phase===2?bossRage.attackPercent/100:1) - defense*.4);
+  const defense = player.defense * (action === 'DEFEND_SHIELD' ? 2.5 : 1) * guardPercent / 100 * (buffs.some(b => b.kind === 'WAR_CRY') ? powerTuning.warCry.defensePercent / 100 : 1);
+  const frozen = foeEffects.some(e => e.kind === 'SLOW') ? powerTuning.frostBolt.attackPercent / 100 : 1;
+  const base = Math.max(1, monster.attack*(intent.kind==='HEAVY'?1.8:1)*(phase===2?bossRage.attackPercent/100:1)*frozen - defense*.4);
   received = dice(Math.max(1, Math.floor(base*.75)), Math.max(1, Math.ceil(base*1.25)));
   if(monster.element==='FIRE')received=Math.max(1,Math.floor(received*(1-(player.fireResistance??0)/100)));
   if(intent.kind==='HEAVY'&&action==='DEFEND_SHIELD')received=Math.max(1,Math.floor(received*.45));

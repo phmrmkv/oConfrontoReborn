@@ -1,6 +1,6 @@
 # Poderes da luta: o que existe e o que pode entrar
 
-Avaliação de 2026-11-13 (pedido do dono: "na luta avalie mais poderes pra ser usado"). Nada aqui mudou regra de combate ainda: é a proposta, com a arte dos ícones gerada no gerador local.
+Avaliação de 2026-11-13 (pedido do dono: "na luta avalie mais poderes pra ser usado"). Os 5 poderes abaixo já estão na caçada solo (`shared/powers.ts`, `core/engine.ts`); duelo e Caçada em grupo seguem sem eles. `npm run powers:simulate` compara a caçada com e sem eles: a vitória não muda, as lutas ficam 1 a 2,5 turnos mais longas com o uso ingênuo, e o Arqueiro passa a vencer mais os chefes de nível 36 a 40.
 
 ## O que existe hoje (caçada solo e duelo)
 Sete ações iguais para todas as vocações; só o nome dos dois especiais muda. O único limite é a mana, que não volta durante a luta.

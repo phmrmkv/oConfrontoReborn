@@ -7,9 +7,11 @@ const specials: Record<string, Record<string, string>> = {
   SORCERER: { TRIPLE_HIT: 's1-explosao', FIFTH_HIT: 's2-tempestade' },
   DRUID: { TRIPLE_HIT: 'd1-espinhos', FIFTH_HIT: 'd2-furia-natural' },
 };
-const shared: Record<string, string> = { INTERRUPT: 'interromper' };
+const shared: Record<string, string> = { INTERRUPT: 'interromper', MEDITATE: 'meditar' };
+// O poder próprio de cada vocação (ação POWER, shared/powers.ts).
+const ownPower: Record<string, string> = { KNIGHT: 'k-grito-de-guerra', PALADIN: 'p-flecha-envenenada', SORCERER: 's-raio-congelante', DRUID: 'd-raizes' };
 /** O ícone próprio de uma ação da luta para a vocação-base, ou `undefined` se ela usa ícone de item. */
 export const powerArt = (baseVocation: string, action: string): string | undefined => {
-  const file = specials[baseVocation]?.[action] ?? shared[action];
+  const file = action === 'POWER' ? ownPower[baseVocation] : specials[baseVocation]?.[action] ?? shared[action];
   return file ? `/assets/powers/${file}.webp` : undefined;
 };

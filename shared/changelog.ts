@@ -1,6 +1,11 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-poderes', date: '2026-11-13', title: 'Poderes novos na caçada', items: [
+    'Cada vocação ganhou um poder próprio na caçada: Grito de guerra (Cavaleiro), Flecha envenenada (Arqueiro), Raio congelante (Feiticeiro) e Raízes (Druida).',
+    'Todos ganharam Meditar, que recupera parte da mana e defende melhor naquele turno.',
+    'Os poderes têm tempo de recarga, mostrado no botão. Os efeitos que você põe na criatura aparecem embaixo da vida dela.',
+  ] },
   { id: '2026-11-13-so-arte-propria', date: '2026-11-13', title: 'Só arte própria no jogo', items: [
     'Os sprites do TibiaWiki saíram do jogo: agora tudo o que você vê é arte própria de O Confronto.',
     'Itens que ainda não têm a arte própria mostram um quadradinho com as iniciais do nome até a figura chegar.',
