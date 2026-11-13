@@ -8,6 +8,7 @@ import { combatStats } from './combatStats';
 import { regions } from '../../../shared/adventure';
 import { event, awardAchievements } from './adventureService';
 import { addItem, recordGold } from '../economy/economy';
+import { hasRarity, rarityOddsOf, rollRarity } from '../../../shared/rarity';
 import { loadSettings } from '../core/settings';
 import { scaleInt } from '../../../shared/economy';
 import { vocationAllowed, skillCosts } from '../../../shared/adventure';
@@ -67,7 +68,7 @@ export class BattleService {
     const action = parseAction(rawAction);
     return transaction(async tx => {
       const c = await lockCharacter(tx, accountId, characterId);
-      const b = await tx.battle.findFirst({ where: { id: battleId, characterId }, include: { monster: { include: { loots: { include: { blueprint: { select: { name: true } } } } } } } });
+      const b = await tx.battle.findFirst({ where: { id: battleId, characterId }, include: { monster: { include: { loots: { include: { blueprint: { select: { name: true, slot: true } } } } } } } });
       if (!b) throw new GameError(404, 'Batalha não encontrada.');
       if (b.isFinished || b.turnVersion !== expectedTurn) throw new GameError(409, 'Esse turno já passou ou a batalha terminou. Atualize a tela.');
       const equipment = await tx.inventoryItem.findMany({ where: { characterId, isEquipped: true }, include: { blueprint: true } });
@@ -86,7 +87,7 @@ export class BattleService {
       const exhausted = fought.status === 'ONGOING' && b.turnVersion + 1 >= BATTLE_MAX_TURNS;
       const result = exhausted ? { ...fought, status: 'FLED' as const, effects: [] as ActiveEffect[], log: [...spoken, `Depois de ${BATTLE_MAX_TURNS} turnos, os dois lados recuam exaustos. Ninguém leva nada.`] } : { ...fought, log: spoken };
       let gold = 0, xpGain = 0;
-      const droppedItems: { blueprintId: number; quantity: number; name: string }[] = [];
+      const droppedItems: { blueprintId: number; quantity: number; name: string; rarity: number }[] = [];
       if (result.status === 'VICTORY') {
         if (b.monster.experience < 0 || b.monster.goldMin < 0 || b.monster.goldMax < b.monster.goldMin)
           throw new GameError(409, 'Recompensa do monstro inválida.');
@@ -97,8 +98,10 @@ export class BattleService {
           if (loot.dropChance < 0 || loot.dropChance > 1 || !Number.isFinite(loot.dropChance) || loot.maxAmount < 1)
             throw new GameError(409, 'Tabela de loot inválida. Use probabilidades entre 0 e 1.');
           if (dice(1, 1000000) <= Math.floor(loot.dropChance * 1000000)) {
-            const drop = { blueprintId: loot.blueprintId, quantity: dice(1, loot.maxAmount), name: loot.blueprint.name };
-            await addItem(tx, characterId, drop.blueprintId, drop.quantity, 'LOOT', { type: 'battle', id: battleId });
+            // Equipamento sorteia a raridade do exemplar (shared/rarity.ts); chefe multiplica as chances. Poção e material são sempre Comuns.
+            const rarity = hasRarity(loot.blueprint.slot) ? rollRarity(rarityOddsOf(settings), dice(1, 10000), b.monster.isBoss ? settings['rarity.bossBoostPercent'] : 100) : 0;
+            const drop = { blueprintId: loot.blueprintId, quantity: dice(1, loot.maxAmount), name: loot.blueprint.name, rarity };
+            await addItem(tx, characterId, drop.blueprintId, drop.quantity, 'LOOT', { type: 'battle', id: battleId }, 0, null, rarity);
             droppedItems.push(drop);
           }
         }

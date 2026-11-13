@@ -235,3 +235,17 @@ main:focus{outline:none}
 @media(max-width:760px){.link-button{min-height:32px;padding-top:4px;padding-bottom:4px}}
 /* Retrato de criatura com arte própria (ui/CreatureIcon.tsx): 128 px reduzido com suavização, sem distorcer. */
 img.sprite.creature-art{image-rendering:auto;object-fit:contain}
+/* Raridade do exemplar (ui/RarityFrame.tsx, shared/rarity.ts): uma cor por raridade, em camada separada do ícone.
+   1 Incomum (verde), 2 Raro (azul), 3 Épico (roxo), 4 Lendário (dourado), 5 Mítico (vermelho). Comum não tem moldura. */
+:root{--rarity-1:#62c370;--rarity-2:#5aa7f2;--rarity-3:#b58af5;--rarity-4:#ecbd4f;--rarity-5:#f2665a}
+:root[data-theme="light"]{--rarity-1:#2c7a39;--rarity-2:#1d5fae;--rarity-3:#7440bd;--rarity-4:#93650a;--rarity-5:#b3271f}
+.rarity-1{--rarity:var(--rarity-1)}.rarity-2{--rarity:var(--rarity-2)}.rarity-3{--rarity:var(--rarity-3)}.rarity-4{--rarity:var(--rarity-4)}.rarity-5{--rarity:var(--rarity-5)}
+.rarity-frame{display:inline-grid;place-items:center;vertical-align:middle;padding:3px;border-radius:8px;background:color-mix(in srgb,var(--rarity) 13%,transparent);box-shadow:inset 0 0 0 2px var(--rarity),0 0 9px color-mix(in srgb,var(--rarity) 45%,transparent)}
+.rarity-frame.rarity-4,.rarity-frame.rarity-5{animation:rarity-pulse 2.6s ease-in-out infinite}
+@keyframes rarity-pulse{50%{box-shadow:inset 0 0 0 2px var(--rarity),0 0 16px color-mix(in srgb,var(--rarity) 80%,transparent)}}
+.rarity-tag{display:inline-block;vertical-align:middle;padding:1px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--rarity) 60%,transparent);background:color-mix(in srgb,var(--rarity) 13%,transparent);color:var(--rarity);font-family:Inter,"Segoe UI",sans-serif;font-size:12px;font-weight:700;letter-spacing:.3px;line-height:1.5;white-space:nowrap}
+.rarity-line{margin:4px 0}
+.equipment-slot .rarity-frame{padding:2px;border-radius:6px}
+/* Na mochila, todo span filho direto vira a etiqueta do canto (style.css); a moldura volta ao fluxo, como o brilho do +7. No detalhe do item ela não estica. */
+.bag-slot>.rarity-frame{position:relative;right:auto;bottom:auto}
+.item-detail>.rarity-frame{align-self:flex-start;flex:0 0 auto}

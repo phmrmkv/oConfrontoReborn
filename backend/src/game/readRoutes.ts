@@ -8,6 +8,7 @@ import { buyListing, cancelListing, listItem, expireListings } from '../economy/
 import { loadSettings } from '../core/settings';
 import { isPremium } from '../premium/premium';
 import { npcBuyPrice } from '../../../shared/economy';
+import { MAX_RARITY } from '../../../shared/rarity';
 import { forgeableSlots } from '../../../shared/forge';
 import { combatStats } from './combatStats';
 export const readRoutes = Router();
@@ -55,11 +56,12 @@ readRoutes.get('/market', asyncRoute(async (req,res) => {
   const slots = ['WEAPON', 'ARMOR', 'HELMET', 'LEGS', 'BOOTS', 'SHIELD', 'AMULET', 'RING', 'AMMO', 'BACKPACK', 'LOOT', 'CONSUMABLE'];
   // Um ou mais tipos separados por vírgula (ex.: HELMET,ARMOR,LEGS,BOOTS para a aba Armaduras).
   const slot = String(req.query.slot ?? '').split(',').filter(x => slots.includes(x)) as ItemSlot[];
-  const maxLevel = req.query.maxLevel ? Math.min(1000, integer(Number(req.query.maxLevel))) : undefined, minTier = req.query.minTier ? Math.min(10, integer(Number(req.query.minTier), 0)) : 0;
+  const maxLevel = req.query.maxLevel ? Math.min(1000, integer(Number(req.query.maxLevel))) : undefined, minTier = req.query.minTier ? Math.min(10, integer(Number(req.query.minTier), 0)) : 0,
+    minRarity = req.query.minRarity ? Math.min(MAX_RARITY, integer(Number(req.query.minRarity), 0)) : 0;
   await expireListings(20);
   // Mais recentes primeiro; a busca filtra pelo nome do item.
   const blueprint: Prisma.ItemBlueprintWhereInput = { ...(q ? { name: { contains: q } } : {}), ...(slot.length ? { slot: { in: slot } } : {}), ...(maxLevel ? { minLevel: { lte: maxLevel } } : {}) };
-  const where: Prisma.MarketListingWhereInput = { status: 'OPEN', OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }], ...(Object.keys(blueprint).length ? { blueprint } : {}), ...(minTier ? { upgradeTier: { gte: minTier } } : {}) };
+  const where: Prisma.MarketListingWhereInput = { status: 'OPEN', OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }], ...(Object.keys(blueprint).length ? { blueprint } : {}), ...(minTier ? { upgradeTier: { gte: minTier } } : {}), ...(minRarity ? { rarity: { gte: minRarity } } : {}) };
   const [items, total] = await Promise.all([prisma.marketListing.findMany({ where, include: { blueprint: true, seller: { select: { name: true } } }, orderBy: { id: 'desc' }, skip, take }), prisma.marketListing.count({ where })]);
   res.json(paged(items, total, page));
 }));

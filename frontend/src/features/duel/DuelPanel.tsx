@@ -3,6 +3,8 @@ import {api} from '../../lib/api';
 import {msg} from '../../lib/format';
 import type {Hero} from '../../lib/types';
 import Icon from '../../ui/GameIcon';
+import {RarityFrame,RarityTag} from '../../ui/RarityFrame';
+import {raritySuffix} from '../../../../shared/rarity';
 import {Feedback} from '../../ui/Feedback';
 import {LimitedRows} from '../../ui/ShowMore';
 import {Pager,usePaged} from '../../ui/Pager';
@@ -13,16 +15,16 @@ import {duelActionLabels,modeHelp,modeLabels,outcomeLabels,type DuelAction,type 
 type Card={id:number;name:string;level:number;vocation:string;classTier:number;profileAvatar:string|null;profileEmblem:string|null};
 type Side={characterId:number;character:Card;vocation:string;hp:number;maxHp:number;mana:number;maxMana:number;ready:boolean;action:DuelAction|null;missed:number};
 type Duel={id:number;round:number;status:string;outcome:DuelOutcome;winnerId:number|null;deadlineAt:string|null;finishedAt:string|null;me:Side;foe:Side;
-  mode:DuelMode;stake:string;fee:string;honorDelta:number;loot:{id:number;item:string;upgradeTier:number;status:string;winnerId:number;ransomPrice:string}|null;
+  mode:DuelMode;stake:string;fee:string;honorDelta:number;loot:{id:number;item:string;upgradeTier:number;rarity?:number;status:string;winnerId:number;ransomPrice:string}|null;
   actions:{key:DuelAction;label:string;mana:number;help:string}[];rounds:DuelRoundRecord[]};
-type Loot={id:number;duelId:number;item:string;sprite:string;upgradeTier:number;ransomPrice:string;expiresAt:string};
+type Loot={id:number;duelId:number;item:string;sprite:string;upgradeTier:number;rarity?:number;ransomPrice:string;expiresAt:string};
 type State={now:string;record:{wins:number;losses:number;streak:number;honor:number;marks:number};eligible:string|null;today:number;gold:string;
   rules:{minLevel:number;levelBandPercent:number;dailyLimit:number;roundHours:number;inviteHours:number;wagerMaxPercent:number;wagerFeePercent:number;lootChancePercent:number;
     lootProtectTier:number;ransomHours:number;ransomPercent:number;pairDailyLimit:number;modes:DuelMode[]};
   honorShop:{key:string;kind:'TITLE'|'FRAME';name:string;marks:number;owned:boolean;using:boolean}[];lootsLost:(Loot&{winner:Card})[];lootsWon:(Loot&{loser:Card})[];
   friends:(Card&{blocked:string|null})[];received:{id:number;from:Card;expiresAt:string;mode:DuelMode;wager:string}[];sent:{id:number;to:Card;expiresAt:string;mode:DuelMode;wager:string}[];duel:Duel|null};
 type HistoryRow={id:number;opponent:Card;outcome:DuelOutcome;won:boolean;draw:boolean;rounds:number;finishedAt:string;mode:DuelMode;stake:string;fee:string;honorDelta:number;
-  loot:{item:string;upgradeTier:number;status:string;mine:boolean}|null};
+  loot:{item:string;upgradeTier:number;rarity?:number;status:string;mine:boolean}|null};
 type Ranking={tier:number|null;items:(Card&{pvpWins:number;pvpLosses:number;honorPoints:number})[]};
 const gold=(v:string|bigint)=>BigInt(v).toLocaleString('pt-BR');
 const lootStatus:Record<string,string>={OPEN:'pode ser resgatado',RANSOMED:'resgatado',EXPIRED:'prazo de resgate vencido',GONE:'já usado pelo vencedor'};
@@ -87,12 +89,12 @@ export default function DuelPanel({hero,openProfile}:{hero:Hero;openProfile:(nam
 
     {s.lootsLost.length>0&&<section className="panel duel-loots"><div className="section-title"><h2>Itens perdidos no espólio</h2><span>{s.lootsLost.length}</span></div>
       <p className="muted">Pague o preço ao vencedor e o item volta para a sua mochila. Se ele usar, vender ou anunciar o item antes, o resgate acaba.</p>
-      {s.lootsLost.map(l=><div className="market-row" key={l.id}><Icon name={l.item} src={l.sprite} size={36}/><div><h3>{l.item}{l.upgradeTier?` +${l.upgradeTier}`:''}</h3>
+      {s.lootsLost.map(l=><div className="market-row" key={l.id}><RarityFrame rarity={l.rarity}><Icon name={l.item} src={l.sprite} size={36}/></RarityFrame><div><h3>{l.item}{l.upgradeTier?` +${l.upgradeTier}`:''} <RarityTag rarity={l.rarity}/></h3>
         <p>Levado por {l.winner.name} · resgate {relative(new Date(l.expiresAt).getTime()-(clock+offset.current)).replace('em ','vence em ')}</p></div>
         <button className="primary" disabled={busy||BigInt(s.gold)<BigInt(l.ransomPrice)} onClick={()=>void act(`loot/${l.id}/ransom`)}>Resgatar por {gold(l.ransomPrice)} de ouro</button></div>)}</section>}
     {s.lootsWon.length>0&&<section className="panel duel-loots"><div className="section-title"><h2>Espólios que você levou</h2><span>{s.lootsWon.length}</span></div>
       <p className="muted">O antigo dono pode resgatar cada um pagando o preço de loja. Usar, vender ou anunciar o item encerra o resgate.</p>
-      {s.lootsWon.map(l=><div className="market-row" key={l.id}><Icon name={l.item} src={l.sprite} size={36}/><div><h3>{l.item}{l.upgradeTier?` +${l.upgradeTier}`:''}</h3>
+      {s.lootsWon.map(l=><div className="market-row" key={l.id}><RarityFrame rarity={l.rarity}><Icon name={l.item} src={l.sprite} size={36}/></RarityFrame><div><h3>{l.item}{l.upgradeTier?` +${l.upgradeTier}`:''} <RarityTag rarity={l.rarity}/></h3>
         <p>De {l.loser.name} · ele pode resgatar por {gold(l.ransomPrice)} de ouro {relative(new Date(l.expiresAt).getTime()-(clock+offset.current)).replace('em ','até daqui a ')}</p></div></div>)}</section>}
 
     {s.received.length>0&&<section className="panel"><div className="section-title"><h2>Desafios recebidos</h2><span>{s.received.length}</span></div>
@@ -131,7 +133,7 @@ export default function DuelPanel({hero,openProfile}:{hero:Hero;openProfile:(nam
       {history.items.map(h=><div className="market-row" key={h.id}><Avatar c={h.opponent}/><div><h3>{h.draw?'Empate':h.won?'Vitória':'Derrota'} contra <button className="link-button" onClick={()=>openProfile(h.opponent.name)}>{h.opponent.name}</button></h3>
         <p>{outcomeLabels[h.outcome]} · {h.rounds} {h.rounds===1?'rodada':'rodadas'} · {new Date(h.finishedAt).toLocaleDateString('pt-BR')}{h.honorDelta?` · ${h.draw?'':h.won?'+':'−'}${h.honorDelta} de honra`:''}</p>
         {h.mode!=='HONOR'&&<p>{modeLabels[h.mode]}{h.mode==='GOLD'&&BigInt(h.stake)>0n?(h.draw?`: aposta de ${gold(h.stake)} devolvida`:h.won?`: +${gold(BigInt(h.stake)*2n-BigInt(h.fee))} de ouro (taxa ${gold(h.fee)})`:`: −${gold(h.stake)} de ouro`):''}
-          {h.mode==='LOOT'?(h.loot?`: ${h.loot.mine?'você levou':'você perdeu'} ${h.loot.item}${h.loot.upgradeTier?` +${h.loot.upgradeTier}`:''} (${lootStatus[h.loot.status]??h.loot.status})`:': nenhum item mudou de dono'):''}</p>}</div>
+          {h.mode==='LOOT'?(h.loot?`: ${h.loot.mine?'você levou':'você perdeu'} ${h.loot.item}${h.loot.upgradeTier?` +${h.loot.upgradeTier}`:''}${raritySuffix(h.loot.rarity??0)} (${lootStatus[h.loot.status]??h.loot.status})`:': nenhum item mudou de dono'):''}</p>}</div>
         <span className={h.draw?'tag':h.won?'tag':'tag danger'}>{h.draw?'EMPATE':h.won?'VITÓRIA':'DERROTA'}</span>
         <button type="button" className="link-button" onClick={()=>setReport({id:h.id,name:h.opponent.name,reason:''})}>Denunciar</button>
         {report?.id===h.id&&<form className="duel-report" onSubmit={e=>{e.preventDefault();void sendReport();}}><label>O que aconteceu neste duelo? A equipe vai analisar.
@@ -210,7 +212,7 @@ function DuelView({d,hero,left,busy,surrender,setSurrender,choose,forfeit,reload
     :<div className="battle-result"><h2>{result}</h2><p>{d.winnerId===hero.id?`Você venceu ${d.foe.character.name}.`:d.winnerId===null?`Você e ${d.foe.character.name} terminaram sem vencedor.`:`${d.foe.character.name} venceu o duelo.`} {outcomeLabels[d.outcome]}.</p>
       {d.honorDelta>0&&<p>{d.winnerId===hero.id?`+${d.honorDelta}`:`−${d.honorDelta}`} de honra.</p>}
       {d.mode==='GOLD'&&BigInt(d.stake)>0n&&<p>{d.winnerId===null?`A aposta de ${gold(d.stake)} voltou para cada um.`:d.winnerId===hero.id?`Você levou o pote: +${gold(BigInt(d.stake)*2n-BigInt(d.fee))} de ouro (taxa da arena ${gold(d.fee)}).`:`Você perdeu a aposta de ${gold(d.stake)} de ouro.`}</p>}
-      {d.mode==='LOOT'&&d.winnerId!==null&&<p>{d.loot?(d.loot.winnerId===hero.id?`Espólio: você levou ${d.loot.item}${d.loot.upgradeTier?` +${d.loot.upgradeTier}`:''}.`:`Espólio: você perdeu ${d.loot.item}${d.loot.upgradeTier?` +${d.loot.upgradeTier}`:''}.`)+(d.loot.status!=='OPEN'?` (${lootStatus[d.loot.status]??d.loot.status})`:''):'Nenhum item mudou de dono desta vez.'}</p>}
+      {d.mode==='LOOT'&&d.winnerId!==null&&<p>{d.loot?(d.loot.winnerId===hero.id?`Espólio: você levou ${d.loot.item}${d.loot.upgradeTier?` +${d.loot.upgradeTier}`:''}${raritySuffix(d.loot.rarity??0)}.`:`Espólio: você perdeu ${d.loot.item}${d.loot.upgradeTier?` +${d.loot.upgradeTier}`:''}${raritySuffix(d.loot.rarity??0)}.`)+(d.loot.status!=='OPEN'?` (${lootStatus[d.loot.status]??d.loot.status})`:''):'Nenhum item mudou de dono desta vez.'}</p>}
       <div className="inline-actions battle-result-actions">{d.loot&&d.loot.status==='OPEN'&&d.loot.winnerId!==hero.id&&<button className="primary" disabled={busy} onClick={()=>ransom(d.loot!.id)}>Resgatar por {gold(d.loot.ransomPrice)} de ouro</button>}<button className="primary" onClick={close}>Voltar à arena</button></div></div>}
     {last&&<RoundCard r={last} meId={hero.id} d={d}/>}
     {d.rounds.length>1&&<details className="duel-rounds"><summary>Ver todas as rodadas ({d.rounds.length})</summary>

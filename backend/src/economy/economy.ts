@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { GameError } from '../core/engine';
 import type { GoldReason, ItemReason } from '../../../shared/economy';
+import { MAX_RARITY, hasRarity } from '../../../shared/rarity';
 type Tx = Prisma.TransactionClient;
 export interface Ref { type: string; id: number }
 // Munição (flechas, virotes e runas de foco) é equipamento permanente: não é gasta em combate, então não empilha.
@@ -24,8 +25,8 @@ export async function addGold(tx: Tx, characterId: number, delta: bigint, reason
 export function recordGold(tx: Tx, characterId: number, delta: bigint, balanceAfter: bigint, reason: GoldReason, ref?: Ref) {
   return tx.goldLedger.create({ data: { characterId, delta, balanceAfter, reason, refType: ref?.type ?? null, refId: ref?.id ?? null } });
 }
-export function recordItem(tx: Tx, characterId: number, blueprintId: number, delta: number, reason: ItemReason, ref?: Ref, upgradeTier = 0) {
-  return tx.itemLedger.create({ data: { characterId, blueprintId, delta, upgradeTier, reason, refType: ref?.type ?? null, refId: ref?.id ?? null } });
+export function recordItem(tx: Tx, characterId: number, blueprintId: number, delta: number, reason: ItemReason, ref?: Ref, upgradeTier = 0, rarity = 0) {
+  return tx.itemLedger.create({ data: { characterId, blueprintId, delta, upgradeTier, rarity, reason, refType: ref?.type ?? null, refId: ref?.id ?? null } });
 }
 // Consome itens empilháveis (ex.: materiais do Ferreiro) de pilhas soltas na mochila. Falta de quantidade desfaz tudo.
 export async function takeStack(tx: Tx, characterId: number, blueprintId: number, quantity: number, reason: ItemReason, ref?: Ref) {
@@ -43,14 +44,16 @@ export async function takeStack(tx: Tx, characterId: number, blueprintId: number
   await recordItem(tx, characterId, blueprintId, -quantity, reason, ref);
 }
 // Entrega de itens: pilhas (loot, poções) são somadas em uma linha da mochila em vez de criar uma nova a cada drop.
-export async function addItem(tx: Tx, characterId: number, blueprintId: number, quantity: number, reason: ItemReason, ref?: Ref, upgradeTier = 0, rareItemId: number | null = null) {
+// `rarity` (shared/rarity.ts) só existe em equipamento: o que empilha é sempre Comum.
+export async function addItem(tx: Tx, characterId: number, blueprintId: number, quantity: number, reason: ItemReason, ref?: Ref, upgradeTier = 0, rareItemId: number | null = null, rarity = 0) {
   if (!Number.isSafeInteger(quantity) || quantity < 1) throw new GameError(400, 'Quantidade inválida.');
   const blueprint = await tx.itemBlueprint.findUniqueOrThrow({ where: { id: blueprintId }, select: { slot: true } });
+  if (!Number.isInteger(rarity) || rarity < 0 || rarity > MAX_RARITY || (rarity > 0 && !hasRarity(blueprint.slot))) throw new GameError(400, 'Raridade inválida para este item.');
   let item;
   const existing = isStackable(blueprint.slot) && upgradeTier === 0 && !rareItemId
     ? await tx.inventoryItem.findFirst({ where: { characterId, blueprintId, isEquipped: false, upgradeTier: 0 }, orderBy: { id: 'asc' } }) : null;
   if (existing) item = await tx.inventoryItem.update({ where: { id: existing.id }, data: { quantity: { increment: quantity } } });
-  else item = await tx.inventoryItem.create({ data: { characterId, blueprintId, quantity, upgradeTier, rareItemId } });
-  await recordItem(tx, characterId, blueprintId, quantity, reason, ref, upgradeTier);
+  else item = await tx.inventoryItem.create({ data: { characterId, blueprintId, quantity, upgradeTier, rareItemId, rarity } });
+  await recordItem(tx, characterId, blueprintId, quantity, reason, ref, upgradeTier, rarity);
   return item;
 }
