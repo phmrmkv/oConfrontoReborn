@@ -273,3 +273,8 @@
 :root[data-motion="reduce"] .battle-stage .fx-burst{display:none}
 /* Projétil sem a folha de efeitos: uma esfera de luz própria (antes era um ícone de runa). */
 .battle-stage .projectile-orb{display:block;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff6c8,#ffb347 45%,#c2410c 75%,transparent 76%);box-shadow:0 0 14px #ffb347}
+/* Golpes especiais (folha <herói>-especiais.webp): o boneco toca a linha do golpe uma vez, por cima da animação comum do avanço. */
+.battle-stage .fighter.sheeted .sheet-sprite.special-play{animation:sheet-row .5s steps(4,jump-none) both!important}
+.battle-stage .fx-burst.special .fx-cell{width:150px;height:150px}
+.battle-stage .fighter.many .fx-burst.special .fx-cell{width:104px;height:104px}
+.battle-stage .fx-burst.special.late .fx-cell{opacity:0;animation:fx-late .4s steps(4,jump-none) .24s forwards}

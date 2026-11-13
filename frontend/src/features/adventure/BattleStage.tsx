@@ -1,4 +1,4 @@
-import Stage,{heroSheetOf,heroSpriteOf,monsterSheetOf,shotOf,spriteOf,stageNumber as n,type Step} from '../../ui/BattleStage';
+import Stage,{heroSheetOf,heroSpecialsOf,heroSpriteOf,specialOf,monsterSheetOf,shotOf,spriteOf,stageNumber as n,type Step} from '../../ui/BattleStage';
 import type {Battle,TurnRecord} from '../../lib/types';
 import {creatureShot} from '../../lib/creatureArt';
 
@@ -8,7 +8,7 @@ function script(t:TurnRecord,vocation:string,foeShot?:string):Step[]{
   const s:Step[]=[],guard=t.action==='DEFEND_SHIELD',melee=vocation==='KNIGHT';
   if(['ATTACK','TRIPLE_HIT','FIFTH_HIT','INTERRUPT'].includes(t.action)){
     const kill=t.monsterHp<=0;
-    s.push({cues:[{who:'hero',cls:melee?'lunge':'cast',shot:melee?undefined:shotOf(vocation),...(t.stolen?{float:{text:`+${n(t.stolen)}`,kind:'heal' as const}}:{})},
+    s.push({cues:[{who:'hero',cls:melee?'lunge':'cast',shot:melee?undefined:shotOf(vocation),special:specialOf(t.action),...(t.stolen?{float:{text:`+${n(t.stolen)}`,kind:'heal' as const}}:{})},
       {who:'foe',cls:`hit late${kill?' dying':''}`,float:{text:`−${n(t.dealt)}`,kind:t.crit?'crit':'dmg'}}],shake:t.crit||t.action==='FIFTH_HIT',ms:kill?900:620});
   } else if(t.action==='HEAL')s.push({cues:[{who:'hero',cls:'heal',float:{text:`+${n(t.healed)}`,kind:'heal'}}],ms:620});
   else if(guard)s.push({cues:[{who:'hero',cls:'guard'}],ms:320});
@@ -28,6 +28,6 @@ export default function BattleStage({battle,heroName,vocation}:{battle:Battle;he
   const last=battle.turns?.length?battle.turns[battle.turns.length-1]:null;
   const fx=(battle.effects??[]).map(e=>`fx-${e.kind.toLowerCase()}`).join(' ');
   return <Stage scene={battle.battleId} turn={last?.turn??0} steps={last?script(last,vocation,creatureShot(battle.monsterName,battle.monsterSprite)):[]}
-    left={[{id:'hero',name:heroName,src:heroSpriteOf(vocation),sheet:heroSheetOf(vocation),down:battle.status==='DEFEAT',gone:battle.status==='FLED',fx}]}
+    left={[{id:'hero',name:heroName,src:heroSpriteOf(vocation),sheet:heroSheetOf(vocation),specials:heroSpecialsOf(vocation),down:battle.status==='DEFEAT',gone:battle.status==='FLED',fx}]}
     right={[{id:'foe',name:battle.monsterName,src:spriteOf(battle.monsterName,battle.monsterSprite),sheet:monsterSheetOf(battle.monsterName,battle.monsterSprite),size:battle.isBoss?160:128,boss:battle.isBoss,rage:battle.phase===2,down:battle.monsterHp<=0}]}/>;
 }

@@ -21,6 +21,10 @@ const fileOfPath = (path?: string): string | undefined => {
 export const creatureFile = (name: string, spritePath?: string): string | undefined => fileOfPath(spritePath) ?? monsters[name];
 /** O arquivo da arte própria do herói de uma vocação-base (KNIGHT, PALADIN, SORCERER, DRUID). */
 export const heroFile = (baseVocation: string): string | undefined => heroes[baseVocation];
+// Folha dos golpes especiais do herói (<herói>-especiais.webp; comando no ART.md, "Especiais dos heróis"), quando já existe.
+const specials: Record<string, string> = (sheets as { specials?: Record<string, string> }).specials ?? {};
+/** O arquivo da folha de golpes especiais do herói de uma vocação-base, ou `undefined` enquanto ela não existe. */
+export const heroSpecialsFile = (baseVocation: string): string | undefined => specials[baseVocation];
 /** O que voa quando a criatura ataca de longe (nome de ícone do GameIcon), ou `undefined` se ela bate de perto. */
 export const creatureShot = (name: string, spritePath?: string): string | undefined => shots[creatureFile(name, spritePath) ?? ''];
 export const sheetUrl = (file?: string) => file ? `/assets/sprites/${file}.webp` : undefined;
