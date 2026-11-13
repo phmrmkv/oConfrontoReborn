@@ -20,7 +20,8 @@ export async function equip(accountId: number, characterId: number, itemId: numb
       throw new GameError(409, 'Item não pode ser equipado. Separe pilhas antes de equipar.');
     if (!vocationAllowed(blueprint.vocations, c.vocation)) throw new GameError(409, 'Vocação incompatível.');
     await tx.inventoryItem.updateMany({ where: { characterId, equippedSlot: blueprint.slot }, data: { isEquipped: false, equippedSlot: null } });
-    return tx.inventoryItem.update({ where: { id: itemId }, data: { isEquipped: true, equippedSlot: blueprint.slot } });
+    // Comércio limitado: o item que vincula ao equipar fica vinculado na primeira vez que é vestido.
+    return tx.inventoryItem.update({ where: { id: itemId }, data: { isEquipped: true, equippedSlot: blueprint.slot, ...(item.bindOnEquip ? { bound: true, bindOnEquip: false } : {}) } });
   });
 }
 

@@ -114,7 +114,7 @@ Achados para depois:
 
 ## Resultado da Fase 2 (2026-10-31)
 
-- **3 regiões novas:** Cripta Esquecida (100, chefe Warlock), Cidadela dos Renegados (125, chefe Hero) e **Vale da Perdição** (160, chefe **Infernatil** no 250). Regra do dono: a região final é sempre a mais perigosa, o Vale da Perdição; a do nível 80 voltou a ser Pântano Sombrio. Na Fase 3 o nome de Capriel passa para a nova última região.
+- **3 regiões novas:** Cripta Esquecida (100, chefe Warlock), Cidadela dos Renegados (125, chefe Hero) e **Vale da Perdição** (160, chefe **Infernatil** no 250). Regra do dono: a região final é sempre a mais perigosa, o Vale da Perdição; a do nível 80 voltou a ser Pântano Sombrio. Na Fase 3 a chave interna `capriel` passou para a nova última região (na tela, Vale da Perdição); Capriel hoje é só o nome da cidade.
 - **17 monstros novos** (total 58). No Vale, alguns reaproveitam sprites com nome próprio (Elemental de Fogo Ancestral, Golem Ancestral, Gosma Primordial, Serpente Abissal, Dragão Ancião), como o Guardião da Pedreira faz com o Cyclops.
 - **38 equipamentos novos:** armas, escudos, armaduras, elmos, botas e amuleto até o nível 235, todos com sprite do manifesto.
 - **Flecha / runa** (espaço de munição): agora é equipamento permanente (não empilha; regra em `economy.ts`). O Arqueiro usa Arrow → Throwing Knife (20–230) e os magos usam runas como foco mágico (Light Magic Missile → Sudden Death, 20–210). Isso resolve a falta de armas de mago acima do 35 e de Arqueiro acima do 65 sem importar sprites.
@@ -132,13 +132,13 @@ Decisão do dono: **❓4 = B (Eras)**. O jogo agora tem conteúdo do nível 1 ao
 | Geleiras da 2ª Era | 400 | Frost Troll, Mammoth, Witch, Necromancer… | Verminor (550) |
 | Cidadela da 3ª Era | 550 | Assassin, Elf Arcanist, Monk, Hero, Warlock… | Infernatil da 3ª Era (700) |
 | Abismo da 4ª Era | 700 | Giant Spider, Demon, Dragon Lord… | Senhor dos Dragões da 4ª Era (850) |
-| **Vale da Perdição** | 850 | "… de Capriel" (Demon, Dragon Lord, Hero, Warlock…) | **Apocalypse (1000)** |
+| **Vale da Perdição** | 850 | "… da Perdição" (Demon, Dragon Lord, Hero, Warlock…) | **Apocalypse (1000)** |
 
 - **55 monstros novos** (113 no total): 10 comuns e 1 chefe por Era, ~14 níveis entre cada um. Verminor e Apocalypse usam os próprios sprites; os demais reaproveitam sprites com o nome da Era.
 - **65 equipamentos de Era** (173 itens no total): um conjunto completo por Era (250, 400, 550, 700, 850) para as 4 vocações — arma de Cavaleiro, arma e munição de Arqueiro, cajado/varinha, runa e robe de mago, armadura, elmo, pernas, botas, escudo, amuleto e anel. Reaproveitam sprites clássicos (campo `sprite` no catálogo) com atributos pela curva.
 - **Mudança em relação ao plano:** em vez de "nível de item" (que exigia migração e mudança no cálculo de atributos), cada Era tem os próprios itens. Para o jogador o efeito é o mesmo e **não houve migração**.
 - **Tela:** Mercador, Mercado, Tarefas e Equipamento agora usam o sprite gravado no item/monstro (antes o Guardião da Pedreira aparecia com "?" nas Tarefas). O Mercador ganhou o filtro "Só o que posso usar" (ligado por padrão). Limites da lista: loja 400 itens, tarefas 300.
-- **Simulador:** do 250 ao 1000, comuns ≈ 5 turnos e 5–25% da vida, chefes ≈ 10 turnos e 33–50%, 100% de vitórias em todas as vocações. Testado no jogo: Cavaleiro nível 1000 com parte do conjunto de Capriel venceu o Demon de Capriel (981) em 7 turnos.
+- **Simulador:** do 250 ao 1000, comuns ≈ 5 turnos e 5–25% da vida, chefes ≈ 10 turnos e 33–50%, 100% de vitórias em todas as vocações. Testado no jogo: Cavaleiro nível 1000 com parte do conjunto de Capriel venceu o Demon da Perdição (981) em 7 turnos.
 - **Custo:** um conjunto completo de Capriel (8 peças de Cavaleiro) custa ~69 milhões de ouro, ≈ 500 lutas no próprio Vale.
 
 ## 6. Decisões do dono

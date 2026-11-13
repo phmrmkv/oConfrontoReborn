@@ -1,6 +1,31 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-criaturas-da-perdicao', date: '2026-11-13', title: 'Criaturas da Perdição', items: [
+    'As dez criaturas do Vale da Perdição deixaram de levar o nome de Capriel e agora levam o da região: Elf Arcanist da Perdição, Hero da Perdição, Warlock da Perdição, Demon da Perdição e as outras. Capriel é a cidade e só dá nome ao que é bom: o Templo, a guarda, os títulos e o equipamento Herdeiro de Capriel.',
+    'A runa do equipamento de Capriel agora é a Soulfire Rune de Capriel, com os mesmos atributos.',
+    'Tarefas, missões e o seu histórico de batalhas já mostram os nomes novos; nada do que você conquistou mudou.',
+  ] },
+  { id: '2026-11-13-conjuntos-das-eras', date: '2026-11-13', title: 'Conjuntos das Eras', items: [
+    'O equipamento de cada Era agora forma um conjunto: Guardião da 1ª Era, Caçador da 2ª Era, Sábio da 3ª Era, Vigia da 4ª Era e Herdeiro de Capriel.',
+    'Vestir 2 peças do mesmo conjunto dá o primeiro bônus e 4 peças, o segundo. Dá para misturar dois conjuntos. O detalhe de cada item mostra o conjunto e quantas peças você veste; o resumo do equipamento mostra os bônus ativos.',
+    'No duelo, os bônus de conjunto valem metade.',
+  ] },
+  { id: '2026-11-13-comercio-limitado', date: '2026-11-13', title: 'Comércio limitado: itens vinculados', items: [
+    'Equipamentos agora têm três estados. Livre: anda pelo Mercado como sempre (Comum e Incomum, itens da loja e do Ferreiro). Vincula ao equipar: Raro e Épico que caem são livres até você vestir, e aí ficam seus. Vinculado: Lendário e Mítico que caem de chefe, recompensas da Jornada e itens despertados com fragmentos.',
+    'Item vinculado não pode ser anunciado no Mercado nem cair no Espólio do duelo. O jogo avisa antes de você vestir um item que vai vincular.',
+    'Itens raros numerados (+10) continuam sempre livres, para a história de donos seguir; a taxa de venda deles no Mercado é de 10%.',
+    'Tudo o que você já tinha continua livre.',
+  ] },
+  { id: '2026-11-13-fragmentos-de-chefe', date: '2026-11-13', title: 'Fragmentos de chefe: raridade garantida', items: [
+    'Em Caçar, cada criatura mostra o que pode deixar e a chance de cada item, em "O que pode deixar".',
+    'Cada vitória contra um chefe, na caçada ou em grupo, dá 1 fragmento de chefe.',
+    'No Ferreiro, a aba Despertar usa os fragmentos para subir a raridade de um equipamento em um degrau, sem sorteio: 5 para Incomum, 10 para Raro, 20 para Épico, 40 para Lendário e 80 para Mítico. Vale para itens equipados, favoritos e +10, e a melhoria continua a mesma.',
+  ] },
+  { id: '2026-11-13-melhoria-com-ajuda', date: '2026-11-13', title: 'Ferreiro: cada falha ajuda a próxima', items: [
+    'Quando uma melhoria falha e o item continua inteiro, a próxima tentativa daquele mesmo item ganha +5 pontos de chance, até +15. A ajuda zera quando a melhoria dá certo, ao reforjar o item ou se ele for vendido no Mercado.',
+    'O risco de quebra continua o mesmo, mas fica menor junto com a chance de falhar. A tela do Ferreiro mostra a ajuda de cada item.',
+  ] },
   { id: '2026-11-13-atributos-secundarios', date: '2026-11-13', title: 'Equipamentos com atributos novos', items: [
     'Anéis, amuletos e o equipamento das Eras agora trazem atributos novos: dano crítico (o crítico bate mais forte), roubo de vida (parte do dano volta como vida), poder de cura (a cura recupera mais) e resistência a efeitos (chance de evitar veneno, queimadura e lentidão).',
     'Eles aparecem no detalhe de cada item, na comparação do Mercado e no resumo do seu equipamento. Na arena, o roubo de vida aparece como um número verde no seu personagem.',
@@ -44,7 +69,7 @@ export const changelog: ChangelogEntry[] = [
     'Pequenos defeitos das artes foram limpos: sobras na borda de alguns quadros e uma névoa clara em volta de alguns personagens.',
   ] },
   { id: '2026-11-12-arte-propria-catalogo', date: '2026-11-12', title: 'Arte própria para todas as criaturas', items: [
-    'As 55 criaturas distintas do catálogo de Caçar agora têm arte própria na arena, com animações de movimento, ataque, defesa e queda. As variantes das Eras e de Capriel usam a folha da criatura original.',
+    'As 55 criaturas distintas do catálogo de Caçar agora têm arte própria na arena, com animações de movimento, ataque, defesa e queda. As variantes das Eras e do Vale da Perdição usam a folha da criatura original.',
   ] },
   { id: '2026-11-12-arqueiro-feiticeiro-arte-propria', date: '2026-11-12', title: 'Arqueiro e Feiticeiro com arte própria', items: [
     'Na arena, o Arqueiro puxa a flecha da aljava e dispara. O Feiticeiro lança fogo com o cajado e se protege com um escudo mágico.',

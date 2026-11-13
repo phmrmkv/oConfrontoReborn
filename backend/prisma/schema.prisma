@@ -104,7 +104,9 @@ model Character {
   agility                Int                    @default(10)
   resistance             Int                    @default(10)
   statPoints             Int                    @default(0)
-  goldInHand             BigInt                 @default(100)
+  goldInHand             BigInt                 @default(100)
+  // Fragmentos de chefe: cada vitória contra chefe dá alguns; o Ferreiro os usa para despertar a raridade de um item (shared/rarity.ts).
+  bossFragments  Int      @default(0)
   goldInBank             BigInt                 @default(0)
   huntMonsterId          Int?
   huntEndsAt             DateTime?
@@ -177,6 +179,8 @@ model ItemBlueprint {
   criticalChance Int              @default(0)
   fireResistance Int              @default(0)
   speed          Int              @default(0)
+  // Conjunto das Eras (shared/itemSets.ts); vazio para quem não é de conjunto.
+  setKey           String?        @db.VarChar(16)
   // Atributos secundários (shared/itemStats.ts), em %.
   critDamage       Int            @default(0)
   lifeSteal        Int            @default(0)
@@ -201,6 +205,11 @@ model InventoryItem {
   upgradeTier  Int           @default(0)
   // Raridade do exemplar: 0 Comum … 5 Mítico (shared/rarity.ts). Só equipamento sai acima de Comum.
   rarity       Int           @default(0)
+  // Falhas seguidas de melhoria deste exemplar (somam chance à próxima, upgrade.failBonus*); zera no acerto.
+  upgradeFails Int           @default(0)
+  // Comércio limitado (shared/binding.ts): vinculado não sai do personagem; vincula ao equipar fica vinculado ao ser vestido.
+  bound        Boolean       @default(false)
+  bindOnEquip  Boolean       @default(false)
   favorite     Boolean       @default(false)
   rareItemId   Int?          @unique
   rareItem     RareItem?     @relation(fields: [rareItemId], references: [id])
@@ -269,6 +278,8 @@ model MarketListing {
   quantity    Int           @default(1)
   upgradeTier Int           @default(0)
   rarity      Int           @default(0)
+  // O exemplar anunciado que ainda vincula ao equipar continua assim para quem comprar (vinculado não pode ser anunciado).
+  bindOnEquip Boolean       @default(false)
   rareItemId  Int?
   rareItem    RareItem?     @relation(fields: [rareItemId], references: [id])
   price       BigInt

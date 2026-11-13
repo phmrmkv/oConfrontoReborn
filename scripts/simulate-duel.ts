@@ -16,7 +16,8 @@ let seed = 4242; const rng = () => (seed = (seed * 1664525 + 1013904223) % 42949
 const dice = (min: number, max: number) => min + Math.floor(rng() * (max - min + 1));
 
 function fighter(id: number, v: BaseVocation, level: number): DuelFighter {
-  const h = hero(v, level, items);
+  // Como no duelo de verdade: bônus de conjunto pela metade (pvp.setPercent).
+  const h = hero(v, level, items, 0, 0, 100, 100, defaultSettings()['pvp.setPercent']);
   return { characterId: id, name: v, vocation: h.c.vocation, hp: h.maxHp, maxHp: h.maxHp, mana: h.maxMana, maxMana: h.maxMana,
     attack: h.stats.attack, defense: h.stats.defense, agility: h.c.agility, criticalChance: h.stats.criticalChance, dodgeChance: h.stats.dodgeChance, critDamage: h.stats.critDamage, lifeSteal: h.stats.lifeSteal, healPower: h.stats.healPower, action: null, missed: 0 };
 }

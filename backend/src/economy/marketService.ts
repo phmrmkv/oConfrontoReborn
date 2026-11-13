@@ -34,10 +34,11 @@ export async function listItem(accountId: number, characterId: number, itemId: n
       if (!item) throw new GameError(404, 'Item não encontrado.');
       if (item.isEquipped || item.equippedSlot || item.quantity < 1) throw new GameError(409, 'Desequipe o item primeiro.');
       assertNotFavorite(item, 'anunciar');
+      if (item.bound) throw new GameError(409, 'Este item está vinculado a você e não pode ser anunciado no Mercado.');
       if (await tx.marketListing.count({ where: { sellerId: characterId, status: 'OPEN' } }) >= MAX_OPEN_LISTINGS) throw new GameError(409, `Limite de ${MAX_OPEN_LISTINGS} anúncios abertos.`);
       if (c.goldInHand < listingFee) throw new GameError(409, `Ouro insuficiente para a taxa de anúncio (${listingFee}).`);
       const expiresAt = new Date(Date.now() + settings['market.durationHours'] * 3_600_000);
-      const listing = await tx.marketListing.create({ data: { sellerId: characterId, blueprintId: item.blueprintId, quantity: item.quantity, upgradeTier: item.upgradeTier, rarity: item.rarity, rareItemId: item.rareItemId, price, expiresAt, listingFee } });
+      const listing = await tx.marketListing.create({ data: { sellerId: characterId, blueprintId: item.blueprintId, quantity: item.quantity, upgradeTier: item.upgradeTier, rarity: item.rarity, bindOnEquip: item.bindOnEquip, rareItemId: item.rareItemId, price, expiresAt, listingFee } });
       await addGold(tx, characterId, -listingFee, 'MARKET_LISTING_FEE', { type: 'listing', id: listing.id });
       await tx.inventoryItem.delete({ where: { id: item.id } });
       await recordItem(tx, characterId, item.blueprintId, -item.quantity, 'MARKET_LIST', { type: 'listing', id: listing.id }, item.upgradeTier, item.rarity);
@@ -68,12 +69,13 @@ export async function buyListing(accountId: number, characterId: number, listing
     if (listing.status !== 'OPEN') throw new GameError(409, 'Anúncio indisponível.');
     if (listing.expiresAt && listing.expiresAt <= new Date()) throw new GameError(409, 'Este anúncio expirou.');
     if (listing.price <= 0 || buyer.goldInHand < listing.price) throw new GameError(409, 'Ouro insuficiente.');
-    const fee = saleFee(listing.price, settings['market.saleFeePercent']);
+    // Raro numerado (+10) paga a taxa de raro: ele é sempre livre, mesmo no comércio limitado.
+    const fee = saleFee(listing.price, listing.rareItemId ? settings['market.rareSaleFeePercent'] : settings['market.saleFeePercent']);
     const ref = { type: 'listing', id: listingId };
     await addGold(tx, characterId, 0n - listing.price, 'MARKET_PURCHASE', ref);
     await addGold(tx, listing.sellerId, listing.price, 'MARKET_SALE', ref);
     await addGold(tx, listing.sellerId, -fee, 'MARKET_FEE', ref);
-    await addItem(tx, characterId, listing.blueprintId, listing.quantity, 'MARKET_BUY', ref, listing.upgradeTier, listing.rareItemId, listing.rarity);
+    await addItem(tx, characterId, listing.blueprintId, listing.quantity, 'MARKET_BUY', ref, listing.upgradeTier, listing.rareItemId, listing.rarity, { bound: false, bindOnEquip: listing.bindOnEquip });
     await tx.marketListing.update({ where: { id: listingId }, data: { status: 'SOLD', buyerId: characterId, soldAt: new Date(), fee } });
     return { listingId, status: 'SOLD', fee: fee.toString() };
   });
@@ -87,7 +89,7 @@ export async function cancelListing(accountId: number, characterId: number, list
     if (!listing) throw new GameError(404, 'Anúncio não encontrado.');
     if (listing.status === 'CANCELLED' || listing.status === 'EXPIRED') return { listingId, status: listing.status };
     if (listing.status !== 'OPEN') throw new GameError(409, 'Anúncio já vendido.');
-    await addItem(tx, characterId, listing.blueprintId, listing.quantity, 'MARKET_RETURN', { type: 'listing', id: listingId }, listing.upgradeTier, listing.rareItemId, listing.rarity);
+    await addItem(tx, characterId, listing.blueprintId, listing.quantity, 'MARKET_RETURN', { type: 'listing', id: listingId }, listing.upgradeTier, listing.rareItemId, listing.rarity, { bound: false, bindOnEquip: listing.bindOnEquip });
     await tx.marketListing.update({ where: { id: listingId }, data: { status: 'CANCELLED' } });
     return { listingId, status: 'CANCELLED' };
   });
@@ -103,7 +105,7 @@ export async function expireListings(limit = 50) {
         await tx.$queryRaw`SELECT id FROM MarketListing WHERE id = ${id} FOR UPDATE`;
         const listing = await tx.marketListing.findUniqueOrThrow({ where: { id } });
         if (listing.status !== 'OPEN' || !listing.expiresAt || listing.expiresAt > new Date()) return;
-        await addItem(tx, sellerId, listing.blueprintId, listing.quantity, 'MARKET_RETURN', { type: 'listing', id }, listing.upgradeTier, listing.rareItemId, listing.rarity);
+        await addItem(tx, sellerId, listing.blueprintId, listing.quantity, 'MARKET_RETURN', { type: 'listing', id }, listing.upgradeTier, listing.rareItemId, listing.rarity, { bound: false, bindOnEquip: listing.bindOnEquip });
         await tx.marketListing.update({ where: { id }, data: { status: 'EXPIRED' } });
         expired++;
       });

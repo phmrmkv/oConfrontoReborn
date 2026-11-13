@@ -8,7 +8,7 @@ const nameOfPath = new Map(manifest.entries.map(e => [e.path, e.name]));
 
 /**
  * O arquivo (sem extensão) da arte própria de uma criatura, ou `undefined` se ela ainda usa o sprite do TibiaWiki.
- * As criaturas das Eras e de Capriel usam o sprite da original; por isso a busca é pelo sprite e só depois pelo nome.
+ * As criaturas das Eras e do Vale da Perdição usam o sprite da original; por isso a busca é pelo sprite e só depois pelo nome.
  */
 export const creatureFile = (name: string, spritePath?: string): string | undefined => monsters[nameOfPath.get(spritePath ?? '') ?? ''] ?? monsters[name];
 /** O arquivo da arte própria do herói de uma vocação-base (KNIGHT, PALADIN, SORCERER, DRUID). */

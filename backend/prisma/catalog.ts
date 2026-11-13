@@ -2,11 +2,14 @@
 // Atributos são balanceamento desta adaptação, não cópia automática da wiki. Sprites: TibiaWiki (manifest.json).
 import type { ItemSlot } from '@prisma/client';
 import { forgeMaterials } from '../../shared/forge';
+import { eraSetKeys } from '../../shared/itemSets';
 
 export interface CatalogItem { name: string; slot: ItemSlot; attack: number; defense: number; armor: number; npcPrice: number; minLevel: number;
   vocations?: string; magicAttack?: number; criticalChance?: number; fireResistance?: number; speed?: number; sprite?: string;
   // Atributos secundários (shared/itemStats.ts), em %.
-  critDamage?: number; lifeSteal?: number; healPower?: number; statusResistance?: number }
+  critDamage?: number; lifeSteal?: number; healPower?: number; statusResistance?: number;
+  // Conjunto das Eras (shared/itemSets.ts).
+  setKey?: string }
 const item = (name: string, slot: ItemSlot, minLevel: number, attack: number, defense: number, armor: number, npcPrice: number, extra: Partial<CatalogItem> = {}): CatalogItem =>
   ({ name, slot, attack, defense, armor, npcPrice, minLevel, ...extra });
 // Preço de loja dos equipamentos novos: cresce com o quadrado do nível (≈ 20–90 lutas da própria faixa).
@@ -90,7 +93,7 @@ export const items: CatalogItem[] = [
 function eraGear(level: number, index: number): CatalogItem[] {
   const suffix = index < 4 ? ` da ${index + 1}ª Era` : ' de Capriel', pick = (bases: string[]) => bases[index % bases.length];
   const era = (base: string, slot: ItemSlot, attack: number, defense: number, armor: number, extra: Partial<CatalogItem> = {}) =>
-    item(base + suffix, slot, level, attack, defense, armor, price(level), { sprite: base, ...extra });
+    item(base + suffix, slot, level, attack, defense, armor, price(level), { sprite: base, setKey: eraSetKeys[index], ...extra });
   const r = (x: number) => Math.round(x);
   // Atributos secundários crescem um pouco a cada Era (shared/itemStats.ts).
   const step = (values: number[]) => values[Math.min(index, values.length - 1)];
@@ -99,7 +102,8 @@ function eraGear(level: number, index: number): CatalogItem[] {
     era(pick(['Crossbow', 'Throwing Star']), 'WEAPON', r(.55 * level), 0, 0, { ...PALADIN, criticalChance: 6, speed: 3, critDamage: step([6, 8, 10, 12, 15]) }),
     era(pick(['Power Bolt', 'Burst Arrow']), 'AMMO', r(.32 * level), 0, 0, { ...PALADIN, criticalChance: 6, critDamage: step([4, 5, 6, 8, 10]) }),
     era(pick(['Skull Staff', 'Wand of Vortex', 'Snakebite Rod']), 'WEAPON', 0, r(.04 * level), 0, { ...MAGE, magicAttack: r(.3 * level), healPower: step([5, 7, 10, 12, 15]) }),
-    era(pick(['Sudden Death Rune', 'Soulfire Rune']), 'AMMO', 0, 0, 0, { ...MAGE, magicAttack: r(.27 * level), critDamage: step([4, 5, 6, 8, 10]) }),
+    // A runa de Capriel é a Soulfire: Capriel só dá nome ao que é bom (decisão do dono em 2026-11-13). As Eras seguem alternando.
+    era(index === 4 ? 'Soulfire Rune' : pick(['Sudden Death Rune', 'Soulfire Rune']), 'AMMO', 0, 0, 0, { ...MAGE, magicAttack: r(.27 * level), critDamage: step([4, 5, 6, 8, 10]) }),
     era(pick(['Royal Scale Robe', 'Red Robe']), 'ARMOR', 0, 0, r(.1 * level), { ...MAGE, magicAttack: r(.2 * level), statusResistance: step([5, 8, 10, 12, 15]) }),
     era(pick(['Magic Plate Armor', 'Royal Draken Mail', 'Dragon Scale Mail', 'Golden Armor', 'Crown Armor']), 'ARMOR', 0, 0, r(.16 * level + 12), { fireResistance: 15, statusResistance: step([10, 12, 15, 18, 20]) }),
     era(pick(['Demon Helmet', 'Royal Helmet', 'Golden Helmet', 'Crown Helmet', 'Winged Helmet']), 'HELMET', 0, 0, r(.1 * level + 4)),
@@ -220,16 +224,16 @@ export const monsters: CatalogMonster[] = [
   { name: 'Demon da 4ª Era', level: 817, regionKey: 'era4', element: 'FIRE', sprite: 'Demon', hp: 79890, attack: 1459, defense: 1734, experience: 1067982, goldMin: 85887, goldMax: 171774 },
   { name: 'Dragon Lord da 4ª Era', level: 831, regionKey: 'era4', element: 'FIRE', sprite: 'Dragon Lord', hp: 81045, attack: 1476, defense: 1760, experience: 1104898, goldMin: 88813, goldMax: 177626 },
   { name: 'Senhor dos Dragões da 4ª Era', level: 850, regionKey: 'era4', isBoss: true, element: 'FIRE', sprite: 'Dragon Lord', hp: 135540, attack: 2852, defense: 1893, experience: 2312000, goldMin: 92863, goldMax: 185726 },
-  { name: 'Elf Arcanist de Capriel', level: 855, regionKey: 'capriel', sprite: 'Elf Arcanist', hp: 88093, attack: 1490, defense: 1902, experience: 1169640, goldMin: 93943, goldMax: 187886 },
-  { name: 'Young Sea Serpent de Capriel', level: 869, regionKey: 'capriel', sprite: 'Young Sea Serpent', hp: 89305, attack: 1504, defense: 1928, experience: 1208258, goldMin: 97002, goldMax: 194004 },
-  { name: 'Wailing Widow de Capriel', level: 883, regionKey: 'capriel', sprite: 'Wailing Widow', hp: 90513, attack: 1518, defense: 1955, experience: 1247502, goldMin: 100110, goldMax: 200220 },
-  { name: 'Black Knight de Capriel', level: 897, regionKey: 'capriel', sprite: 'Black Knight', hp: 91739, attack: 1532, defense: 1981, experience: 1287374, goldMin: 103267, goldMax: 206534 },
-  { name: 'Hero de Capriel', level: 911, regionKey: 'capriel', sprite: 'Hero', hp: 92951, attack: 1547, defense: 2007, experience: 1327874, goldMin: 106473, goldMax: 212946 },
-  { name: 'Warlock de Capriel', level: 925, regionKey: 'capriel', sprite: 'Warlock', hp: 94197, attack: 1561, defense: 2034, experience: 1369000, goldMin: 109728, goldMax: 219456 },
-  { name: 'Fire Devil de Capriel', level: 939, regionKey: 'capriel', element: 'FIRE', sprite: 'Fire Devil', hp: 95409, attack: 1728, defense: 2060, experience: 1410754, goldMin: 113032, goldMax: 226064 },
-  { name: 'Giant Spider de Capriel', level: 953, regionKey: 'capriel', sprite: 'Giant Spider', hp: 96620, attack: 1589, defense: 2086, experience: 1453134, goldMin: 116385, goldMax: 232770 },
-  { name: 'Dragon Lord de Capriel', level: 967, regionKey: 'capriel', element: 'FIRE', sprite: 'Dragon Lord', hp: 97844, attack: 1761, defense: 2112, experience: 1496142, goldMin: 119787, goldMax: 239574 },
-  { name: 'Demon de Capriel', level: 981, regionKey: 'capriel', element: 'FIRE', sprite: 'Demon', hp: 99056, attack: 1778, defense: 2138, experience: 1539778, goldMin: 123238, goldMax: 246476 },
+  { name: 'Elf Arcanist da Perdição', level: 855, regionKey: 'capriel', sprite: 'Elf Arcanist', hp: 88093, attack: 1490, defense: 1902, experience: 1169640, goldMin: 93943, goldMax: 187886 },
+  { name: 'Young Sea Serpent da Perdição', level: 869, regionKey: 'capriel', sprite: 'Young Sea Serpent', hp: 89305, attack: 1504, defense: 1928, experience: 1208258, goldMin: 97002, goldMax: 194004 },
+  { name: 'Wailing Widow da Perdição', level: 883, regionKey: 'capriel', sprite: 'Wailing Widow', hp: 90513, attack: 1518, defense: 1955, experience: 1247502, goldMin: 100110, goldMax: 200220 },
+  { name: 'Black Knight da Perdição', level: 897, regionKey: 'capriel', sprite: 'Black Knight', hp: 91739, attack: 1532, defense: 1981, experience: 1287374, goldMin: 103267, goldMax: 206534 },
+  { name: 'Hero da Perdição', level: 911, regionKey: 'capriel', sprite: 'Hero', hp: 92951, attack: 1547, defense: 2007, experience: 1327874, goldMin: 106473, goldMax: 212946 },
+  { name: 'Warlock da Perdição', level: 925, regionKey: 'capriel', sprite: 'Warlock', hp: 94197, attack: 1561, defense: 2034, experience: 1369000, goldMin: 109728, goldMax: 219456 },
+  { name: 'Fire Devil da Perdição', level: 939, regionKey: 'capriel', element: 'FIRE', sprite: 'Fire Devil', hp: 95409, attack: 1728, defense: 2060, experience: 1410754, goldMin: 113032, goldMax: 226064 },
+  { name: 'Giant Spider da Perdição', level: 953, regionKey: 'capriel', sprite: 'Giant Spider', hp: 96620, attack: 1589, defense: 2086, experience: 1453134, goldMin: 116385, goldMax: 232770 },
+  { name: 'Dragon Lord da Perdição', level: 967, regionKey: 'capriel', element: 'FIRE', sprite: 'Dragon Lord', hp: 97844, attack: 1761, defense: 2112, experience: 1496142, goldMin: 119787, goldMax: 239574 },
+  { name: 'Demon da Perdição', level: 981, regionKey: 'capriel', element: 'FIRE', sprite: 'Demon', hp: 99056, attack: 1778, defense: 2138, experience: 1539778, goldMin: 123238, goldMax: 246476 },
   { name: 'Apocalypse', level: 1000, regionKey: 'capriel', isBoss: true, element: 'FIRE', hp: 158839, attack: 3303, defense: 2230, experience: 3200000, goldMin: 128000, goldMax: 256000 },
 ];
 // </monstros>

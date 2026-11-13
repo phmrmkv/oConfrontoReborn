@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import { GameError } from '../core/engine';
 import type { GoldReason, ItemReason } from '../../../shared/economy';
 import { MAX_RARITY, hasRarity } from '../../../shared/rarity';
+import { FREE, type Binding } from '../../../shared/binding';
 type Tx = Prisma.TransactionClient;
 export interface Ref { type: string; id: number }
 // Munição (flechas, virotes e runas de foco) é equipamento permanente: não é gasta em combate, então não empilha.
@@ -44,8 +45,8 @@ export async function takeStack(tx: Tx, characterId: number, blueprintId: number
   await recordItem(tx, characterId, blueprintId, -quantity, reason, ref);
 }
 // Entrega de itens: pilhas (loot, poções) são somadas em uma linha da mochila em vez de criar uma nova a cada drop.
-// `rarity` (shared/rarity.ts) só existe em equipamento: o que empilha é sempre Comum.
-export async function addItem(tx: Tx, characterId: number, blueprintId: number, quantity: number, reason: ItemReason, ref?: Ref, upgradeTier = 0, rareItemId: number | null = null, rarity = 0) {
+// `rarity` (shared/rarity.ts) e `binding` (shared/binding.ts) só existem em equipamento: o que empilha é sempre Comum e livre.
+export async function addItem(tx: Tx, characterId: number, blueprintId: number, quantity: number, reason: ItemReason, ref?: Ref, upgradeTier = 0, rareItemId: number | null = null, rarity = 0, binding: Binding = FREE) {
   if (!Number.isSafeInteger(quantity) || quantity < 1) throw new GameError(400, 'Quantidade inválida.');
   const blueprint = await tx.itemBlueprint.findUniqueOrThrow({ where: { id: blueprintId }, select: { slot: true } });
   if (!Number.isInteger(rarity) || rarity < 0 || rarity > MAX_RARITY || (rarity > 0 && !hasRarity(blueprint.slot))) throw new GameError(400, 'Raridade inválida para este item.');
@@ -53,7 +54,11 @@ export async function addItem(tx: Tx, characterId: number, blueprintId: number, 
   const existing = isStackable(blueprint.slot) && upgradeTier === 0 && !rareItemId
     ? await tx.inventoryItem.findFirst({ where: { characterId, blueprintId, isEquipped: false, upgradeTier: 0 }, orderBy: { id: 'asc' } }) : null;
   if (existing) item = await tx.inventoryItem.update({ where: { id: existing.id }, data: { quantity: { increment: quantity } } });
-  else item = await tx.inventoryItem.create({ data: { characterId, blueprintId, quantity, upgradeTier, rareItemId, rarity } });
+  else {
+    // Item raro numerado (+10) é sempre livre; poção e material também.
+    const b = hasRarity(blueprint.slot) && !rareItemId ? binding : FREE;
+    item = await tx.inventoryItem.create({ data: { characterId, blueprintId, quantity, upgradeTier, rareItemId, rarity, bound: b.bound, bindOnEquip: b.bindOnEquip && !b.bound } });
+  }
   await recordItem(tx, characterId, blueprintId, quantity, reason, ref, upgradeTier, rarity);
   return item;
 }

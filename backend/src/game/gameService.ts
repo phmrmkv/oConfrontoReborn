@@ -12,7 +12,7 @@ import { makeRare, retireRare, RARE_TIER } from '../economy/rare';
 import { BASE_ATTRIBUTE } from '../../../shared/progression';
 // Cada ponto em Vitalidade dá +15 de vida máxima; em Resistência, +15 de mana máxima.
 const STAT_BONUS = 15;
-import { statsResetCost, npcSellPrice, percentOf, resolveUpgrade, upgradeSuccessPercent, PROTECTION_STONE, type UpgradeOutcome, type UpgradeResult } from '../../../shared/economy';
+import { statsResetCost, npcSellPrice, percentOf, resolveUpgrade, upgradeSuccessPercent, upgradeFailBonus, PROTECTION_STONE, type UpgradeOutcome, type UpgradeResult } from '../../../shared/economy';
 import { rarityName } from '../../../shared/rarity';
 
 export async function requireIdle(tx: Prisma.TransactionClient, characterId: number) {
@@ -133,10 +133,13 @@ export async function upgrade(accountId: number, characterId: number, itemId: nu
       if (useProtection && !stone) throw new GameError(409, 'Você não tem Pedra de Proteção.');
       // O ouro é gasto de qualquer jeito; o resultado (sucesso, falha ou quebra) é decidido aqui, no servidor.
       await addGold(tx, characterId, -cost, 'UPGRADE', { type: 'item', id: itemId });
-      const rules = { safeUntilTier: settings['upgrade.safeUntilTier'], breakFromTier: settings['upgrade.breakFromTier'], breakOnFailPercent: settings['upgrade.breakOnFailPercent'] };
+      const rules = { safeUntilTier: settings['upgrade.safeUntilTier'], breakFromTier: settings['upgrade.breakFromTier'], breakOnFailPercent: settings['upgrade.breakOnFailPercent'],
+        failBonusPercent: settings['upgrade.failBonusPercent'], failBonusMax: settings['upgrade.failBonusMax'] };
+      // Falha que acumula chance: as falhas seguidas deste item somam pontos à tentativa de agora.
+      const bonus = upgradeFailBonus(item.upgradeFails, rules);
       // Favorito só tenta melhoria que pode quebrar com Pedra de Proteção.
       if (item.favorite && !stone && item.upgradeTier >= rules.breakFromTier && rules.breakOnFailPercent > 0) assertNotFavorite(item, 'arriscar uma melhoria que pode quebrar (ou use uma Pedra de Proteção)');
-      const rolled: UpgradeOutcome = resolveUpgrade(item.upgradeTier, rules, randomInt(1, 101), randomInt(1, 101));
+      const rolled: UpgradeOutcome = resolveUpgrade(item.upgradeTier, rules, randomInt(1, 101), randomInt(1, 101), item.upgradeFails);
       // A pedra só é consumida quando realmente evitou a quebra.
       let outcome: UpgradeResult = rolled;
       if (rolled === 'BROKE' && stone) {
@@ -146,9 +149,12 @@ export async function upgrade(accountId: number, characterId: number, itemId: nu
         outcome = 'PROTECTED';
         await event(tx, characterId, 'UPGRADE', `${item.blueprint.name}: Pedra de Proteção`, `A melhoria falhou e o item teria quebrado, mas a Pedra de Proteção o salvou. Continua em +${item.upgradeTier}. ${cost} ouro perdidos.`);
       }
-      const chance = upgradeSuccessPercent(item.upgradeTier, rules.safeUntilTier);
+      const chance = upgradeSuccessPercent(item.upgradeTier, rules.safeUntilTier, bonus);
+      // Falhou e o item continua (com ou sem a Pedra): a próxima tentativa dele ganha a ajuda; o acerto zera.
+      if (outcome === 'FAILED' || outcome === 'PROTECTED') await tx.inventoryItem.update({ where: { id: itemId }, data: { upgradeFails: { increment: 1 } } });
+      const nextBonus = outcome === 'FAILED' || outcome === 'PROTECTED' ? upgradeFailBonus(item.upgradeFails + 1, rules) : 0;
       if (outcome === 'SUCCESS') {
-        await tx.inventoryItem.update({ where: { id: itemId }, data: { upgradeTier: { increment: 1 } } });
+        await tx.inventoryItem.update({ where: { id: itemId }, data: { upgradeTier: { increment: 1 }, upgradeFails: 0 } });
         if (item.upgradeTier + 1 >= RARE_TIER) await makeRare(tx, item, characterId, c.name);
         await event(tx, characterId, 'UPGRADE', `${item.blueprint.name} +${item.upgradeTier + 1}`, `Melhoria concluída por ${cost} ouro.`);
         await awardAchievements(tx, characterId);
@@ -159,11 +165,11 @@ export async function upgrade(accountId: number, characterId: number, itemId: nu
         await recordItem(tx, characterId, item.blueprintId, -1, 'UPGRADE_BREAK', { type: 'item', id: itemId }, item.upgradeTier, item.rarity);
         await event(tx, characterId, 'UPGRADE', `${item.blueprint.name} quebrou`, `A melhoria para +${item.upgradeTier + 1} falhou e o item se partiu. ${cost} ouro perdidos.`);
       } else {
-        await event(tx, characterId, 'UPGRADE', `${item.blueprint.name}: melhoria falhou`, `O item resistiu e continua em +${item.upgradeTier}. ${cost} ouro perdidos.`);
+        await event(tx, characterId, 'UPGRADE', `${item.blueprint.name}: melhoria falhou`, `O item resistiu e continua em +${item.upgradeTier}. ${cost} ouro perdidos.${nextBonus ? ` A próxima tentativa deste item ganha +${nextBonus} pontos de chance.` : ''}`);
       }
       const newTier = outcome === 'SUCCESS' ? item.upgradeTier + 1 : item.upgradeTier;
       const rare = newTier >= RARE_TIER ? await tx.rareItem.findFirst({ where: { inventoryItem: { id: itemId } }, select: { serial: true, firstOfKind: true } }) : null;
-      return { itemId, outcome, chance, upgradeTier: newTier, spent: cost.toString(), rareSerial: rare?.serial ?? null, firstOfKind: rare?.firstOfKind ?? false };
+      return { itemId, outcome, chance, bonus, nextBonus, upgradeTier: newTier, spent: cost.toString(), rareSerial: rare?.serial ?? null, firstOfKind: rare?.firstOfKind ?? false };
     });
   });
 }

@@ -10,6 +10,7 @@ import { event, awardAchievements } from './adventureService';
 import { addItem, recordGold } from '../economy/economy';
 import { hasRarity, rarityOddsOf, rollRarity } from '../../../shared/rarity';
 import { needsAdapting, vocationEquivalent } from '../../../shared/loot';
+import { bindingOnDrop } from '../../../shared/binding';
 import { loadSettings } from '../core/settings';
 import { scaleInt } from '../../../shared/economy';
 import { vocationAllowed, skillCosts } from '../../../shared/adventure';
@@ -87,7 +88,7 @@ export class BattleService {
       const line = bossLines[b.monster.name]?.rage, spoken = line ? fought.log.map(l => l === GENERIC_RAGE_LINE ? line : l) : fought.log;
       const exhausted = fought.status === 'ONGOING' && b.turnVersion + 1 >= BATTLE_MAX_TURNS;
       const result = exhausted ? { ...fought, status: 'FLED' as const, effects: [] as ActiveEffect[], log: [...spoken, `Depois de ${BATTLE_MAX_TURNS} turnos, os dois lados recuam exaustos. Ninguém leva nada.`] } : { ...fought, log: spoken };
-      let gold = 0, xpGain = 0;
+      let gold = 0, xpGain = 0, fragments = 0;
       const droppedItems: { blueprintId: number; quantity: number; name: string; rarity: number; adapted?: boolean }[] = [];
       if (result.status === 'VICTORY') {
         if (b.monster.experience < 0 || b.monster.goldMin < 0 || b.monster.goldMax < b.monster.goldMin)
@@ -110,11 +111,14 @@ export class BattleService {
             // Equipamento sorteia a raridade do exemplar (shared/rarity.ts); chefe multiplica as chances. Poção e material são sempre Comuns.
             const rarity = hasRarity(loot.blueprint.slot) ? rollRarity(rarityOddsOf(settings), dice(1, 10000), b.monster.isBoss ? settings['rarity.bossBoostPercent'] : 100) : 0;
             const drop = { blueprintId: picked.id, quantity: dice(1, loot.maxAmount), name: picked.name, rarity, ...(adapted ? { adapted } : {}) };
-            await addItem(tx, characterId, drop.blueprintId, drop.quantity, 'LOOT', { type: 'battle', id: battleId }, 0, null, rarity);
+            // Comércio limitado: Raro e Épico vinculam ao equipar; Lendário e Mítico de chefe chegam vinculados.
+            await addItem(tx, characterId, drop.blueprintId, drop.quantity, 'LOOT', { type: 'battle', id: battleId }, 0, null, rarity, bindingOnDrop(rarity, b.monster.isBoss));
             droppedItems.push(drop);
           }
         }
         await tx.characterTask.updateMany({ where: { characterId, isCompleted: false, task: { monsterId: b.monsterId } }, data: { currentKills: { increment: 1 } } });
+        // Fragmentos de chefe: o caminho garantido para a raridade (Ferreiro, Despertar).
+        if (b.monster.isBoss) fragments = settings['boss.fragmentsPerWin'];
       }
       const { experience, level, data: levelData } = gainExperience(c, xpGain);
       const heavy = monsterIntent(b.monster, b.turnVersion).kind === 'HEAVY';
@@ -122,7 +126,7 @@ export class BattleService {
         foe: result.foe, heavy, hp: result.hp, maxHp: c.maxHp, monsterHp: result.monsterHp, monsterMaxHp: b.monster.hp,
         ...(result.effectDamage ? { effectDamage: result.effectDamage } : {}), ...(result.stolen ? { stolen: result.stolen } : {}), ...(result.inflicted ? { inflicted: result.inflicted } : {}) };
       const turns = [...stored.turns, record].slice(-MAX_TURNS_KEPT);
-      await tx.character.update({ where: { id: characterId }, data: { hp: result.hp, mana: result.mana, ...levelData, goldInHand: { increment: BigInt(gold) } } });
+      await tx.character.update({ where: { id: characterId }, data: { hp: result.hp, mana: result.mana, ...levelData, goldInHand: { increment: BigInt(gold) }, ...(fragments ? { bossFragments: { increment: fragments } } : {}) } });
       if (gold > 0) await recordGold(tx, characterId, BigInt(gold), c.goldInHand + BigInt(gold), 'MONSTER', { type: 'battle', id: battleId });
       await tx.battle.update({ where: { id: battleId }, data: { monsterHp: result.monsterHp,
         isFinished: result.status !== 'ONGOING', activeCharacterId: result.status === 'ONGOING' ? characterId : null,
@@ -142,7 +146,7 @@ export class BattleService {
         if(result.status==='VICTORY')await awardAchievements(tx,characterId);
       }
       return { ...result, turns, battleId, turnVersion: b.turnVersion+1, maxHp: c.maxHp+(level-c.level)*levelGains.hp, monsterMaxHp: b.monster.hp,
-        monsterName: b.monster.name, monsterSprite: b.monster.spriteUrl,isBoss:b.monster.isBoss,intent:monsterIntent(b.monster,b.turnVersion+1), monsterStatus: monsterStatus(b.monster), phase: bossPhase({ isBoss: b.monster.isBoss, hp: result.monsterHp, maxHp: b.monster.hp }), defeat, rewards: { gold: String(gold), experience: experience.toString(), xpGained: xpGain, level, leveledUp: level > c.level, droppedItems } };
+        monsterName: b.monster.name, monsterSprite: b.monster.spriteUrl,isBoss:b.monster.isBoss,intent:monsterIntent(b.monster,b.turnVersion+1), monsterStatus: monsterStatus(b.monster), phase: bossPhase({ isBoss: b.monster.isBoss, hp: result.monsterHp, maxHp: b.monster.hp }), defeat, rewards: { gold: String(gold), experience: experience.toString(), xpGained: xpGain, level, leveledUp: level > c.level, droppedItems, ...(fragments ? { fragments } : {}) } };
     });
   }
 }

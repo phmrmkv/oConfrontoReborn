@@ -174,7 +174,7 @@ async function devCopy() {
         classTier: master.classTier, promotedAt: master.promotedAt, goldInHand: master.goldInHand } });
       if (master.goldInHand > 0n) await recordGold(tx, c.id, master.goldInHand, master.goldInHand, 'STARTER');
       for (const i of master.inventory) {
-        const copy = await addItem(tx, c.id, i.blueprintId, i.quantity, 'ADMIN_GRANT', { type: 'devCopy', id: master.id }, i.upgradeTier, null, i.rarity);
+        const copy = await addItem(tx, c.id, i.blueprintId, i.quantity, 'ADMIN_GRANT', { type: 'devCopy', id: master.id }, i.upgradeTier, null, i.rarity, { bound: i.bound, bindOnEquip: i.bindOnEquip });
         await tx.inventoryItem.update({ where: { id: copy.id }, data: { isEquipped: true, equippedSlot: i.equippedSlot } });
       }
       account = await tx.account.findUniqueOrThrow({ where: { id: a.id }, include: { characters: true } });

@@ -69,6 +69,14 @@ test('missões: todo monstro do catálogo tem nome, quem pede e história própr
   for(const x of all){assert.notEqual(x.giver,'Mural de missões de Capriel',`${x.name} caiu na história genérica`);assert(x.story.length>40,`${x.name}: história curta`);assert(!/thais/i.test(x.story+x.title+x.giver),`${x.name} ainda cita Thais`);}
   assert.equal(new Set(all.map(x=>x.title)).size,all.length,'títulos de missão repetidos');
 });
+test('Capriel só dá nome ao que é bom (decisão do dono em 2026-11-13)',async()=>{
+  const {missionFor}=await import('../../../shared/missions');
+  const bad=/death|dead|demon|devil|skull|doom|curse|hell|blood|evil|necro|morte|mort[oa]|dem[oô]n|diab|maldi|caveira|sangue|sopro|perdi[cç][aã]o|trev[ao]s|sombr/i;
+  for(const m of monsters)assert(!/capriel/i.test(m.name),`${m.name}: criatura não leva o nome de Capriel`);
+  for(const m of monsters.filter(x=>x.regionKey==='capriel'&&!x.isBoss))assert.match(m.name,/ da Perdição$/,`${m.name}: criatura do Vale da Perdição`);
+  for(const i of items.filter(x=>/capriel/i.test(x.name)))assert(!bad.test(i.name),`${i.name}: nome negativo com Capriel`);
+  for(const m of monsters){const x=missionFor(m.name);assert(!/capriel/i.test(x.title),`${m.name}: título de missão com Capriel`);}
+});
 test('classes: 8 por vocação até o 1000, nomes únicos, custo crescente e bônus no combate',async()=>{
   const {classLevels,classNames,classLabel,classTierOf,classCost,MAX_CLASS_TIER}=await import('../../../shared/adventure');
   assert.equal(MAX_CLASS_TIER,8);assert.equal(classLevels.at(-1),1000);

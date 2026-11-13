@@ -24,7 +24,7 @@ export const shotOf=heroShot;
 // 4 defender, 5 curar, 6 apanhar (2 quadros) e cair (2 quadros). Quem não tem folha continua com o sprite do TibiaWiki.
 // A lista do que existe vem de lib/spriteSheets.json, escrito por `npm run art` (o build roda antes): salvar o PNG em art/sprites com o nome do ART.md basta.
 export const heroSheetOf=(baseVocation:string)=>sheetUrl(heroFile(baseVocation));
-// As criaturas das Eras e de Capriel usam o sprite da original; lib/creatureArt.ts acha a folha pelo sprite, e só depois pelo nome.
+// As criaturas das Eras e do Vale da Perdição usam o sprite da original; lib/creatureArt.ts acha a folha pelo sprite, e só depois pelo nome.
 export const monsterSheetOf=(name:string,spritePath?:string)=>sheetUrl(creatureFile(name,spritePath));
 // O desenho ocupa cerca de 70% do quadro da folha, então o quadro é mostrado maior que um sprite comum.
 export const SHEET_SCALE=1.5;

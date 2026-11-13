@@ -97,3 +97,55 @@ test('duelo: só parte da vantagem da raridade vale', () => {
   assert.equal(combatStats(hero, mythic, { rarityPercent: 0 }).attack - base, 100);
   assert.equal(defaultSettings()['pvp.rarityPercent'], 50);
 });
+
+test('Ferreiro: cada falha soma chance à próxima tentativa do mesmo item, com teto', async () => {
+  const { upgradeSuccessPercent, upgradeBreakPercent, upgradeFailBonus, upgradeFailCap, resolveUpgrade, defaultSettings: d } = await import('../../../shared/economy');
+  const { analyzeForge, monteCarloForge } = await import('../../../shared/forgeSim');
+  const rules = { safeUntilTier: 3, breakFromTier: 6, breakOnFailPercent: 50, failBonusPercent: 5, failBonusMax: 15 };
+  assert.deepEqual([0, 1, 2, 3, 4, 9].map(f => upgradeFailBonus(f, rules)), [0, 5, 10, 15, 15, 15]);
+  assert.equal(upgradeFailCap(rules), 3); assert.equal(upgradeFailCap({ failBonusPercent: 0, failBonusMax: 15 }), 0);
+  assert.equal(upgradeFailBonus(5, {}), 0, 'sem a regra, nenhuma ajuda');
+  // +9→+10: 25%, com 3 falhas seguidas 40%; a quebra cai junto (falha × 50%).
+  assert.equal(upgradeSuccessPercent(9, 3, upgradeFailBonus(3, rules)), 40);
+  assert.equal(upgradeBreakPercent(9, rules, 0), 37.5); assert.equal(upgradeBreakPercent(9, rules, 3), 30);
+  assert.equal(upgradeSuccessPercent(3, 3, 50), 100, 'nunca passa de 100%');
+  assert.equal(upgradeSuccessPercent(1, 3, 50), 100);
+  // O mesmo sorteio que falhava passa com a ajuda.
+  assert.equal(resolveUpgrade(9, rules, 40, 100, 0), 'FAILED');
+  assert.equal(resolveUpgrade(9, rules, 40, 100, 3), 'SUCCESS');
+  // Sem falhas, a regra é idêntica à antiga.
+  for (let t = 0; t < 10; t++) for (const roll of [1, 25, 50, 85, 100]) assert.equal(resolveUpgrade(t, rules, roll, roll, 0), resolveUpgrade(t, { safeUntilTier: 3, breakFromTier: 6, breakOnFailPercent: 50 }, roll, roll));
+  // Simulador exato com a ajuda bate com o sorteio e sai mais barato que sem ela.
+  const cost = (t: number) => 100 * (t + 1), ex = analyzeForge(rules, 10, cost, 1000);
+  let x = 11; const rng = () => (x = (x * 1664525 + 1013904223) % 4294967296) / 4294967296;
+  const mc = monteCarloForge(rules, 10, cost, 1000, 30000, rng);
+  assert.ok(Math.abs(mc.expectedItemsUsed - ex.expectedItemsUsed) / ex.expectedItemsUsed < 0.05, `${mc.expectedItemsUsed} vs ${ex.expectedItemsUsed}`);
+  assert.ok(Math.abs(mc.expectedGold - ex.expectedGold) / ex.expectedGold < 0.05);
+  const plain = analyzeForge({ safeUntilTier: 3, breakFromTier: 6, breakOnFailPercent: 50 }, 10, cost, 1000);
+  assert.ok(ex.expectedItemsUsed < plain.expectedItemsUsed && ex.survivalChance > plain.survivalChance);
+  assert.deepEqual([d()['upgrade.failBonusPercent'], d()['upgrade.failBonusMax']], [5, 15]);
+});
+
+test('fragmentos de chefe: despertar custa o dobro a cada degrau', async () => {
+  const { awakenCost } = await import('../../../shared/rarity');
+  const { itemReasons } = await import('../../../shared/economy');
+  assert.deepEqual([1, 2, 3, 4, 5].map(t => awakenCost(t, 5)), [5, 10, 20, 40, 80]);
+  assert.equal([1, 2, 3, 4, 5].reduce((s, t) => s + awakenCost(t, 5), 0), 155);
+  assert.deepEqual([0, 6].map(t => awakenCost(t, 5)), [0, 0], 'Comum não é destino e não há nada acima de Mítico');
+  assert.deepEqual([1, 5].map(t => awakenCost(t, 0)), [1, 16], 'base nunca abaixo de 1');
+  assert.equal(itemReasons.FORGE_AWAKEN_OUT, 'sink'); assert.equal(itemReasons.FORGE_AWAKEN_IN, 'source');
+  assert.equal(defaultSettings()['boss.fragmentsPerWin'], 1); assert.equal(defaultSettings()['boss.awakenBaseFragments'], 5);
+});
+
+test('comércio limitado: como chega o que cai e o que fica fora do Espólio', async () => {
+  const { bindingOnDrop, bindingLabel, FREE, BOUND, BIND_ON_EQUIP } = await import('../../../shared/binding');
+  const { lootEligible } = await import('../../../shared/pvp');
+  assert.deepEqual([0, 1].map(r => bindingOnDrop(r, true)), [FREE, FREE], 'Comum e Incomum são livres, até de chefe');
+  assert.deepEqual([2, 3].map(r => bindingOnDrop(r, false)), [BIND_ON_EQUIP, BIND_ON_EQUIP]);
+  assert.deepEqual([4, 5].map(r => bindingOnDrop(r, false)), [BIND_ON_EQUIP, BIND_ON_EQUIP], 'Lendário e Mítico fora de chefe só vinculam ao equipar');
+  assert.deepEqual([4, 5].map(r => bindingOnDrop(r, true)), [BOUND, BOUND]);
+  assert.deepEqual([bindingLabel(FREE), bindingLabel(BOUND), bindingLabel(BIND_ON_EQUIP)], [null, 'Vinculado', 'Vincula ao equipar']);
+  const base = { isEquipped: false, favorite: false, rareItemId: null, upgradeTier: 0, quantity: 1, slot: 'WEAPON' };
+  assert.equal(lootEligible(base, 7), true); assert.equal(lootEligible({ ...base, bound: true }, 7), false); assert.equal(lootEligible({ ...base, bound: false }, 7), true);
+  assert.equal(defaultSettings()['market.rareSaleFeePercent'], 10);
+});
