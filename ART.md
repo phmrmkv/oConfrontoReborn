@@ -2,7 +2,7 @@
 
 > Arquivo gerado por `npm run art` a partir de `scripts/art.mjs`. Para mudar um comando, edite a lista naquele arquivo e rode de novo.
 
-A arena de batalha está trocando os sprites do TibiaWiki por arte própria. Cada personagem vem numa folha só, sempre no mesmo formato. Hoje **59 de 59** folhas estão prontas.
+A arena de batalha está trocando os sprites do TibiaWiki por arte própria. Cada personagem vem numa folha só, sempre no mesmo formato. Hoje **59 de 60** folhas estão prontas.
 
 ## Como usar
 1. Copie o comando inteiro do personagem e cole no ChatGPT (gere um personagem por vez).
@@ -20,12 +20,14 @@ Só as folhas novas ou alteradas são refeitas (`art/web.json` guarda o que já 
 ## Formato de toda folha
 - 1024 × 1536 px, fundo transparente, 4 colunas × 6 linhas, quadros de 256 × 256 px, personagem virado para a direita.
 - Linhas: 1 parado, 2 avançar, 3 atacar, 4 defender, 5 curar (heróis) ou gesto especial (criaturas), 6 apanhar (2 quadros) e cair (2 quadros).
+- A folha de efeitos (`efeitos.png`) usa a mesma grade: linhas 1 a 3, um projétil parado por quadro, apontando para a direita; linha 4 escudo de guarda, 5 cura e 6 impacto, com 4 quadros cada. Enquanto ela não existe, a arena usa os ícones do TibiaWiki.
 
 ## Se o GPT errar
 - Grade torta: "refaça mantendo o personagem, mas alinhe a grade em 4 × 6 com quadros de 256 px".
 - Fundo branco, xadrez ou com contorno colorido: "fundo transparente de verdade, limpo, sem halo".
 - Efeito de magia cortado em quadrado: "refaça só a linha N, com o brilho solto em volta do corpo, sem caixa nem fundo".
 - Confira sempre a linha 6 (apanhar e cair): é a que mais sai errada.
+- Na folha de efeitos, projétil torto ou apontando para a esquerda: "refaça só a linha N, com cada projétil na horizontal, apontando para a direita, centralizado no quadro".
 
 ## Situação
 | Arquivo | Personagem | Tipo | Situação | Usado por |
@@ -89,6 +91,7 @@ Só as folhas novas ou alteradas são refeitas (`art/web.json` guarda o que já 
 | `infernatil.png` | Infernatil | Chefe | feito | Infernatil (nv. 250), Infernatil da 3ª Era (nv. 700) |
 | `verminor.png` | Verminor | Chefe | feito | Verminor (nv. 550) |
 | `apocalypse.png` | Apocalypse | Chefe | feito | Apocalypse (nv. 1000) |
+| `efeitos.png` | Efeitos da arena | Efeitos | falta | projéteis, escudo de guarda, cura e impacto na arena |
 
 ## Heróis
 
@@ -1451,4 +1454,31 @@ Formato obrigatório:
   Linha 6: dois quadros levando um golpe e sendo empurrada para trás, depois dois quadros caindo e deitada no chão.
 
 Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel, paleta limitada (negro-arroxeado, vermelho pulsante, azul-branco), luz vindo de cima à esquerda, sem anti-aliasing borrado e sem degradê suave. Mesmo estilo de um cavaleiro de armadura de aço escuro e capa vinho já usado no jogo. A mesma criatura, com as mesmas cores e proporções, em todos os 24 quadros.
+```
+
+## Efeitos
+
+O que voa num ataque à distância e os brilhos da arena. Com esta folha pronta, a arena deixa de usar os ícones do TibiaWiki para a flecha, as runas que voam e o escudo de guarda, e ganha a cura e o impacto desenhados. Os dois últimos quadros da linha 3 (espinhos e pedra) são reserva: ainda nenhum golpe os usa.
+
+### Efeitos da arena · `efeitos.png` · falta
+
+```
+Crie uma folha de efeitos em pixel art para a arena de um jogo de RPG por turnos visto de lado.
+
+Conteúdo: projéteis e brilhos de magia originais, sem personagem nenhum. Design próprio, sem copiar nenhum jogo existente.
+
+Formato obrigatório:
+- Imagem de 1024 x 1536 pixels, fundo totalmente transparente (PNG), limpo, sem halo colorido nas bordas.
+- Grade exata de 4 colunas por 6 linhas. Cada quadro tem 256 x 256 pixels. Sem linhas de grade, sem bordas, sem texto, sem números, sem sombra no chão.
+- Um efeito por quadro, centralizado, ocupando cerca de 60% da largura do quadro. Nada pode encostar ou passar da borda do quadro, nem o brilho.
+- Linhas 1 a 3: um projétil por quadro, parado, desenhado na horizontal e apontando para a DIREITA, com o rastro para a esquerda:
+  Linha 1: flecha de madeira clara com ponta de ferro e penas vinho; virote de besta curto e grosso, de ponta de aço larga; faca de arremesso de lâmina fina e cabo enrolado em couro; lança de cabo de madeira com ponta de ferro em forma de folha.
+  Linha 2: bola de fogo grande, laranja e amarela, com rastro de chamas para trás; bola de fogo pequena, laranja, com rastro curto; míssil arcano: esfera azul-clara brilhante com rastro de faíscas azuis; esfera de energia amarela envolta em pequenos raios.
+  Linha 3: caveira de fumaça roxa escura, de olhos acesos, com rastro de fumaça; bolha de veneno verde pingando, com rastro de gotas; feixe de espinhos e folhas verdes, girando; pedra arremessada, cinza, com lascas soltas.
+- Linhas 4 a 6: animações de 4 quadros em sequência, da esquerda para a direita, cada uma centralizada no quadro:
+  Linha 4: escudo de guarda: um escudo redondo de luz azul-clara, visto de frente, que surge pequeno, cresce, brilha forte e fica firme.
+  Linha 5: cura: brilho verde suave subindo em espiral, com pequenas cruzes e faíscas verdes, que nasce, cresce, fica forte e se desfaz.
+  Linha 6: impacto de golpe: estrela de impacto branca e amarela com faíscas, que estoura, abre e se desfaz.
+
+Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel nos objetos sólidos (flecha, virote, faca, lança e pedra), paleta limitada, luz vindo de cima à esquerda, sem anti-aliasing borrado e sem degradê suave. Mesmo estilo de um cavaleiro de armadura de aço escuro e capa vinho já usado no jogo. Brilhos e magias soltos no ar, sem caixa nem fundo.
 ```

@@ -246,3 +246,28 @@
 .battle-stage .fighter.sheeted.right.lunge .sheet-sprite{animation-name:sheet-lunge-right}
 @keyframes sheet-lunge-left{0%{background-position:0 20%;transform:none}12%{background-position:33.333% 20%}24%{background-position:66.667% 20%}34%{background-position:0 40%}42%{background-position:33.333% 40%}50%{background-position:66.667% 40%}62%{background-position:100% 40%;transform:none}70%{background-position:0 20%;transform:scaleX(-1)}80%{background-position:33.333% 20%;transform:scaleX(-1)}90%{background-position:66.667% 20%;transform:scaleX(-1)}97%,100%{background-position:0 0;transform:none}}
 @keyframes sheet-lunge-right{0%{background-position:0 20%;transform:scaleX(-1)}12%{background-position:33.333% 20%}24%{background-position:66.667% 20%}34%{background-position:0 40%}42%{background-position:33.333% 40%}50%{background-position:66.667% 40%}62%{background-position:100% 40%;transform:scaleX(-1)}70%{background-position:0 20%;transform:none}80%{background-position:33.333% 20%;transform:none}90%{background-position:66.667% 20%;transform:none}97%,100%{background-position:0 0;transform:scaleX(-1)}}
+/* ----- Efeitos próprios (folha efeitos.webp, 4 × 6 quadros; ver ui/BattleStage.tsx). Sem a folha, nada disto aparece. ----- */
+/* Linhas 1 a 3: projéteis parados, apontando para a direita; voam reto (sem girar) e viram para quem atira da direita. */
+.battle-stage .fx-cell{display:block;background-repeat:no-repeat;background-size:400% 600%;image-rendering:auto}
+.battle-stage .projectile.own{filter:none}
+.battle-stage .projectile.own .fx-cell{width:76px;height:76px}
+.battle-stage .projectile.own.left{animation-name:stage-fly-right}
+.battle-stage .projectile.own.right{animation-name:stage-fly-left}
+.battle-stage .projectile.own.right .fx-cell{transform:scaleX(-1)}
+@keyframes stage-fly-right{from{transform:translateX(0);opacity:1}to{transform:translateX(calc(var(--reach)*1.2));opacity:1}}
+@keyframes stage-fly-left{from{transform:translateX(0);opacity:1}to{transform:translateX(calc(var(--reach)*-1.2));opacity:1}}
+/* Linhas 4 a 6: guarda, cura e impacto, 4 quadros cada. Sem animação (Configurações), fica o último quadro da guarda e somem cura e impacto. */
+.battle-stage .fx-cell.fx-anim{background-position-x:100%;animation:sheet-row .36s steps(4,jump-none) both}
+.battle-stage .guard-shield.own{filter:none;bottom:12px}
+.battle-stage .guard-shield.own .fx-cell{width:96px;height:96px}
+.battle-stage .fighter.many .guard-shield.own .fx-cell{width:68px;height:68px}
+.battle-stage .fx-burst{position:absolute;left:50%;bottom:28px;z-index:3;transform:translateX(-50%);pointer-events:none}
+.battle-stage .fx-burst .fx-cell{width:132px;height:132px}
+.battle-stage .fighter.many .fx-burst .fx-cell{width:92px;height:92px}
+.battle-stage .fx-burst.heal .fx-cell{animation-duration:.6s}
+.battle-stage .fx-burst.impact{bottom:44px}
+.battle-stage .fx-burst.impact .fx-cell{width:96px;height:96px;animation-duration:.3s}
+/* Impacto que chega no fim do golpe (late): fica escondido durante a espera e aparece já no primeiro quadro. */
+.battle-stage .fx-burst.impact.late .fx-cell{opacity:0;animation:fx-late .3s steps(4,jump-none) .24s forwards}
+@keyframes fx-late{from{opacity:1;background-position-x:0}to{opacity:1;background-position-x:100%}}
+:root[data-motion="reduce"] .battle-stage .fx-burst{display:none}

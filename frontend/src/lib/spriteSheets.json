@@ -80,5 +80,25 @@
     "elfo-arcanista": "Heavy Magic Missile Rune",
     "elemental-de-agua": "Heavy Magic Missile Rune",
     "infernatil": "Great Fireball Rune"
+  },
+  "effects": null,
+  "effectCells": {
+    "Arrow": 0,
+    "Power Bolt": 1,
+    "Throwing Knife": 2,
+    "Spear": 3,
+    "Great Fireball Rune": 4,
+    "Fireball Rune": 5,
+    "Heavy Magic Missile Rune": 6,
+    "Energy Bomb Rune": 7,
+    "Sudden Death Rune": 8,
+    "Poison Bomb Rune": 9,
+    "Thorns": 10,
+    "Stone": 11
+  },
+  "effectRows": {
+    "guard": 3,
+    "heal": 4,
+    "impact": 5
   }
 }

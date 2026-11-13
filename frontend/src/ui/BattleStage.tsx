@@ -2,7 +2,7 @@ import {useEffect,useRef,useState} from 'react';
 import Icon from './GameIcon';
 import manifest from '../../public/assets/tibia/manifest.json';
 import {applyMotion} from '../lib/theme';
-import {creatureFile,heroFile,sheetUrl} from '../lib/creatureArt';
+import {creatureFile,effectCell,effectRow,effectsSheet,heroFile,heroShot,sheetUrl} from '../lib/creatureArt';
 
 // Arena animada, usada na caçada, no Duelo e na Caçada em grupo: lutadores à esquerda e à direita encenam a rodada que o servidor
 // já resolveu (avanço, projétil, tranco, números que sobem, cura, guarda, esquiva, queda). Nenhuma regra de combate mora aqui.
@@ -16,11 +16,10 @@ export type Step={cues:Cue[];shake?:boolean;ms:number};
 export type StageFighter={id:string;name:string;src:string;sheet?:string;size?:number;boss?:boolean;rage?:boolean;down?:boolean;gone?:boolean;fx?:string};
 const paths=new Map(manifest.entries.map(e=>[e.name,e.path]));
 export const spriteOf=(name:string,fallback='')=>paths.get(name)??fallback;
-// Boneco de cada vocação (sprites do TibiaWiki já registrados no manifesto) e o que voa quando o golpe é à distância.
+// Boneco de cada vocação (sprites do TibiaWiki já registrados no manifesto). O que voa quando o golpe é à distância vem de lib/creatureArt.
 const heroSprites:Record<string,string>={KNIGHT:'Hero',PALADIN:'Hunter',SORCERER:'Warlock',DRUID:'Monk'};
-const shots:Record<string,string>={PALADIN:'Arrow',SORCERER:'Great Fireball Rune',DRUID:'Heavy Magic Missile Rune'};
 export const heroSpriteOf=(baseVocation:string)=>spriteOf(heroSprites[baseVocation]??'Hero',spriteOf('Hero'));
-export const shotOf=(baseVocation:string)=>shots[baseVocation];
+export const shotOf=heroShot;
 // Arte própria do jogo (versão de site em frontend/public/assets/sprites, ver CREDITOS.md lá; originais em art/sprites). Linhas da folha: 1 parado, 2 avançar, 3 atacar,
 // 4 defender, 5 curar, 6 apanhar (2 quadros) e cair (2 quadros). Quem não tem folha continua com o sprite do TibiaWiki.
 // A lista do que existe vem de lib/spriteSheets.json, escrito por `npm run art` (o build roda antes): salvar o PNG em art/sprites com o nome do ART.md basta.
@@ -30,6 +29,16 @@ export const monsterSheetOf=(name:string,spritePath?:string)=>sheetUrl(creatureF
 // O desenho ocupa cerca de 70% do quadro da folha, então o quadro é mostrado maior que um sprite comum.
 export const SHEET_SCALE=1.5;
 export const stageNumber=(v:number)=>v.toLocaleString('pt-BR');
+
+// Efeitos próprios (folha efeitos.webp, ver lib/creatureArt.ts): com ela, o projétil voa reto e desenhado, o escudo de guarda é o da
+// folha e a cura e o impacto ganham animação; sem ela, a arena fica como sempre foi (ícones do TibiaWiki, que giram no voo).
+const fxSheet=effectsSheet();
+// Um quadro parado (`cell`, 0 a 11) ou uma linha animada (`row`, 4 quadros) da folha de efeitos.
+function FxCell({cell,row}:{cell?:number;row?:number}){
+  if(!fxSheet||(cell===undefined&&row===undefined))return null;
+  const at=row!==undefined?{backgroundPositionY:`${row*20}%`}:{backgroundPosition:`${(cell!%4)*100/3}% ${Math.floor(cell!/4)*20}%`};
+  return <span className={`fx-cell${row!==undefined?' fx-anim':''}`} style={{backgroundImage:`url(${fxSheet})`,...at}}/>;
+}
 
 // Os sprites do Tibia têm 64×64, mas muitos bonecos ocupam só parte desse quadro. Para ninguém ficar miúdo, a arena mede a área
 // desenhada do primeiro quadro, amplia até o dobro para ela encher o espaço e a apoia no chão, centralizada.
@@ -71,7 +80,10 @@ export default function BattleStage({scene,turn,left,right,steps}:{scene:string|
     const cls=['fighter',side,f.sheet?'sheeted':'',f.boss?'boss':'',f.rage&&!down?'rage':'',many?'many':'',down?'down':gone?'gone':cue?.cls??'idle'].join(' ');
     return <div className={cls} key={f.id}>
       <div className={`body ${f.fx??''}`}>{f.sheet?<span className="sheet-sprite sprite" role="img" aria-label={f.name} style={{width:Math.round((f.size??128)*SHEET_SCALE),height:Math.round((f.size??128)*SHEET_SCALE),backgroundImage:`url(${f.sheet})`}}/>:<StageSprite src={f.src} alt={f.name} size={f.size??128}/>}</div>
-      {cue?.cls?.includes('guard')&&<span className="guard-shield"><Icon name="Mastermind Shield" size={many?40:56}/></span>}
+      {cue?.cls?.includes('guard')&&(fxSheet?<span key={`${index}-guard`} className="guard-shield own"><FxCell row={effectRow('guard')}/></span>
+        :<span className="guard-shield"><Icon name="Mastermind Shield" size={many?40:56}/></span>)}
+      {fxSheet&&cue?.cls?.includes('heal')&&<span key={`${index}-heal`} className="fx-burst heal"><FxCell row={effectRow('heal')}/></span>}
+      {fxSheet&&cue?.cls?.includes('hit')&&cue.float?.kind!=='fx'&&<span key={`${index}-impact`} className={`fx-burst impact ${cue.cls.includes('late')?'late':''}`}><FxCell row={effectRow('impact')}/></span>}
       {cue?.float&&<b key={`${index}-${f.id}`} className={`float ${cue.float.kind} ${cue.cls?.includes('late')?'late':''}`}>{cue.float.text}</b>}
       <span className="nameplate">{f.name}</span>
     </div>;
@@ -81,7 +93,8 @@ export default function BattleStage({scene,turn,left,right,steps}:{scene:string|
     <div className={`battle-stage ${step?.shake?'shake':''}`} key={scene} aria-hidden="true">
       <div className="stage-floor"/>
       <div className={`stage-side left ${left.length>1?'many':''}`}>{left.map(f=>fighter(f,'left',left.length>1))}</div>
-      {shotCues.map(c=><span key={`${index}-${c.who}`} className={`projectile ${left.some(f=>f.id===c.who)?'left':'right'}`}><Icon name={c.shot!} size={36}/></span>)}
+      {shotCues.map(c=>{const cell=fxSheet?effectCell(c.shot!):undefined;
+        return <span key={`${index}-${c.who}`} className={`projectile ${left.some(f=>f.id===c.who)?'left':'right'}${cell!==undefined?' own':''}`}>{cell!==undefined?<FxCell cell={cell}/>:<Icon name={c.shot!} size={36}/>}</span>;})}
       <div className={`stage-side right ${right.length>1?'many':''}`}>{right.map(f=>fighter(f,'right',right.length>1))}</div>
     </div>
     <button type="button" className="link-button stage-motion" aria-pressed={!still} title="Vale para o jogo todo; também fica em Configurações." onClick={toggle}>{still?'Animações desligadas · ligar':'Animações ligadas · desligar'}</button>

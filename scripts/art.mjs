@@ -101,6 +101,47 @@ export const shots = {
 };
 const ranged = m => /para a direita|tiro (de|com)/.test(m.attack);
 
+// ----- Efeitos da arena (uma folha só, no mesmo formato 4 × 6 das outras) -----
+// Linhas 1 a 3: um projétil por quadro, parado e apontando para a direita (a arena faz ele voar e o vira para quem atira da
+// direita), na ordem abaixo. `shot` é o ícone do TibiaWiki que o quadro substitui: o mesmo nome que `shots` (acima) e os heróis
+// da arena (lib/creatureArt.ts) usam. `spare`: quadro de reserva, que ainda nenhum golpe usa.
+// Linhas 4 a 6: animações de 4 quadros, guarda, cura e impacto (`effectRows`, contadas a partir de 0).
+export const effects = { key: 'Efeitos', file: 'efeitos', name: 'Efeitos da arena' };
+export const effectCells = [
+  { shot: 'Arrow', look: 'flecha de madeira clara com ponta de ferro e penas vinho' },
+  { shot: 'Power Bolt', look: 'virote de besta curto e grosso, de ponta de aço larga' },
+  { shot: 'Throwing Knife', look: 'faca de arremesso de lâmina fina e cabo enrolado em couro' },
+  { shot: 'Spear', look: 'lança de cabo de madeira com ponta de ferro em forma de folha' },
+  { shot: 'Great Fireball Rune', look: 'bola de fogo grande, laranja e amarela, com rastro de chamas para trás' },
+  { shot: 'Fireball Rune', look: 'bola de fogo pequena, laranja, com rastro curto' },
+  { shot: 'Heavy Magic Missile Rune', look: 'míssil arcano: esfera azul-clara brilhante com rastro de faíscas azuis' },
+  { shot: 'Energy Bomb Rune', look: 'esfera de energia amarela envolta em pequenos raios' },
+  { shot: 'Sudden Death Rune', look: 'caveira de fumaça roxa escura, de olhos acesos, com rastro de fumaça' },
+  { shot: 'Poison Bomb Rune', look: 'bolha de veneno verde pingando, com rastro de gotas' },
+  { shot: 'Thorns', look: 'feixe de espinhos e folhas verdes, girando', spare: true },
+  { shot: 'Stone', look: 'pedra arremessada, cinza, com lascas soltas', spare: true },
+];
+export const effectRows = { guard: 3, heal: 4, impact: 5 };
+const effectLine = (from, to) => effectCells.slice(from, to).map(e => e.look).join('; ');
+export const effectsPrompt = () => `Crie uma folha de efeitos em pixel art para a arena de um jogo de RPG por turnos visto de lado.
+
+Conteúdo: projéteis e brilhos de magia originais, sem personagem nenhum. Design próprio, sem copiar nenhum jogo existente.
+
+Formato obrigatório:
+- Imagem de 1024 x 1536 pixels, fundo totalmente transparente (PNG), limpo, sem halo colorido nas bordas.
+- Grade exata de 4 colunas por 6 linhas. Cada quadro tem 256 x 256 pixels. Sem linhas de grade, sem bordas, sem texto, sem números, sem sombra no chão.
+- Um efeito por quadro, centralizado, ocupando cerca de 60% da largura do quadro. Nada pode encostar ou passar da borda do quadro, nem o brilho.
+- Linhas 1 a 3: um projétil por quadro, parado, desenhado na horizontal e apontando para a DIREITA, com o rastro para a esquerda:
+  Linha 1: ${effectLine(0, 4)}.
+  Linha 2: ${effectLine(4, 8)}.
+  Linha 3: ${effectLine(8, 12)}.
+- Linhas 4 a 6: animações de 4 quadros em sequência, da esquerda para a direita, cada uma centralizada no quadro:
+  Linha 4: escudo de guarda: um escudo redondo de luz azul-clara, visto de frente, que surge pequeno, cresce, brilha forte e fica firme.
+  Linha 5: cura: brilho verde suave subindo em espiral, com pequenas cruzes e faíscas verdes, que nasce, cresce, fica forte e se desfaz.
+  Linha 6: impacto de golpe: estrela de impacto branca e amarela com faíscas, que estoura, abre e se desfaz.
+
+Estilo: pixel art nítido de 32 bits, contorno escuro de 1 pixel nos objetos sólidos (flecha, virote, faca, lança e pedra), paleta limitada, luz vindo de cima à esquerda, sem anti-aliasing borrado e sem degradê suave. Mesmo estilo de um cavaleiro de armadura de aço escuro e capa vinho já usado no jogo. Brilhos e magias soltos no ar, sem caixa nem fundo.`;
+
 // Pronta = já tem a versão de site (o original fica em art/sprites).
 const have = name => fs.existsSync(path.join(dir, `${name}.webp`));
 const format = (who, sizeRule) => `Formato obrigatório:
@@ -155,10 +196,14 @@ async function main() {
   await buildSheets(root);
   const odd = creatures.filter(m => ranged(m) !== (m.key in shots)).map(m => m.key), lost = Object.keys(shots).filter(k => !creatures.some(m => m.key === k));
   if (odd.length || lost.length) throw new Error(`scripts/art.mjs: a lista \`shots\` não bate com os ataques descritos: ${[...odd, ...lost].join(', ')}`);
+  // Todo projétil de criatura precisa de um quadro na folha de efeitos (os dos heróis são conferidos em lib/creatureArt.test.ts).
+  const uncovered = [...new Set(Object.values(shots))].filter(s => !effectCells.some(e => e.shot === s));
+  if (uncovered.length) throw new Error(`scripts/art.mjs: projétil sem quadro na folha de efeitos (effectCells): ${uncovered.join(', ')}`);
   const sheets = { heroes: Object.fromEntries(heroes.filter(h => have(h.file)).map(h => [h.key, h.file])), monsters: Object.fromEntries(creatures.filter(m => have(m.file)).map(m => [m.key, m.file])),
-    shots: Object.fromEntries(creatures.filter(m => have(m.file) && shots[m.key]).map(m => [m.file, shots[m.key]])) };
+    shots: Object.fromEntries(creatures.filter(m => have(m.file) && shots[m.key]).map(m => [m.file, shots[m.key]])),
+    effects: have(effects.file) ? effects.file : null, effectCells: Object.fromEntries(effectCells.map((e, i) => [e.shot, i])), effectRows };
   writeText(path.join(root, 'frontend/src/lib/spriteSheets.json'), JSON.stringify(sheets, null, 2) + '\n');
-  const uses = await usedBy(), all = [...heroes, ...creatures], done = all.filter(a => have(a.file)).length;
+  const uses = await usedBy(), all = [...heroes, ...creatures, effects], done = all.filter(a => have(a.file)).length;
   const mark = a => have(a.file) ? 'feito' : 'falta';
   const block = (a, prompt) => `### ${a.name} · \`${a.file}.png\` · ${mark(a)}\n\n\`\`\`\n${prompt}\n\`\`\`\n`;
   const md = `# Arte própria de O Confronto
@@ -183,18 +228,21 @@ Só as folhas novas ou alteradas são refeitas (\`art/web.json\` guarda o que j�
 ## Formato de toda folha
 - 1024 × 1536 px, fundo transparente, 4 colunas × 6 linhas, quadros de 256 × 256 px, personagem virado para a direita.
 - Linhas: 1 parado, 2 avançar, 3 atacar, 4 defender, 5 curar (heróis) ou gesto especial (criaturas), 6 apanhar (2 quadros) e cair (2 quadros).
+- A folha de efeitos (\`efeitos.png\`) usa a mesma grade: linhas 1 a 3, um projétil parado por quadro, apontando para a direita; linha 4 escudo de guarda, 5 cura e 6 impacto, com 4 quadros cada. Enquanto ela não existe, a arena usa os ícones do TibiaWiki.
 
 ## Se o GPT errar
 - Grade torta: "refaça mantendo o personagem, mas alinhe a grade em 4 × 6 com quadros de 256 px".
 - Fundo branco, xadrez ou com contorno colorido: "fundo transparente de verdade, limpo, sem halo".
 - Efeito de magia cortado em quadrado: "refaça só a linha N, com o brilho solto em volta do corpo, sem caixa nem fundo".
 - Confira sempre a linha 6 (apanhar e cair): é a que mais sai errada.
+- Na folha de efeitos, projétil torto ou apontando para a esquerda: "refaça só a linha N, com cada projétil na horizontal, apontando para a direita, centralizado no quadro".
 
 ## Situação
 | Arquivo | Personagem | Tipo | Situação | Usado por |
 |---|---|---|---|---|
 ${heroes.map(h => `| \`${h.file}.png\` | ${h.name} | Herói | ${mark(h)} | vocação ${h.name} |`).join('\n')}
 ${creatures.map(m => `| \`${m.file}.png\` | ${m.name} | ${m.boss ? 'Chefe' : 'Criatura'} | ${mark(m)} | ${(uses.get(m.key) ?? [m.key]).join(', ')} |`).join('\n')}
+| \`${effects.file}.png\` | ${effects.name} | Efeitos | ${mark(effects)} | projéteis, escudo de guarda, cura e impacto na arena |
 
 ## Heróis
 
@@ -203,7 +251,12 @@ ${heroes.map(h => block(h, heroPrompt(h))).join('\n')}
 
 Os nomes novos são da arte. As criaturas das Eras e de Capriel usam a mesma folha da criatura original.
 
-${creatures.map(m => block(m, creaturePrompt(m))).join('\n')}`;
+${creatures.map(m => block(m, creaturePrompt(m))).join('\n')}
+## Efeitos
+
+O que voa num ataque à distância e os brilhos da arena. Com esta folha pronta, a arena deixa de usar os ícones do TibiaWiki para a flecha, as runas que voam e o escudo de guarda, e ganha a cura e o impacto desenhados. Os dois últimos quadros da linha 3 (espinhos e pedra) são reserva: ainda nenhum golpe os usa.
+
+${block(effects, effectsPrompt())}`;
   writeText(path.join(root, 'ART.md'), md);
   const row = (a, what, where) => `| \`${a.file}.webp\` | ${a.name}, ${what} | ${where} |`;
   writeText(path.join(dir, 'CREDITOS.md'), `# Sprites próprios de O Confronto
@@ -215,7 +268,8 @@ Arte original do jogo, criada pelo dono com geração de imagens do ChatGPT a pa
 | Arquivo | O que é | Onde aparece |
 |---|---|---|
 ${heroes.filter(h => have(h.file)).map(h => row(h, 'herói', 'Arena de batalha (caçada, Duelo e Caçada em grupo)')).join('\n')}
-${creatures.filter(m => have(m.file)).map(m => row(m, m.boss ? 'chefe' : 'criatura', `Arena de batalha, no lugar do sprite do ${m.key}`)).join('\n')}
+${[...creatures.filter(m => have(m.file)).map(m => row(m, m.boss ? 'chefe' : 'criatura', `Arena de batalha, no lugar do sprite do ${m.key}`)),
+  ...(have(effects.file) ? [row(effects, 'folha de efeitos', 'Arena de batalha: projéteis, escudo de guarda, cura e impacto')] : [])].join('\n')}
 
 ## Formato das folhas
 - 1024 × 1536 px, fundo transparente, 4 colunas × 6 linhas, quadros de 256 × 256 px, personagem virado para a direita.
