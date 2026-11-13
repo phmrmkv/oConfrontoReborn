@@ -1,0 +1,9579 @@
+{
+	"version": 1,
+	"companies": [
+		{
+			"name": "novo",
+			"save": {
+				"auto_sell": false,
+				"buffs": {},
+				"chest": {},
+				"counters": {
+					"combo": 0.0,
+					"forged": 0.0,
+					"gold": 0.0,
+					"items": 0.0,
+					"kills": 0.0
+				},
+				"daily": {},
+				"expeditions": [],
+				"feats": {},
+				"flags": {
+					"enchant": true,
+					"guide": 0.0
+				},
+				"furthest": 20.0,
+				"gems": 1000000000000.0,
+				"gold": 1000000000000.0,
+				"gold_rate": 0.0,
+				"insignias": 0.0,
+				"inventory": [],
+				"item_seq": 1.0,
+				"last_seen": 0.0,
+				"licenses": {},
+				"login": {},
+				"materials": {
+					"adamant": 1000000.0,
+					"essence": 1000000.0,
+					"iron": 1000000.0,
+					"leather": 1000000.0,
+					"mithril": 1000000.0,
+					"steel": 1000000.0
+				},
+				"members": [
+					{
+						"alloc": {},
+						"enchant": {},
+						"gear": {},
+						"hp": 210.0,
+						"id": "knight",
+						"in_field": true,
+						"key": "knight",
+						"kind": "hero",
+						"level": 1.0,
+						"points": 0.0,
+						"revive": 0.0,
+						"xp": 0.0
+					}
+				],
+				"pet": "",
+				"pet_names": {},
+				"pets": [],
+				"play_seconds": 0.0,
+				"potions": {},
+				"protect": 2.0,
+				"protect_stones": 0.0,
+				"quest_state": {
+					"c_first": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_forge": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_loot": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_lv5": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_stage2": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_combo": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_forge3": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_gold": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_kill20": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_kill40": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_loot10": {
+						"base": 0.0,
+						"claimed": false
+					}
+				},
+				"rate_v": 2.0,
+				"runes": {},
+				"species": {},
+				"stage": 1.0,
+				"stash": [],
+				"v": 1.0,
+				"vigil": 0.0,
+				"wave": 1.0,
+				"xp_rate": 0.0
+			},
+			"game_stats": [
+				{
+					"key": "knight",
+					"aspect": "",
+					"max_hp": 210.0,
+					"attack_damage": 6.0,
+					"attack_speed": 1.0,
+					"crit_chance": 0.05,
+					"crit_damage": 2.0,
+					"armor": 48.0,
+					"dodge": 0.04,
+					"block": 0.18,
+					"range": 28.0,
+					"move_speed": 70.0
+				}
+			],
+			"game_power": 527,
+			"stats": [
+				{
+					"max_hp": 210.0,
+					"attack_damage": 6.0,
+					"attack_speed": 1.0,
+					"crit_chance": 0.05,
+					"crit_damage": 2.0,
+					"armor": 48.0,
+					"dodge": 0.04,
+					"block": 0.18,
+					"range": 28.0,
+					"move_speed": 70.0,
+					"key": "knight",
+					"ranged": false,
+					"element": "phys",
+					"aspect": "",
+					"undead": false,
+					"resist": 0.25
+				}
+			],
+			"power": 527,
+			"first": {
+				"won": false,
+				"time": 1.42857142857143,
+				"blows": 6,
+				"standing": 0,
+				"digest": 520451409
+			},
+			"trial": {
+				"floor": 0,
+				"fights": 1,
+				"digest": 520451410
+			}
+		},
+		{
+			"name": "meio",
+			"save": {
+				"auto_sell": false,
+				"buffs": {},
+				"chest": {},
+				"counters": {
+					"combo": 0.0,
+					"forged": 0.0,
+					"gold": 0.0,
+					"items": 0.0,
+					"kills": 0.0,
+					"licenses": 12.0
+				},
+				"daily": {},
+				"expeditions": [],
+				"feats": {},
+				"flags": {
+					"enchant": true,
+					"guide": 0.0
+				},
+				"furthest": 20.0,
+				"gems": 1000000000000.0,
+				"gold": 999999999580.0,
+				"gold_rate": 0.0,
+				"insignias": 0.0,
+				"inventory": [],
+				"item_seq": 37.0,
+				"last_seen": 0.0,
+				"licenses": {
+					"b0_0": true,
+					"b0_1": true,
+					"b1_0": true,
+					"b1_1": true,
+					"b2_0": true,
+					"b2_1": true,
+					"b3_0": true,
+					"b3_1": true,
+					"b4_0": true,
+					"b4_1": true,
+					"b5_0": true,
+					"b5_1": true
+				},
+				"login": {},
+				"materials": {
+					"adamant": 1000000.0,
+					"essence": 1000000.0,
+					"iron": 1000000.0,
+					"leather": 1000000.0,
+					"mithril": 1000000.0,
+					"steel": 1000000.0
+				},
+				"members": [
+					{
+						"alloc": {
+							"armor": 11.0,
+							"attack_damage": 22.0,
+							"crit_chance": 11.0,
+							"max_hp": 11.0
+						},
+						"enchant": {},
+						"gear": {
+							"armor": {
+								"class": "Vanguard",
+								"id": 3.0,
+								"kind": "armor",
+								"level": 11.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 74.8190863656998
+									},
+									{
+										"stat": "armor",
+										"value": 22.7469483146667
+									},
+									{
+										"stat": "block",
+										"value": 0.0254863387298584
+									}
+								],
+								"name": "Túnica da Estepe",
+								"rarity": 2.0
+							},
+							"boots": {
+								"class": "Universal",
+								"id": 6.0,
+								"kind": "boots",
+								"level": 8.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 10.6983827261925
+									},
+									{
+										"stat": "max_hp",
+										"value": 11.7849363704681
+									}
+								],
+								"name": "Bota da Estepe",
+								"rarity": 1.0
+							},
+							"bracelet": {
+								"class": "Universal",
+								"id": 11.0,
+								"kind": "bracelet",
+								"level": 7.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.10725237339735
+									},
+									{
+										"stat": "block",
+										"value": 0.0123590985717773
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.015367315839386
+									}
+								],
+								"name": "Manilha do Arauto",
+								"rarity": 2.0
+							},
+							"cape": {
+								"class": "Vanguard",
+								"id": 12.0,
+								"kind": "cape",
+								"level": 6.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.0169048507809639
+									},
+									{
+										"stat": "armor",
+										"value": 10.5560534591675
+									},
+									{
+										"stat": "max_hp",
+										"value": 42.1034780426025
+									}
+								],
+								"name": "Manto da Estepe",
+								"rarity": 2.0
+							},
+							"earring": {
+								"class": "Universal",
+								"id": 9.0,
+								"kind": "earring",
+								"level": 11.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0162428144931793
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.0831093955993652
+									}
+								],
+								"name": "Brinco do Estandarte",
+								"rarity": 1.0
+							},
+							"gloves": {
+								"class": "Vanguard",
+								"id": 7.0,
+								"kind": "gloves",
+								"level": 6.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 2.22069607794285
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.0918238399028778
+									}
+								],
+								"name": "Luvas da Estepe",
+								"rarity": 1.0
+							},
+							"helm": {
+								"class": "Vanguard",
+								"id": 4.0,
+								"kind": "helm",
+								"level": 11.0,
+								"mods": [
+									{
+										"stat": "block",
+										"value": 0.0249742487025261
+									},
+									{
+										"stat": "max_hp",
+										"value": 49.4278549118042
+									}
+								],
+								"name": "Elmo da Estepe",
+								"rarity": 1.0
+							},
+							"necklace": {
+								"class": "Universal",
+								"id": 8.0,
+								"kind": "necklace",
+								"level": 9.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.0881356474757194
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0171370418987274
+									}
+								],
+								"name": "Pingente do Estandarte",
+								"rarity": 1.0
+							},
+							"offhand": {
+								"class": "Universal",
+								"id": 2.0,
+								"kind": "offhand",
+								"level": 6.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0162778345191479
+									},
+									{
+										"stat": "block",
+										"value": 0.0217533870363236
+									},
+									{
+										"stat": "armor",
+										"value": 11.3900349569321
+									}
+								],
+								"name": "Escudo da Estepe",
+								"rarity": 2.0
+							},
+							"pants": {
+								"class": "Universal",
+								"id": 5.0,
+								"kind": "pants",
+								"level": 7.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 14.2757079936218
+									},
+									{
+										"stat": "move_speed",
+										"value": 9.48899223109245
+									},
+									{
+										"stat": "max_hp",
+										"value": 34.7619612264824
+									}
+								],
+								"name": "Perneira do Estandarte",
+								"rarity": 2.0
+							},
+							"ring1": {
+								"class": "Vanguard",
+								"id": 10.0,
+								"kind": "ring",
+								"level": 11.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0235093688154221
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.144706047122955
+									},
+									{
+										"stat": "dodge",
+										"value": 0.0174003349702358
+									}
+								],
+								"name": "Aliança do Arauto",
+								"rarity": 2.0
+							},
+							"weapon": {
+								"class": "Vanguard",
+								"id": 1.0,
+								"kind": "weapon",
+								"level": 11.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0297756064939499
+									},
+									{
+										"stat": "attack_damage",
+										"value": 9.58103977203369
+									}
+								],
+								"name": "Montante do Andarilho",
+								"rarity": 1.0
+							}
+						},
+						"hp": 528.430728418938,
+						"id": "knight",
+						"in_field": true,
+						"key": "knight",
+						"kind": "hero",
+						"level": 12.0,
+						"points": 0.0,
+						"revive": 0.0,
+						"xp": 0.0
+					},
+					{
+						"alloc": {
+							"armor": 11.0,
+							"attack_damage": 22.0,
+							"crit_chance": 11.0,
+							"max_hp": 11.0
+						},
+						"enchant": {},
+						"gear": {
+							"armor": {
+								"class": "Ranger",
+								"id": 15.0,
+								"kind": "armor",
+								"level": 8.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 67.9675876457214
+									},
+									{
+										"stat": "block",
+										"value": 0.0186127142628193
+									},
+									{
+										"stat": "armor",
+										"value": 22.3383931620598
+									}
+								],
+								"name": "Túnica da Estepe",
+								"rarity": 2.0
+							},
+							"boots": {
+								"class": "Universal",
+								"id": 18.0,
+								"kind": "boots",
+								"level": 8.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 12.9338837646484
+									},
+									{
+										"stat": "dodge",
+										"value": 0.020809759423542
+									},
+									{
+										"stat": "max_hp",
+										"value": 20.0074992783737
+									}
+								],
+								"name": "Bota do Estandarte",
+								"rarity": 2.0
+							},
+							"bracelet": {
+								"class": "Universal",
+								"id": 23.0,
+								"kind": "bracelet",
+								"level": 11.0,
+								"mods": [
+									{
+										"stat": "block",
+										"value": 0.019915051322937
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.137856309891224
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0218639188334942
+									}
+								],
+								"name": "Manilha do Arauto",
+								"rarity": 2.0
+							},
+							"cape": {
+								"class": "Universal",
+								"id": 24.0,
+								"kind": "cape",
+								"level": 7.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.017971962739706
+									},
+									{
+										"stat": "max_hp",
+										"value": 44.773759278717
+									},
+									{
+										"stat": "armor",
+										"value": 11.4036395409393
+									}
+								],
+								"name": "Manto da Estepe",
+								"rarity": 2.0
+							},
+							"earring": {
+								"class": "Ranger",
+								"id": 21.0,
+								"kind": "earring",
+								"level": 7.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.0868744713439941
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.017038855261898
+									}
+								],
+								"name": "Brinco do Arauto",
+								"rarity": 2.0
+							},
+							"gloves": {
+								"class": "Ranger",
+								"id": 19.0,
+								"kind": "gloves",
+								"level": 7.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.149337435928345
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0200339630702496
+									},
+									{
+										"stat": "attack_damage",
+										"value": 3.72660614936829
+									}
+								],
+								"name": "Luvas do Estandarte",
+								"rarity": 2.0
+							},
+							"helm": {
+								"class": "Ranger",
+								"id": 16.0,
+								"kind": "helm",
+								"level": 11.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 68.5340970123291
+									},
+									{
+										"stat": "block",
+										"value": 0.029041588766098
+									},
+									{
+										"stat": "armor",
+										"value": 16.3912331943512
+									}
+								],
+								"name": "Elmo do Estandarte",
+								"rarity": 2.0
+							},
+							"necklace": {
+								"class": "Ranger",
+								"id": 20.0,
+								"kind": "necklace",
+								"level": 9.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.10522956385231
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.017509805264473
+									},
+									{
+										"stat": "attack_damage",
+										"value": 2.72238987922668
+									}
+								],
+								"name": "Pingente do Arauto",
+								"rarity": 2.0
+							},
+							"offhand": {
+								"class": "Universal",
+								"id": 14.0,
+								"kind": "offhand",
+								"level": 11.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 47.7719452598572
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0297813599367142
+									},
+									{
+										"stat": "block",
+										"value": 0.0400769798583984
+									}
+								],
+								"name": "Escudo da Estepe",
+								"rarity": 2.0
+							},
+							"pants": {
+								"class": "Universal",
+								"id": 17.0,
+								"kind": "pants",
+								"level": 7.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 14.2560086791992
+									},
+									{
+										"stat": "max_hp",
+										"value": 40.2324028554535
+									},
+									{
+										"stat": "move_speed",
+										"value": 10.4737032982635
+									}
+								],
+								"name": "Perneira do Estandarte",
+								"rarity": 2.0
+							},
+							"ring1": {
+								"class": "Ranger",
+								"id": 22.0,
+								"kind": "ring",
+								"level": 10.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0170832639598846
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.113466121413231
+									}
+								],
+								"name": "Aliança do Estandarte",
+								"rarity": 1.0
+							},
+							"weapon": {
+								"class": "Universal",
+								"id": 13.0,
+								"kind": "weapon",
+								"level": 10.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 11.4308008525848
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.114991485674381
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.03352157423172
+									}
+								],
+								"name": "Montante da Estepe",
+								"rarity": 2.0
+							}
+						},
+						"hp": 530.167568929321,
+						"id": "ranger",
+						"in_field": true,
+						"key": "ranger",
+						"kind": "hero",
+						"level": 12.0,
+						"points": 0.0,
+						"revive": 0.0,
+						"xp": 0.0
+					},
+					{
+						"alloc": {
+							"armor": 10.0,
+							"attack_damage": 20.0,
+							"crit_chance": 10.0,
+							"max_hp": 10.0
+						},
+						"enchant": {},
+						"gear": {
+							"armor": {
+								"class": "Universal",
+								"id": 27.0,
+								"kind": "armor",
+								"level": 8.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 65.8967473731995
+									},
+									{
+										"stat": "armor",
+										"value": 19.0690427101135
+									},
+									{
+										"stat": "block",
+										"value": 0.0182796400527477
+									}
+								],
+								"name": "Túnica da Estepe",
+								"rarity": 2.0
+							},
+							"boots": {
+								"class": "Arcanist",
+								"id": 30.0,
+								"kind": "boots",
+								"level": 8.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 14.5680104570389
+									},
+									{
+										"stat": "max_hp",
+										"value": 19.9132272787857
+									},
+									{
+										"stat": "dodge",
+										"value": 0.0185110999754906
+									}
+								],
+								"name": "Bota do Estandarte",
+								"rarity": 2.0
+							},
+							"bracelet": {
+								"class": "Universal",
+								"id": 35.0,
+								"kind": "bracelet",
+								"level": 11.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0156324980771542
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.124444593515396
+									}
+								],
+								"name": "Manilha do Estandarte",
+								"rarity": 1.0
+							},
+							"cape": {
+								"class": "Arcanist",
+								"id": 36.0,
+								"kind": "cape",
+								"level": 10.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.0254861956658363
+									},
+									{
+										"stat": "max_hp",
+										"value": 65.9700567349243
+									},
+									{
+										"stat": "armor",
+										"value": 15.6142858938217
+									}
+								],
+								"name": "Manto da Estepe",
+								"rarity": 2.0
+							},
+							"earring": {
+								"class": "Universal",
+								"id": 33.0,
+								"kind": "earring",
+								"level": 7.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.0933107995910644
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0150323154981136
+									}
+								],
+								"name": "Brinco do Arauto",
+								"rarity": 2.0
+							},
+							"gloves": {
+								"class": "Arcanist",
+								"id": 31.0,
+								"kind": "gloves",
+								"level": 11.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 4.54268879928589
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0271987803168297
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.231427235412598
+									}
+								],
+								"name": "Luvas do Estandarte",
+								"rarity": 2.0
+							},
+							"helm": {
+								"class": "Arcanist",
+								"id": 28.0,
+								"kind": "helm",
+								"level": 10.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 14.2941580394983
+									},
+									{
+										"stat": "max_hp",
+										"value": 44.4436656852722
+									}
+								],
+								"name": "Elmo da Estepe",
+								"rarity": 1.0
+							},
+							"necklace": {
+								"class": "Universal",
+								"id": 32.0,
+								"kind": "necklace",
+								"level": 11.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 2.65433882904053
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.101745253801346
+									}
+								],
+								"name": "Pingente do Estandarte",
+								"rarity": 1.0
+							},
+							"offhand": {
+								"class": "Universal",
+								"id": 26.0,
+								"kind": "offhand",
+								"level": 10.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 11.9010419417918
+									},
+									{
+										"stat": "max_hp",
+										"value": 26.6505193975925
+									}
+								],
+								"name": "Escudo do Andarilho",
+								"rarity": 1.0
+							},
+							"pants": {
+								"class": "Arcanist",
+								"id": 29.0,
+								"kind": "pants",
+								"level": 7.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 8.03435105638504
+									},
+									{
+										"stat": "armor",
+										"value": 8.67082169079781
+									}
+								],
+								"name": "Perneira da Estepe",
+								"rarity": 1.0
+							},
+							"ring1": {
+								"class": "Arcanist",
+								"id": 34.0,
+								"kind": "ring",
+								"level": 7.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0148277659352779
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.0963829432096481
+									},
+									{
+										"stat": "dodge",
+										"value": 0.0116371256329536
+									}
+								],
+								"name": "Aliança do Arauto",
+								"rarity": 2.0
+							},
+							"weapon": {
+								"class": "Arcanist",
+								"id": 25.0,
+								"kind": "weapon",
+								"level": 9.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 6.6292016658783
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.0896607980847359
+									}
+								],
+								"name": "Montante do Andarilho",
+								"rarity": 1.0
+							}
+						},
+						"hp": 393.266599723495,
+						"id": "arcanist",
+						"in_field": true,
+						"key": "arcanist",
+						"kind": "hero",
+						"level": 11.0,
+						"points": 0.0,
+						"revive": 0.0,
+						"xp": 0.0
+					}
+				],
+				"pet": "",
+				"pet_names": {},
+				"pets": [],
+				"play_seconds": 0.0,
+				"potions": {},
+				"protect": 2.0,
+				"protect_stones": 0.0,
+				"quest_state": {
+					"c_first": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_forge": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_loot": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_lv5": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_stage2": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_combo": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_forge3": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_gold": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_kill20": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_kill40": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_loot10": {
+						"base": 0.0,
+						"claimed": false
+					}
+				},
+				"rate_v": 2.0,
+				"runes": {},
+				"species": {},
+				"stage": 1.0,
+				"stash": [],
+				"v": 1.0,
+				"vigil": 0.0,
+				"wave": 1.0,
+				"xp_rate": 0.0
+			},
+			"game_stats": [
+				{
+					"key": "knight",
+					"aspect": "",
+					"max_hp": 528.430728418938,
+					"attack_damage": 43.3620830199718,
+					"attack_speed": 1.04,
+					"crit_chance": 0.171609982059813,
+					"crit_damage": 2.51502730349827,
+					"armor": 114.547494513364,
+					"dodge": 0.0743051857511997,
+					"block": 0.264573073040485,
+					"range": 28.0,
+					"move_speed": 101.911733701732
+				},
+				{
+					"key": "ranger",
+					"aspect": "",
+					"max_hp": 530.167568929321,
+					"attack_damage": 54.2557562574158,
+					"attack_speed": 1.196,
+					"crit_chance": 0.260132740558434,
+					"crit_damage": 2.70775538810349,
+					"armor": 99.3848455596115,
+					"dodge": 0.0687817221632481,
+					"block": 0.147646334210253,
+					"range": 200.0,
+					"move_speed": 105.550573381091
+				},
+				{
+					"key": "arcanist",
+					"aspect": "",
+					"max_hp": 393.266599723495,
+					"attack_damage": 50.9914751530457,
+					"attack_speed": 0.832,
+					"crit_chance": 0.135691359827375,
+					"crit_damage": 2.73697162361479,
+					"armor": 91.9713242870641,
+					"dodge": 0.0756344212742806,
+					"block": 0.0182796400527477,
+					"range": 240.0,
+					"move_speed": 104.640668510169
+				}
+			],
+			"game_power": 3661,
+			"stats": [
+				{
+					"max_hp": 528.430728418938,
+					"attack_damage": 43.3620830199718,
+					"attack_speed": 1.04,
+					"crit_chance": 0.171609982059813,
+					"crit_damage": 2.51502730349827,
+					"armor": 114.547494513364,
+					"dodge": 0.0743051857511997,
+					"block": 0.264573073040485,
+					"range": 28.0,
+					"move_speed": 101.911733701732,
+					"key": "knight",
+					"ranged": false,
+					"element": "phys",
+					"aspect": "",
+					"undead": false,
+					"resist": 0.25
+				},
+				{
+					"max_hp": 530.167568929321,
+					"attack_damage": 54.2557562574157,
+					"attack_speed": 1.196,
+					"crit_chance": 0.260132740558434,
+					"crit_damage": 2.70775538810349,
+					"armor": 99.3848455596115,
+					"dodge": 0.068781722163248,
+					"block": 0.147646334210253,
+					"range": 200.0,
+					"move_speed": 105.55057338109,
+					"key": "ranger",
+					"ranged": true,
+					"element": "phys",
+					"aspect": "",
+					"undead": false,
+					"resist": 0.25
+				},
+				{
+					"max_hp": 393.266599723495,
+					"attack_damage": 50.9914751530457,
+					"attack_speed": 0.832,
+					"crit_chance": 0.135691359827375,
+					"crit_damage": 2.73697162361479,
+					"armor": 91.971324287064,
+					"dodge": 0.0756344212742805,
+					"block": 0.0182796400527477,
+					"range": 240.0,
+					"move_speed": 104.640668510169,
+					"key": "arcanist",
+					"ranged": true,
+					"element": "arcane",
+					"aspect": "",
+					"undead": false,
+					"resist": 0.25
+				}
+			],
+			"power": 3661,
+			"first": {
+				"won": false,
+				"time": 3.80952380952381,
+				"blows": 37,
+				"standing": 0,
+				"digest": 531642436
+			},
+			"trial": {
+				"floor": 0,
+				"fights": 1,
+				"digest": 531642437
+			}
+		},
+		{
+			"name": "fim",
+			"save": {
+				"auto_sell": false,
+				"buffs": {},
+				"chest": {},
+				"counters": {
+					"combo": 0.0,
+					"forged": 5.0,
+					"gold": 0.0,
+					"items": 0.0,
+					"kills": 0.0,
+					"licenses": 30.0,
+					"refines": 216.0
+				},
+				"daily": {},
+				"expeditions": [],
+				"feats": {},
+				"flags": {
+					"enchant": true,
+					"guide": 0.0,
+					"pity_below_rare": 0.0
+				},
+				"furthest": 20.0,
+				"gems": 999999978200.0,
+				"gold": 999999466678.0,
+				"gold_rate": 0.0,
+				"insignias": 0.0,
+				"inventory": [],
+				"item_seq": 76.0,
+				"last_seen": 0.0,
+				"licenses": {
+					"b0_0": true,
+					"b0_1": true,
+					"b0_2": true,
+					"b0_3": true,
+					"b0_4": true,
+					"b1_0": true,
+					"b1_1": true,
+					"b1_2": true,
+					"b1_3": true,
+					"b1_4": true,
+					"b2_0": true,
+					"b2_1": true,
+					"b2_2": true,
+					"b2_3": true,
+					"b2_4": true,
+					"b3_0": true,
+					"b3_1": true,
+					"b3_2": true,
+					"b3_3": true,
+					"b3_4": true,
+					"b4_0": true,
+					"b4_1": true,
+					"b4_2": true,
+					"b4_3": true,
+					"b4_4": true,
+					"b5_0": true,
+					"b5_1": true,
+					"b5_2": true,
+					"b5_3": true,
+					"b5_4": true
+				},
+				"login": {},
+				"materials": {
+					"adamant": 1000000.0,
+					"essence": 999990.0,
+					"iron": 999136.0,
+					"leather": 1000000.0,
+					"mithril": 999985.0,
+					"steel": 1000000.0
+				},
+				"members": [
+					{
+						"alloc": {
+							"armor": 15.0,
+							"attack_damage": 30.0,
+							"attack_speed": 15.0,
+							"block": 15.0,
+							"crit_chance": 15.0,
+							"crit_damage": 15.0,
+							"dodge": 15.0,
+							"max_hp": 15.0
+						},
+						"enchant": {
+							"armor": 5.0,
+							"boots": 5.0,
+							"bracelet": 5.0,
+							"cape": 5.0,
+							"earring": 5.0,
+							"gloves": 5.0,
+							"helm": 5.0,
+							"necklace": 5.0,
+							"offhand": 5.0,
+							"pants": 5.0,
+							"ring1": 5.0,
+							"weapon": 5.0
+						},
+						"gear": {
+							"armor": {
+								"class": "Vanguard",
+								"id": 3.0,
+								"kind": "armor",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 86.1915532224655
+									},
+									{
+										"stat": "max_hp",
+										"value": 197.060958691406
+									},
+									{
+										"stat": "block",
+										"value": 0.0814136210386276
+									}
+								],
+								"name": "Túnica do Estandarte",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"boots": {
+								"class": "Vanguard",
+								"id": 6.0,
+								"kind": "boots",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 48.8669006813049
+									},
+									{
+										"stat": "dodge",
+										"value": 0.0633366086942196
+									},
+									{
+										"stat": "max_hp",
+										"value": 47.366314703579
+									}
+								],
+								"name": "Bota do Estandarte",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"bracelet": {
+								"class": "Vanguard",
+								"id": 11.0,
+								"kind": "bracelet",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "block",
+										"value": 0.0679888307006836
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.700822441104126
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.122178221484375
+									}
+								],
+								"name": "Manilha do Sol Poente",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"cape": {
+								"class": "Vanguard",
+								"id": 12.0,
+								"kind": "cape",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.0987508074531555
+									},
+									{
+										"stat": "max_hp",
+										"value": 199.954197808228
+									},
+									{
+										"stat": "armor",
+										"value": 47.9562435269165
+									}
+								],
+								"name": "Manto do Estandarte",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"earring": {
+								"class": "Universal",
+								"id": 9.0,
+								"kind": "earring",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.6085841015625
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.130089105841064
+									}
+								],
+								"name": "Brinco do Sol Poente",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"gloves": {
+								"class": "Vanguard",
+								"id": 7.0,
+								"kind": "gloves",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.084648217501831
+									},
+									{
+										"stat": "attack_damage",
+										"value": 13.4541772852135
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.644288736877441
+									}
+								],
+								"name": "Luvas do Estandarte",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"helm": {
+								"class": "Vanguard",
+								"id": 4.0,
+								"kind": "helm",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "block",
+										"value": 0.123470761847305
+									},
+									{
+										"stat": "armor",
+										"value": 62.4794328918457
+									},
+									{
+										"stat": "max_hp",
+										"value": 203.64243730835
+									}
+								],
+								"name": "Elmo do Arauto",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"necklace": {
+								"class": "Universal",
+								"id": 8.0,
+								"kind": "necklace",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.338606139719009
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0564361238204956
+									},
+									{
+										"stat": "attack_damage",
+										"value": 8.18286936218262
+									}
+								],
+								"name": "Pingente do Arauto",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"offhand": {
+								"class": "Vanguard",
+								"id": 2.0,
+								"kind": "offhand",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 95.8916197814941
+									},
+									{
+										"stat": "max_hp",
+										"value": 161.121082098389
+									},
+									{
+										"stat": "block",
+										"value": 0.159075604980469
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.131054178588867
+									}
+								],
+								"name": "Escudo do Arauto",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"pants": {
+								"class": "Vanguard",
+								"id": 5.0,
+								"kind": "pants",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 34.242347062397
+									},
+									{
+										"stat": "max_hp",
+										"value": 117.087911456394
+									},
+									{
+										"stat": "armor",
+										"value": 43.0128900999069
+									}
+								],
+								"name": "Perneira do Estandarte",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"ring1": {
+								"class": "Universal",
+								"id": 10.0,
+								"kind": "ring",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.0578069568300247
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0783747808394432
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.505891058837891
+									}
+								],
+								"name": "Aliança da Vigília",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"weapon": {
+								"class": "Universal",
+								"id": 1.0,
+								"kind": "weapon",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.463945241117477
+									},
+									{
+										"stat": "attack_damage",
+										"value": 35.0544859733582
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.122505657171249
+									}
+								],
+								"name": "Montante do Estandarte",
+								"plus": 3.0,
+								"rarity": 4.0
+							}
+						},
+						"hp": 2613.11863626467,
+						"id": "knight",
+						"in_field": true,
+						"key": "knight",
+						"kind": "hero",
+						"level": 28.0,
+						"points": 0.0,
+						"promoted": true,
+						"revive": 0.0,
+						"xp": 0.0
+					},
+					{
+						"alloc": {
+							"armor": 15.0,
+							"attack_damage": 30.0,
+							"attack_speed": 14.0,
+							"block": 14.0,
+							"crit_chance": 14.0,
+							"crit_damage": 14.0,
+							"dodge": 14.0,
+							"max_hp": 15.0
+						},
+						"enchant": {
+							"armor": 5.0,
+							"boots": 5.0,
+							"bracelet": 5.0,
+							"cape": 5.0,
+							"earring": 5.0,
+							"gloves": 5.0,
+							"helm": 5.0,
+							"necklace": 5.0,
+							"offhand": 5.0,
+							"pants": 5.0,
+							"ring1": 5.0,
+							"weapon": 5.0
+						},
+						"gear": {
+							"armor": {
+								"class": "Universal",
+								"id": 15.0,
+								"kind": "armor",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 72.5595310049057
+									},
+									{
+										"stat": "block",
+										"value": 0.0942848876266479
+									},
+									{
+										"stat": "max_hp",
+										"value": 258.712102470398
+									}
+								],
+								"name": "Túnica do Estandarte",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"boots": {
+								"class": "Universal",
+								"id": 18.0,
+								"kind": "boots",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 51.1962404258537
+									},
+									{
+										"stat": "move_speed",
+										"value": 44.4097105390549
+									},
+									{
+										"stat": "dodge",
+										"value": 0.0741125320890427
+									}
+								],
+								"name": "Bota do Estandarte",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"bracelet": {
+								"class": "Ranger",
+								"id": 23.0,
+								"kind": "bracelet",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.356561785445595
+									},
+									{
+										"stat": "block",
+										"value": 0.0420609996997833
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0617902585853577
+									}
+								],
+								"name": "Manilha do Arauto",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"cape": {
+								"class": "Ranger",
+								"id": 24.0,
+								"kind": "cape",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.0825213394832611
+									},
+									{
+										"stat": "max_hp",
+										"value": 131.660617664337
+									},
+									{
+										"stat": "armor",
+										"value": 35.9489340800285
+									}
+								],
+								"name": "Manto da Estepe",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"earring": {
+								"class": "Ranger",
+								"id": 21.0,
+								"kind": "earring",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.101201809741211
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.523254746704102
+									}
+								],
+								"name": "Brinco do Sol Poente",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"gloves": {
+								"class": "Ranger",
+								"id": 19.0,
+								"kind": "gloves",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.103682117712402
+									},
+									{
+										"stat": "attack_damage",
+										"value": 18.096463967514
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.800125616836548
+									}
+								],
+								"name": "Luvas do Arauto",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"helm": {
+								"class": "Ranger",
+								"id": 16.0,
+								"kind": "helm",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "block",
+										"value": 0.0816629629411697
+									},
+									{
+										"stat": "armor",
+										"value": 36.5455391139936
+									},
+									{
+										"stat": "max_hp",
+										"value": 145.557684809876
+									}
+								],
+								"name": "Elmo do Estandarte",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"necklace": {
+								"class": "Ranger",
+								"id": 20.0,
+								"kind": "necklace",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 17.9733340100098
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.545971917274475
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.122091734228516
+									}
+								],
+								"name": "Pingente do Sol Poente",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"offhand": {
+								"class": "Universal",
+								"id": 14.0,
+								"kind": "offhand",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 92.6446856599617
+									},
+									{
+										"stat": "block",
+										"value": 0.0764682491855622
+									},
+									{
+										"stat": "armor",
+										"value": 49.5940006975651
+									}
+								],
+								"name": "Escudo da Estepe",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"pants": {
+								"class": "Universal",
+								"id": 17.0,
+								"kind": "pants",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 69.0825592166138
+									},
+									{
+										"stat": "armor",
+										"value": 73.2686610827637
+									},
+									{
+										"stat": "max_hp",
+										"value": 226.783789129639
+									}
+								],
+								"name": "Perneira da Vigília",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"ring1": {
+								"class": "Universal",
+								"id": 22.0,
+								"kind": "ring",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.357189697128296
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0590422059509754
+									},
+									{
+										"stat": "dodge",
+										"value": 0.0398121953165531
+									}
+								],
+								"name": "Aliança do Arauto",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"weapon": {
+								"aspect": "sino",
+								"class": "Universal",
+								"id": 13.0,
+								"kind": "weapon",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 51.6627456115723
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.704276143798828
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.15509443034668
+									}
+								],
+								"name": "Montante da Estrada · Sino",
+								"plus": 3.0,
+								"rarity": 5.0
+							}
+						},
+						"hp": 2431.94629654398,
+						"id": "ranger",
+						"in_field": true,
+						"key": "ranger",
+						"kind": "hero",
+						"level": 27.0,
+						"points": 0.0,
+						"promoted": true,
+						"revive": 0.0,
+						"xp": 0.0
+					},
+					{
+						"alloc": {
+							"armor": 15.0,
+							"attack_damage": 30.0,
+							"attack_speed": 14.0,
+							"block": 14.0,
+							"crit_chance": 14.0,
+							"crit_damage": 14.0,
+							"dodge": 14.0,
+							"max_hp": 15.0
+						},
+						"enchant": {
+							"armor": 5.0,
+							"boots": 5.0,
+							"bracelet": 5.0,
+							"cape": 5.0,
+							"earring": 5.0,
+							"gloves": 5.0,
+							"helm": 5.0,
+							"necklace": 5.0,
+							"offhand": 5.0,
+							"pants": 5.0,
+							"ring1": 5.0,
+							"weapon": 5.0
+						},
+						"gear": {
+							"armor": {
+								"class": "Universal",
+								"id": 27.0,
+								"kind": "armor",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "block",
+										"value": 0.0559605252124786
+									},
+									{
+										"stat": "max_hp",
+										"value": 155.949317198753
+									},
+									{
+										"stat": "armor",
+										"value": 51.3043475591183
+									}
+								],
+								"name": "Túnica da Estepe",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"boots": {
+								"class": "Arcanist",
+								"id": 30.0,
+								"kind": "boots",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 87.6803618122101
+									},
+									{
+										"stat": "move_speed",
+										"value": 58.6021024753571
+									},
+									{
+										"stat": "dodge",
+										"value": 0.0960514613534927
+									}
+								],
+								"name": "Bota do Arauto",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"bracelet": {
+								"class": "Arcanist",
+								"id": 35.0,
+								"kind": "bracelet",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0687006496959686
+									},
+									{
+										"stat": "block",
+										"value": 0.0413855550418854
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.422331200939941
+									}
+								],
+								"name": "Manilha do Arauto",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"cape": {
+								"class": "Universal",
+								"id": 36.0,
+								"kind": "cape",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 69.0427042932129
+									},
+									{
+										"stat": "max_hp",
+										"value": 214.524952202148
+									},
+									{
+										"stat": "dodge",
+										"value": 0.120581888916016
+									}
+								],
+								"name": "Manto do Arauto",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"earring": {
+								"class": "Arcanist",
+								"id": 33.0,
+								"kind": "earring",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0759799551506043
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.352703152923584
+									}
+								],
+								"name": "Brinco da Vigília",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"gloves": {
+								"class": "Arcanist",
+								"id": 31.0,
+								"kind": "gloves",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0681519945476532
+									},
+									{
+										"stat": "attack_damage",
+										"value": 13.2873770290375
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.497714758655548
+									}
+								],
+								"name": "Luvas do Estandarte",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"helm": {
+								"class": "Arcanist",
+								"id": 28.0,
+								"kind": "helm",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 192.574656764526
+									},
+									{
+										"stat": "block",
+										"value": 0.0966204670011521
+									},
+									{
+										"stat": "armor",
+										"value": 51.3574733740711
+									}
+								],
+								"name": "Elmo do Arauto",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"necklace": {
+								"class": "Universal",
+								"id": 32.0,
+								"kind": "necklace",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0601261837852478
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.294316664390802
+									},
+									{
+										"stat": "attack_damage",
+										"value": 9.11339488414764
+									}
+								],
+								"name": "Pingente do Arauto",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"offhand": {
+								"class": "Arcanist",
+								"id": 26.0,
+								"kind": "offhand",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 79.741946131897
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.102528224099731
+									},
+									{
+										"stat": "max_hp",
+										"value": 154.770758415222
+									},
+									{
+										"stat": "block",
+										"value": 0.1277967605896
+									}
+								],
+								"name": "Escudo do Arauto",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"pants": {
+								"class": "Universal",
+								"id": 29.0,
+								"kind": "pants",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 62.5314136190796
+									},
+									{
+										"stat": "armor",
+										"value": 66.6960225457764
+									},
+									{
+										"stat": "max_hp",
+										"value": 210.659823469238
+									}
+								],
+								"name": "Perneira da Vigília",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"ring1": {
+								"class": "Arcanist",
+								"id": 34.0,
+								"kind": "ring",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.388211225784302
+									},
+									{
+										"stat": "dodge",
+										"value": 0.045361241373539
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0664343159980774
+									}
+								],
+								"name": "Aliança do Arauto",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"weapon": {
+								"class": "Arcanist",
+								"id": 25.0,
+								"kind": "weapon",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.439169715075493
+									},
+									{
+										"stat": "attack_damage",
+										"value": 38.9887186485291
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.12414404732666
+									}
+								],
+								"name": "Montante do Estandarte",
+								"plus": 3.0,
+								"rarity": 4.0
+							}
+						},
+						"hp": 2344.32447162548,
+						"id": "arcanist",
+						"in_field": true,
+						"key": "arcanist",
+						"kind": "hero",
+						"level": 27.0,
+						"points": 0.0,
+						"revive": 0.0,
+						"xp": 0.0
+					},
+					{
+						"alloc": {
+							"armor": 14.0,
+							"attack_damage": 28.0,
+							"attack_speed": 14.0,
+							"block": 13.0,
+							"crit_chance": 14.0,
+							"crit_damage": 14.0,
+							"dodge": 14.0,
+							"max_hp": 14.0
+						},
+						"enchant": {
+							"armor": 5.0,
+							"boots": 5.0,
+							"bracelet": 5.0,
+							"cape": 5.0,
+							"earring": 5.0,
+							"gloves": 5.0,
+							"helm": 5.0,
+							"necklace": 5.0,
+							"offhand": 5.0,
+							"pants": 5.0,
+							"ring1": 5.0,
+							"weapon": 5.0
+						},
+						"gear": {
+							"armor": {
+								"class": "Ranger",
+								"id": 39.0,
+								"kind": "armor",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "block",
+										"value": 0.0752278459427834
+									},
+									{
+										"stat": "max_hp",
+										"value": 200.138048779678
+									},
+									{
+										"stat": "armor",
+										"value": 85.7354888122559
+									}
+								],
+								"name": "Túnica do Estandarte",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"boots": {
+								"class": "Ranger",
+								"id": 42.0,
+								"kind": "boots",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 58.8922171173096
+									},
+									{
+										"stat": "dodge",
+										"value": 0.0921829265262604
+									},
+									{
+										"stat": "max_hp",
+										"value": 68.1628079862213
+									}
+								],
+								"name": "Bota do Arauto",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"bracelet": {
+								"class": "Ranger",
+								"id": 47.0,
+								"kind": "bracelet",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.565409044358826
+									},
+									{
+										"stat": "block",
+										"value": 0.0653708032928467
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0850894582406998
+									}
+								],
+								"name": "Manilha da Vigília",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"cape": {
+								"class": "Ranger",
+								"id": 48.0,
+								"kind": "cape",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.121028785514832
+									},
+									{
+										"stat": "armor",
+										"value": 56.3579934645081
+									},
+									{
+										"stat": "max_hp",
+										"value": 208.427471047974
+									}
+								],
+								"name": "Manto do Estandarte",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"earring": {
+								"class": "Ranger",
+								"id": 45.0,
+								"kind": "earring",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.528588337402344
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.109351427337647
+									}
+								],
+								"name": "Brinco do Sol Poente",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"gloves": {
+								"class": "Universal",
+								"id": 43.0,
+								"kind": "gloves",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 24.3305457824707
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.144802937463379
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.951479816772461
+									}
+								],
+								"name": "Luvas da Vigília",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"helm": {
+								"class": "Ranger",
+								"id": 40.0,
+								"kind": "helm",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 76.8210548373413
+									},
+									{
+										"stat": "block",
+										"value": 0.12801793167572
+									},
+									{
+										"stat": "max_hp",
+										"value": 262.309619414063
+									}
+								],
+								"name": "Elmo da Vigília",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"necklace": {
+								"class": "Ranger",
+								"id": 44.0,
+								"kind": "necklace",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.105277485346985
+									},
+									{
+										"stat": "attack_damage",
+										"value": 18.7884034570313
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.689160768310547
+									}
+								],
+								"name": "Pingente do Sol Poente",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"offhand": {
+								"class": "Ranger",
+								"id": 38.0,
+								"kind": "offhand",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 168.573988327637
+									},
+									{
+										"stat": "block",
+										"value": 0.164093418859863
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.103878746652222
+									},
+									{
+										"stat": "armor",
+										"value": 80.8793573661804
+									}
+								],
+								"name": "Escudo do Arauto",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"pants": {
+								"class": "Ranger",
+								"id": 41.0,
+								"kind": "pants",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 51.119967854476
+									},
+									{
+										"stat": "max_hp",
+										"value": 189.758084484024
+									},
+									{
+										"stat": "armor",
+										"value": 54.7051022368526
+									}
+								],
+								"name": "Perneira do Arauto",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"ring1": {
+								"class": "Ranger",
+								"id": 46.0,
+								"kind": "ring",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0912215956583023
+									},
+									{
+										"stat": "dodge",
+										"value": 0.0638434061336517
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.56059082989502
+									}
+								],
+								"name": "Aliança da Vigília",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"weapon": {
+								"class": "Universal",
+								"id": 37.0,
+								"kind": "weapon",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.103408432000732
+									},
+									{
+										"stat": "attack_damage",
+										"value": 37.0963867851257
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.441909469184876
+									}
+								],
+								"name": "Montante do Estandarte",
+								"plus": 3.0,
+								"rarity": 4.0
+							}
+						},
+						"hp": 2612.76595676422,
+						"id": "paladin",
+						"in_field": true,
+						"key": "paladin",
+						"kind": "hero",
+						"level": 26.0,
+						"points": 0.0,
+						"revive": 0.0,
+						"xp": 0.0
+					},
+					{
+						"alloc": {
+							"armor": 13.0,
+							"attack_damage": 28.0,
+							"attack_speed": 13.0,
+							"block": 13.0,
+							"crit_chance": 13.0,
+							"crit_damage": 13.0,
+							"dodge": 13.0,
+							"max_hp": 14.0
+						},
+						"enchant": {
+							"armor": 5.0,
+							"boots": 5.0,
+							"bracelet": 5.0,
+							"cape": 5.0,
+							"earring": 5.0,
+							"gloves": 5.0,
+							"helm": 5.0,
+							"necklace": 5.0,
+							"offhand": 5.0,
+							"pants": 5.0,
+							"ring1": 5.0,
+							"weapon": 5.0
+						},
+						"gear": {
+							"armor": {
+								"class": "Vanguard",
+								"id": 54.0,
+								"kind": "armor",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 166.377492825508
+									},
+									{
+										"stat": "armor",
+										"value": 60.2770221282005
+									},
+									{
+										"stat": "block",
+										"value": 0.062482147080946
+									}
+								],
+								"name": "Gibão do Estandarte",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"boots": {
+								"class": "Universal",
+								"id": 57.0,
+								"kind": "boots",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.0797812588823318
+									},
+									{
+										"stat": "move_speed",
+										"value": 36.4292661556721
+									},
+									{
+										"stat": "max_hp",
+										"value": 60.6454711633301
+									}
+								],
+								"name": "Bota do Arauto",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"bracelet": {
+								"class": "Vanguard",
+								"id": 62.0,
+								"kind": "bracelet",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.113920208605957
+									},
+									{
+										"stat": "block",
+										"value": 0.0827608897705078
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.624849013769531
+									}
+								],
+								"name": "Manilha do Arauto",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"cape": {
+								"class": "Universal",
+								"id": 63.0,
+								"kind": "cape",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 42.7466264905357
+									},
+									{
+										"stat": "max_hp",
+										"value": 190.242589644775
+									},
+									{
+										"stat": "dodge",
+										"value": 0.0870616562480927
+									}
+								],
+								"name": "Manto do Estandarte",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"earring": {
+								"class": "Vanguard",
+								"id": 60.0,
+								"kind": "earring",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0692796956605911
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.36891310256958
+									}
+								],
+								"name": "Brinco do Estandarte",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"gloves": {
+								"class": "Vanguard",
+								"id": 58.0,
+								"kind": "gloves",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 18.2093350166702
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0991127866058349
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.698665071708679
+									}
+								],
+								"name": "Luvas da Vigília",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"helm": {
+								"class": "Vanguard",
+								"id": 55.0,
+								"kind": "helm",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 45.3617845894432
+									},
+									{
+										"stat": "block",
+										"value": 0.0795380768385887
+									},
+									{
+										"stat": "max_hp",
+										"value": 134.78916573761
+									}
+								],
+								"name": "Capacete do Estandarte",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"necklace": {
+								"class": "Vanguard",
+								"id": 59.0,
+								"kind": "necklace",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.429161372365952
+									},
+									{
+										"stat": "attack_damage",
+										"value": 12.3687839630127
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0809751354904175
+									}
+								],
+								"name": "Pingente da Vigília",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"offhand": {
+								"class": "Universal",
+								"id": 53.0,
+								"kind": "offhand",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.068569531428051
+									},
+									{
+										"stat": "armor",
+										"value": 46.9138344764471
+									},
+									{
+										"stat": "max_hp",
+										"value": 100.498469886131
+									}
+								],
+								"name": "Égide do Estandarte",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"pants": {
+								"class": "Vanguard",
+								"id": 56.0,
+								"kind": "pants",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 61.5561764976501
+									},
+									{
+										"stat": "armor",
+										"value": 87.5397004760742
+									},
+									{
+										"stat": "max_hp",
+										"value": 207.862297817993
+									}
+								],
+								"name": "Perneira do Sol Poente",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"ring1": {
+								"class": "Universal",
+								"id": 61.0,
+								"kind": "ring",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.0855913434020996
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.779919523974609
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.102981783703613
+									}
+								],
+								"name": "Aliança do Arauto",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"weapon": {
+								"aspect": "brasa",
+								"class": "Vanguard",
+								"id": 52.0,
+								"kind": "weapon",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 59.2553834960937
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.190065768414307
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.718696639404297
+									}
+								],
+								"name": "Lâmina do Estandarte · Brasa",
+								"plus": 3.0,
+								"rarity": 5.0
+							}
+						},
+						"hp": 2200.88658348139,
+						"id": "barbarian",
+						"in_field": true,
+						"key": "barbarian",
+						"kind": "hero",
+						"level": 25.0,
+						"points": 0.0,
+						"revive": 0.0,
+						"xp": 0.0
+					},
+					{
+						"alloc": {
+							"armor": 13.0,
+							"attack_damage": 28.0,
+							"attack_speed": 13.0,
+							"block": 13.0,
+							"crit_chance": 13.0,
+							"crit_damage": 13.0,
+							"dodge": 13.0,
+							"max_hp": 14.0
+						},
+						"enchant": {
+							"armor": 5.0,
+							"boots": 5.0,
+							"bracelet": 5.0,
+							"cape": 5.0,
+							"earring": 5.0,
+							"gloves": 5.0,
+							"helm": 5.0,
+							"necklace": 5.0,
+							"offhand": 5.0,
+							"pants": 5.0,
+							"ring1": 5.0,
+							"weapon": 5.0
+						},
+						"gear": {
+							"armor": {
+								"class": "Arcanist",
+								"id": 66.0,
+								"kind": "armor",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 251.849537760162
+									},
+									{
+										"stat": "armor",
+										"value": 74.1916488098145
+									},
+									{
+										"stat": "block",
+										"value": 0.0854397336585045
+									}
+								],
+								"name": "Gibão do Arauto",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"boots": {
+								"class": "Arcanist",
+								"id": 69.0,
+								"kind": "boots",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.0667958456532955
+									},
+									{
+										"stat": "max_hp",
+										"value": 60.613771036377
+									},
+									{
+										"stat": "move_speed",
+										"value": 44.4227391952515
+									}
+								],
+								"name": "Bota do Arauto",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"bracelet": {
+								"class": "Arcanist",
+								"id": 74.0,
+								"kind": "bracelet",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.532813448947334
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0866752637084961
+									},
+									{
+										"stat": "block",
+										"value": 0.0532425495265961
+									}
+								],
+								"name": "Manilha do Estandarte",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"cape": {
+								"class": "Arcanist",
+								"id": 75.0,
+								"kind": "cape",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 143.28333988678
+									},
+									{
+										"stat": "dodge",
+										"value": 0.079594429195404
+									},
+									{
+										"stat": "armor",
+										"value": 35.2679444667149
+									}
+								],
+								"name": "Manto da Estepe",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"earring": {
+								"class": "Universal",
+								"id": 72.0,
+								"kind": "earring",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0759386654653549
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.417470565872192
+									}
+								],
+								"name": "Brinco do Estandarte",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"gloves": {
+								"class": "Universal",
+								"id": 70.0,
+								"kind": "gloves",
+								"level": 21.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 13.7629661355972
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.0661644880149364
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.603155356750488
+									}
+								],
+								"name": "Luvas do Arauto",
+								"plus": 3.0,
+								"rarity": 3.0
+							},
+							"helm": {
+								"class": "Arcanist",
+								"id": 67.0,
+								"kind": "helm",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 65.1565903024292
+									},
+									{
+										"stat": "max_hp",
+										"value": 230.872388666992
+									},
+									{
+										"stat": "block",
+										"value": 0.129738336520386
+									}
+								],
+								"name": "Capacete da Vigília",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"necklace": {
+								"class": "Arcanist",
+								"id": 71.0,
+								"kind": "necklace",
+								"level": 22.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 14.2887183581543
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.117761431005859
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.541138005889893
+									}
+								],
+								"name": "Pingente do Sol Poente",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"offhand": {
+								"class": "Arcanist",
+								"id": 65.0,
+								"kind": "offhand",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0865101557849884
+									},
+									{
+										"stat": "max_hp",
+										"value": 154.088887726822
+									},
+									{
+										"stat": "block",
+										"value": 0.109271149589539
+									},
+									{
+										"stat": "armor",
+										"value": 58.9302137500763
+									}
+								],
+								"name": "Égide do Arauto",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"pants": {
+								"class": "Universal",
+								"id": 68.0,
+								"kind": "pants",
+								"level": 20.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 206.84527093689
+									},
+									{
+										"stat": "move_speed",
+										"value": 60.4764950140381
+									},
+									{
+										"stat": "armor",
+										"value": 74.5610492793274
+									}
+								],
+								"name": "Perneira do Sol Poente",
+								"plus": 3.0,
+								"rarity": 5.0
+							},
+							"ring1": {
+								"class": "Arcanist",
+								"id": 73.0,
+								"kind": "ring",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.0796193252867699
+									},
+									{
+										"stat": "dodge",
+										"value": 0.0651233732524872
+									},
+									{
+										"stat": "crit_damage",
+										"value": 0.575019724175262
+									}
+								],
+								"name": "Aliança do Estandarte",
+								"plus": 3.0,
+								"rarity": 4.0
+							},
+							"weapon": {
+								"class": "Arcanist",
+								"id": 64.0,
+								"kind": "weapon",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 0.695313106079102
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.167451531307983
+									},
+									{
+										"stat": "attack_damage",
+										"value": 46.5601958007813
+									}
+								],
+								"name": "Lâmina da Vigília",
+								"plus": 3.0,
+								"rarity": 5.0
+							}
+						},
+						"hp": 2411.82181834558,
+						"id": "druid",
+						"in_field": true,
+						"key": "druid",
+						"kind": "hero",
+						"level": 25.0,
+						"points": 0.0,
+						"revive": 0.0,
+						"xp": 0.0
+					}
+				],
+				"pet": "unicorn",
+				"pet_names": {},
+				"pets": [
+					"unicorn"
+				],
+				"play_seconds": 0.0,
+				"potions": {},
+				"protect": 2.0,
+				"protect_stones": 0.0,
+				"quest_state": {
+					"c_first": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_forge": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_loot": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_lv5": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_stage2": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_combo": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_forge3": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_gold": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_kill20": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_kill40": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_loot10": {
+						"base": 0.0,
+						"claimed": false
+					}
+				},
+				"rate_v": 2.0,
+				"runes": {},
+				"species": {},
+				"stage": 1.0,
+				"stash": [],
+				"v": 1.0,
+				"vigil": 0.0,
+				"wave": 1.0,
+				"xp_rate": 0.0
+			},
+			"game_stats": [
+				{
+					"key": "knight",
+					"aspect": "",
+					"max_hp": 2613.11863626467,
+					"attack_damage": 181.526924471171,
+					"attack_speed": 1.07,
+					"crit_chance": 1.0,
+					"crit_damage": 6.66672088497943,
+					"armor": 527.949233353496,
+					"dodge": 0.349518184069459,
+					"block": 0.6,
+					"range": 28.0,
+					"move_speed": 222.990684009608
+				},
+				{
+					"key": "ranger",
+					"aspect": "sino",
+					"max_hp": 2431.94629654398,
+					"attack_damage": 280.296196726899,
+					"attack_speed": 1.224,
+					"crit_chance": 0.933356434490004,
+					"crit_damage": 6.6949745340539,
+					"armor": 411.725432363205,
+					"dodge": 0.306495168274615,
+					"block": 0.446280689045438,
+					"range": 210.0,
+					"move_speed": 273.2909922713
+				},
+				{
+					"key": "arcanist",
+					"aspect": "",
+					"max_hp": 2344.32447162548,
+					"attack_damage": 186.263327079765,
+					"attack_speed": 0.86,
+					"crit_chance": 0.842288516404465,
+					"crit_damage": 5.48326419601344,
+					"armor": 470.128138796944,
+					"dodge": 0.387339300720246,
+					"block": 0.443272402450772,
+					"range": 250.0,
+					"move_speed": 285.941381234984
+				},
+				{
+					"key": "paladin",
+					"aspect": "",
+					"max_hp": 2612.76595676422,
+					"attack_damage": 221.957995811827,
+					"attack_speed": 1.068,
+					"crit_chance": 1.0,
+					"crit_damage": 7.30529662685897,
+					"armor": 546.097344086963,
+					"dodge": 0.418506926451842,
+					"block": 0.6,
+					"range": 170.0,
+					"move_speed": 267.52957270819
+				},
+				{
+					"key": "barbarian",
+					"aspect": "brasa",
+					"max_hp": 2200.88658348139,
+					"attack_damage": 250.795415890727,
+					"attack_speed": 0.962,
+					"crit_chance": 1.0,
+					"crit_damage": 7.34061781018662,
+					"armor": 439.464978985834,
+					"dodge": 0.373854567760522,
+					"block": 0.360588306932716,
+					"range": 30.0,
+					"move_speed": 247.618819730281
+				},
+				{
+					"key": "druid",
+					"aspect": "",
+					"max_hp": 2411.82181834558,
+					"attack_damage": 201.642302009113,
+					"attack_speed": 0.962,
+					"crit_chance": 0.988499095893039,
+					"crit_damage": 6.79418315186827,
+					"armor": 461.605877249449,
+					"dodge": 0.32723259696467,
+					"block": 0.540218063704549,
+					"range": 210.0,
+					"move_speed": 259.064878202847
+				}
+			],
+			"game_power": 28314,
+			"stats": [
+				{
+					"max_hp": 2613.11863626467,
+					"attack_damage": 181.526924471171,
+					"attack_speed": 1.07,
+					"crit_chance": 1.0,
+					"crit_damage": 6.66672088497943,
+					"armor": 527.949233353495,
+					"dodge": 0.349518184069459,
+					"block": 0.6,
+					"range": 28.0,
+					"move_speed": 222.990684009608,
+					"key": "knight",
+					"ranged": false,
+					"element": "phys",
+					"aspect": "",
+					"undead": false,
+					"resist": 0.25
+				},
+				{
+					"max_hp": 2431.94629654398,
+					"attack_damage": 280.2961967269,
+					"attack_speed": 1.224,
+					"crit_chance": 0.933356434490004,
+					"crit_damage": 6.6949745340539,
+					"armor": 411.725432363205,
+					"dodge": 0.306495168274615,
+					"block": 0.446280689045438,
+					"range": 210.0,
+					"move_speed": 273.2909922713,
+					"key": "ranger",
+					"ranged": true,
+					"element": "phys",
+					"aspect": "sino",
+					"undead": false,
+					"resist": 0.25
+				},
+				{
+					"max_hp": 2344.32447162548,
+					"attack_damage": 186.263327079765,
+					"attack_speed": 0.86,
+					"crit_chance": 0.842288516404464,
+					"crit_damage": 5.48326419601344,
+					"armor": 470.128138796944,
+					"dodge": 0.387339300720247,
+					"block": 0.443272402450772,
+					"range": 250.0,
+					"move_speed": 285.941381234984,
+					"key": "arcanist",
+					"ranged": true,
+					"element": "arcane",
+					"aspect": "",
+					"undead": false,
+					"resist": 0.25
+				},
+				{
+					"max_hp": 2612.76595676422,
+					"attack_damage": 221.957995811827,
+					"attack_speed": 1.068,
+					"crit_chance": 1.0,
+					"crit_damage": 7.30529662685897,
+					"armor": 546.097344086963,
+					"dodge": 0.418506926451843,
+					"block": 0.6,
+					"range": 170.0,
+					"move_speed": 267.52957270819,
+					"key": "paladin",
+					"ranged": true,
+					"element": "phys",
+					"aspect": "",
+					"undead": false,
+					"resist": 0.25
+				},
+				{
+					"max_hp": 2200.88658348139,
+					"attack_damage": 250.795415890727,
+					"attack_speed": 0.962,
+					"crit_chance": 1.0,
+					"crit_damage": 7.34061781018662,
+					"armor": 439.464978985834,
+					"dodge": 0.373854567760522,
+					"block": 0.360588306932716,
+					"range": 30.0,
+					"move_speed": 247.618819730281,
+					"key": "barbarian",
+					"ranged": false,
+					"element": "phys",
+					"aspect": "brasa",
+					"undead": false,
+					"resist": 0.25
+				},
+				{
+					"max_hp": 2411.82181834558,
+					"attack_damage": 201.642302009113,
+					"attack_speed": 0.962,
+					"crit_chance": 0.988499095893037,
+					"crit_damage": 6.79418315186826,
+					"armor": 461.60587724945,
+					"dodge": 0.32723259696467,
+					"block": 0.54021806370455,
+					"range": 210.0,
+					"move_speed": 259.064878202847,
+					"key": "druid",
+					"ranged": true,
+					"element": "arcane",
+					"aspect": "",
+					"undead": false,
+					"resist": 0.25,
+					"heal": {
+						"every": 4.0,
+						"mult": 3.0
+					}
+				}
+			],
+			"power": 28314,
+			"first": {
+				"won": true,
+				"time": 50.4672897196262,
+				"blows": 401,
+				"standing": 6,
+				"digest": 513583273
+			},
+			"trial": {
+				"floor": 12,
+				"fights": 8,
+				"digest": 990458622
+			}
+		},
+		{
+			"name": "topo",
+			"save": {
+				"auto_sell": false,
+				"buffs": {},
+				"chest": {},
+				"counters": {
+					"combo": 0.0,
+					"forged": 1.0,
+					"gold": 0.0,
+					"items": 0.0,
+					"kills": 0.0,
+					"licenses": 48.0,
+					"refines": 720.0,
+					"serial": 72.0
+				},
+				"daily": {},
+				"expeditions": [],
+				"feats": {},
+				"flags": {
+					"enchant": true,
+					"guide": 0.0,
+					"pity_below_rare": 1.0
+				},
+				"furthest": 20.0,
+				"gems": 999999330200.0,
+				"gold": 999976236620.0,
+				"gold_rate": 0.0,
+				"insignias": 0.0,
+				"inventory": [],
+				"item_seq": 73.0,
+				"last_seen": 0.0,
+				"licenses": {
+					"b0_0": true,
+					"b0_1": true,
+					"b0_2": true,
+					"b0_3": true,
+					"b0_4": true,
+					"b0_5": true,
+					"b0_6": true,
+					"b0_7": true,
+					"b1_0": true,
+					"b1_1": true,
+					"b1_2": true,
+					"b1_3": true,
+					"b1_4": true,
+					"b1_5": true,
+					"b1_6": true,
+					"b1_7": true,
+					"b2_0": true,
+					"b2_1": true,
+					"b2_2": true,
+					"b2_3": true,
+					"b2_4": true,
+					"b2_5": true,
+					"b2_6": true,
+					"b2_7": true,
+					"b3_0": true,
+					"b3_1": true,
+					"b3_2": true,
+					"b3_3": true,
+					"b3_4": true,
+					"b3_5": true,
+					"b3_6": true,
+					"b3_7": true,
+					"b4_0": true,
+					"b4_1": true,
+					"b4_2": true,
+					"b4_3": true,
+					"b4_4": true,
+					"b4_5": true,
+					"b4_6": true,
+					"b4_7": true,
+					"b5_0": true,
+					"b5_1": true,
+					"b5_2": true,
+					"b5_3": true,
+					"b5_4": true,
+					"b5_5": true,
+					"b5_6": true,
+					"b5_7": true
+				},
+				"login": {},
+				"materials": {
+					"adamant": 998344.0,
+					"essence": 999998.0,
+					"iron": 999136.0,
+					"leather": 1000000.0,
+					"mithril": 998629.0,
+					"steel": 998488.0
+				},
+				"members": [
+					{
+						"alloc": {
+							"attack_damage": 73.0,
+							"crit_chance": 24.0,
+							"max_hp": 48.0
+						},
+						"enchant": {
+							"armor": 30.0,
+							"boots": 30.0,
+							"bracelet": 30.0,
+							"cape": 30.0,
+							"earring": 30.0,
+							"gloves": 30.0,
+							"helm": 30.0,
+							"necklace": 30.0,
+							"offhand": 30.0,
+							"pants": 30.0,
+							"ring1": 30.0,
+							"weapon": 30.0
+						},
+						"gear": {
+							"armor": {
+								"class": "Vanguard",
+								"id": 3.0,
+								"kind": "armor",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 1494.29875376186
+									},
+									{
+										"stat": "block",
+										"value": 0.572830401206446
+									},
+									{
+										"stat": "armor",
+										"value": 480.572451234412
+									}
+								],
+								"name": "Túnica da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 3.0,
+								"serial_date": "2026-11-12"
+							},
+							"boots": {
+								"class": "Vanguard",
+								"id": 6.0,
+								"kind": "boots",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.509786868562532
+									},
+									{
+										"stat": "max_hp",
+										"value": 392.365422852058
+									},
+									{
+										"stat": "move_speed",
+										"value": 326.161477508843
+									}
+								],
+								"name": "Bota da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 6.0,
+								"serial_date": "2026-11-12"
+							},
+							"bracelet": {
+								"class": "Universal",
+								"id": 11.0,
+								"kind": "bracelet",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 2.60381959256048
+									},
+									{
+										"stat": "block",
+										"value": 0.35645732882452
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.559335195518494
+									}
+								],
+								"name": "Manilha da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 11.0,
+								"serial_date": "2026-11-12"
+							},
+							"cape": {
+								"class": "Vanguard",
+								"id": 12.0,
+								"kind": "cape",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 309.208875704699
+									},
+									{
+										"stat": "dodge",
+										"value": 0.711823267095089
+									},
+									{
+										"stat": "max_hp",
+										"value": 1115.24781209404
+									}
+								],
+								"name": "Manto da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 12.0,
+								"serial_date": "2026-11-12"
+							},
+							"earring": {
+								"class": "Vanguard",
+								"id": 9.0,
+								"kind": "earring",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 1.98581587021542
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.570793971373749
+									}
+								],
+								"name": "Brinco da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 9.0,
+								"serial_date": "2026-11-12"
+							},
+							"gloves": {
+								"class": "Vanguard",
+								"id": 7.0,
+								"kind": "gloves",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 94.7765735505581
+									},
+									{
+										"stat": "crit_damage",
+										"value": 4.94149742908096
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.552392833768988
+									}
+								],
+								"name": "Luvas da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 7.0,
+								"serial_date": "2026-11-12"
+							},
+							"helm": {
+								"class": "Universal",
+								"id": 4.0,
+								"kind": "helm",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "block",
+										"value": 0.652852931265068
+									},
+									{
+										"stat": "armor",
+										"value": 312.831711810808
+									},
+									{
+										"stat": "max_hp",
+										"value": 1316.24340926712
+									}
+								],
+								"name": "Elmo da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 4.0,
+								"serial_date": "2026-11-12"
+							},
+							"necklace": {
+								"class": "Universal",
+								"id": 8.0,
+								"kind": "necklace",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 2.60043243436718
+									},
+									{
+										"stat": "attack_damage",
+										"value": 75.8224737252617
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.460000787977982
+									}
+								],
+								"name": "Pingente da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 8.0,
+								"serial_date": "2026-11-12"
+							},
+							"offhand": {
+								"class": "Vanguard",
+								"id": 2.0,
+								"kind": "offhand",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.594954253731394
+									},
+									{
+										"stat": "block",
+										"value": 0.791030428943825
+									},
+									{
+										"stat": "max_hp",
+										"value": 802.669625986299
+									},
+									{
+										"stat": "armor",
+										"value": 348.516803965384
+									}
+								],
+								"name": "Escudo da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 2.0,
+								"serial_date": "2026-11-12"
+							},
+							"pants": {
+								"class": "Universal",
+								"id": 5.0,
+								"kind": "pants",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 326.074497949495
+									},
+									{
+										"stat": "armor",
+										"value": 316.669359387102
+									},
+									{
+										"stat": "max_hp",
+										"value": 1109.82785300285
+									}
+								],
+								"name": "Perneira da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 5.0,
+								"serial_date": "2026-11-12"
+							},
+							"ring1": {
+								"class": "Universal",
+								"id": 10.0,
+								"kind": "ring",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 2.85247542432969
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.441631175195694
+									},
+									{
+										"stat": "dodge",
+										"value": 0.321835810340881
+									}
+								],
+								"name": "Aliança da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 10.0,
+								"serial_date": "2026-11-12"
+							},
+							"weapon": {
+								"class": "Universal",
+								"id": 1.0,
+								"kind": "weapon",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 202.397193116188
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.91418979887486
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.698671453384209
+									}
+								],
+								"name": "Montante da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 1.0,
+								"serial_date": "2026-11-12"
+							}
+						},
+						"hp": 53946.6161549419,
+						"id": "knight",
+						"in_field": true,
+						"key": "knight",
+						"kind": "hero",
+						"level": 30.0,
+						"points": 0.0,
+						"promoted": true,
+						"revive": 0.0,
+						"xp": 0.0
+					},
+					{
+						"alloc": {
+							"attack_damage": 73.0,
+							"crit_chance": 24.0,
+							"max_hp": 48.0
+						},
+						"enchant": {
+							"armor": 30.0,
+							"boots": 30.0,
+							"bracelet": 30.0,
+							"cape": 30.0,
+							"earring": 30.0,
+							"gloves": 30.0,
+							"helm": 30.0,
+							"necklace": 30.0,
+							"offhand": 30.0,
+							"pants": 30.0,
+							"ring1": 30.0,
+							"weapon": 30.0
+						},
+						"gear": {
+							"armor": {
+								"class": "Vanguard",
+								"id": 15.0,
+								"kind": "armor",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 1461.60471236229
+									},
+									{
+										"stat": "block",
+										"value": 0.4436069464149
+									},
+									{
+										"stat": "armor",
+										"value": 596.018151470661
+									}
+								],
+								"name": "Túnica da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 15.0,
+								"serial_date": "2026-11-12"
+							},
+							"boots": {
+								"class": "Vanguard",
+								"id": 18.0,
+								"kind": "boots",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.6653401203794
+									},
+									{
+										"stat": "move_speed",
+										"value": 391.381964896512
+									},
+									{
+										"stat": "max_hp",
+										"value": 408.407286408548
+									}
+								],
+								"name": "Bota da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 18.0,
+								"serial_date": "2026-11-12"
+							},
+							"bracelet": {
+								"class": "Vanguard",
+								"id": 23.0,
+								"kind": "bracelet",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.43660427452507
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.98922033855753
+									},
+									{
+										"stat": "block",
+										"value": 0.32309057935853
+									}
+								],
+								"name": "Manilha da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 23.0,
+								"serial_date": "2026-11-12"
+							},
+							"cape": {
+								"class": "Vanguard",
+								"id": 24.0,
+								"kind": "cape",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 1175.02520289047
+									},
+									{
+										"stat": "dodge",
+										"value": 0.70354442647028
+									},
+									{
+										"stat": "armor",
+										"value": 287.552171632075
+									}
+								],
+								"name": "Manto da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 24.0,
+								"serial_date": "2026-11-12"
+							},
+							"earring": {
+								"class": "Vanguard",
+								"id": 21.0,
+								"kind": "earring",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.489269053285599
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.34577425740624
+									}
+								],
+								"name": "Brinco da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 21.0,
+								"serial_date": "2026-11-12"
+							},
+							"gloves": {
+								"class": "Vanguard",
+								"id": 19.0,
+								"kind": "gloves",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.647303196591473
+									},
+									{
+										"stat": "attack_damage",
+										"value": 90.7702305399227
+									},
+									{
+										"stat": "crit_damage",
+										"value": 4.24987039088059
+									}
+								],
+								"name": "Luvas da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 19.0,
+								"serial_date": "2026-11-12"
+							},
+							"helm": {
+								"class": "Vanguard",
+								"id": 16.0,
+								"kind": "helm",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "block",
+										"value": 0.703472758149529
+									},
+									{
+										"stat": "armor",
+										"value": 343.760488074667
+									},
+									{
+										"stat": "max_hp",
+										"value": 1167.454361306
+									}
+								],
+								"name": "Elmo da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 16.0,
+								"serial_date": "2026-11-12"
+							},
+							"necklace": {
+								"class": "Universal",
+								"id": 20.0,
+								"kind": "necklace",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.529839521222687
+									},
+									{
+										"stat": "attack_damage",
+										"value": 75.0754848543549
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.43966319368625
+									}
+								],
+								"name": "Pingente da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 20.0,
+								"serial_date": "2026-11-12"
+							},
+							"offhand": {
+								"class": "Vanguard",
+								"id": 14.0,
+								"kind": "offhand",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 339.016319482505
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.55862424095993
+									},
+									{
+										"stat": "block",
+										"value": 0.768045965273094
+									},
+									{
+										"stat": "max_hp",
+										"value": 818.545891174374
+									}
+								],
+								"name": "Escudo da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 14.0,
+								"serial_date": "2026-11-12"
+							},
+							"pants": {
+								"class": "Universal",
+								"id": 17.0,
+								"kind": "pants",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 356.209043971868
+									},
+									{
+										"stat": "move_speed",
+										"value": 334.198348331194
+									},
+									{
+										"stat": "max_hp",
+										"value": 904.907121111155
+									}
+								],
+								"name": "Perneira da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 17.0,
+								"serial_date": "2026-11-12"
+							},
+							"ring1": {
+								"class": "Vanguard",
+								"id": 22.0,
+								"kind": "ring",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.36152534535284
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.540953059286499
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.80746133057821
+									}
+								],
+								"name": "Aliança da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 22.0,
+								"serial_date": "2026-11-12"
+							},
+							"weapon": {
+								"class": "Universal",
+								"id": 13.0,
+								"kind": "weapon",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.644451048229694
+									},
+									{
+										"stat": "attack_damage",
+										"value": 262.836197510719
+									},
+									{
+										"stat": "crit_damage",
+										"value": 3.26077012792587
+									}
+								],
+								"name": "Montante da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 13.0,
+								"serial_date": "2026-11-12"
+							}
+						},
+						"hp": 51479.2724464884,
+						"id": "barbarian",
+						"in_field": true,
+						"key": "barbarian",
+						"kind": "hero",
+						"level": 30.0,
+						"points": 0.0,
+						"promoted": true,
+						"revive": 0.0,
+						"xp": 0.0
+					},
+					{
+						"alloc": {
+							"attack_damage": 73.0,
+							"crit_chance": 24.0,
+							"max_hp": 48.0
+						},
+						"enchant": {
+							"armor": 30.0,
+							"boots": 30.0,
+							"bracelet": 30.0,
+							"cape": 30.0,
+							"earring": 30.0,
+							"gloves": 30.0,
+							"helm": 30.0,
+							"necklace": 30.0,
+							"offhand": 30.0,
+							"pants": 30.0,
+							"ring1": 30.0,
+							"weapon": 30.0
+						},
+						"gear": {
+							"armor": {
+								"class": "Ranger",
+								"id": 27.0,
+								"kind": "armor",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "block",
+										"value": 0.565840846548128
+									},
+									{
+										"stat": "max_hp",
+										"value": 1660.80165542679
+									},
+									{
+										"stat": "armor",
+										"value": 584.795281086588
+									}
+								],
+								"name": "Túnica da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 27.0,
+								"serial_date": "2026-11-12"
+							},
+							"boots": {
+								"class": "Ranger",
+								"id": 30.0,
+								"kind": "boots",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 479.38317636406
+									},
+									{
+										"stat": "move_speed",
+										"value": 326.146448999989
+									},
+									{
+										"stat": "dodge",
+										"value": 0.615692440620661
+									}
+								],
+								"name": "Bota da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 30.0,
+								"serial_date": "2026-11-12"
+							},
+							"bracelet": {
+								"class": "Universal",
+								"id": 35.0,
+								"kind": "bracelet",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.574822367765808
+									},
+									{
+										"stat": "block",
+										"value": 0.367993238661575
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.77569150470059
+									}
+								],
+								"name": "Manilha da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 35.0,
+								"serial_date": "2026-11-12"
+							},
+							"cape": {
+								"class": "Ranger",
+								"id": 36.0,
+								"kind": "cape",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 275.772964581728
+									},
+									{
+										"stat": "max_hp",
+										"value": 1047.98412004196
+									},
+									{
+										"stat": "dodge",
+										"value": 0.742453909409046
+									}
+								],
+								"name": "Manto da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 36.0,
+								"serial_date": "2026-11-12"
+							},
+							"earring": {
+								"class": "Ranger",
+								"id": 33.0,
+								"kind": "earring",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.435326732132721
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.37220199665642
+									}
+								],
+								"name": "Brinco da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 33.0,
+								"serial_date": "2026-11-12"
+							},
+							"gloves": {
+								"class": "Ranger",
+								"id": 31.0,
+								"kind": "gloves",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 97.142735283165
+									},
+									{
+										"stat": "crit_damage",
+										"value": 5.16930954420853
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.692349136942196
+									}
+								],
+								"name": "Luvas da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 31.0,
+								"serial_date": "2026-11-12"
+							},
+							"helm": {
+								"class": "Ranger",
+								"id": 28.0,
+								"kind": "helm",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 1323.00594601105
+									},
+									{
+										"stat": "armor",
+										"value": 309.383348040304
+									},
+									{
+										"stat": "block",
+										"value": 0.650564363416481
+									}
+								],
+								"name": "Elmo da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 28.0,
+								"serial_date": "2026-11-12"
+							},
+							"necklace": {
+								"class": "Ranger",
+								"id": 32.0,
+								"kind": "necklace",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 78.7449989838409
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.560479465526581
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.51215447184336
+									}
+								],
+								"name": "Pingente da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 32.0,
+								"serial_date": "2026-11-12"
+							},
+							"offhand": {
+								"class": "Ranger",
+								"id": 26.0,
+								"kind": "offhand",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 346.655543093348
+									},
+									{
+										"stat": "block",
+										"value": 0.779921009793091
+									},
+									{
+										"stat": "max_hp",
+										"value": 783.577716653261
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.491947449858856
+									}
+								],
+								"name": "Escudo da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 26.0,
+								"serial_date": "2026-11-12"
+							},
+							"pants": {
+								"class": "Ranger",
+								"id": 29.0,
+								"kind": "pants",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 311.802907788562
+									},
+									{
+										"stat": "armor",
+										"value": 400.827033861723
+									},
+									{
+										"stat": "max_hp",
+										"value": 954.011235056496
+									}
+								],
+								"name": "Perneira da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 29.0,
+								"serial_date": "2026-11-12"
+							},
+							"ring1": {
+								"class": "Ranger",
+								"id": 34.0,
+								"kind": "ring",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.432176301815796
+									},
+									{
+										"stat": "dodge",
+										"value": 0.309842522229481
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.95429566052392
+									}
+								],
+								"name": "Aliança da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 34.0,
+								"serial_date": "2026-11-12"
+							},
+							"weapon": {
+								"aspect": "sino",
+								"class": "Universal",
+								"id": 25.0,
+								"kind": "weapon",
+								"level": 23.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 191.465891182709
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.550841437404728
+									},
+									{
+										"stat": "crit_damage",
+										"value": 1.98174019961834
+									}
+								],
+								"name": "Montante do Andarilho · Sino",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 25.0,
+								"serial_date": "2026-11-12"
+							}
+						},
+						"hp": 53989.0309429277,
+						"id": "paladin",
+						"in_field": true,
+						"key": "paladin",
+						"kind": "hero",
+						"level": 30.0,
+						"points": 0.0,
+						"promoted": true,
+						"revive": 0.0,
+						"xp": 0.0
+					},
+					{
+						"alloc": {
+							"attack_damage": 73.0,
+							"crit_chance": 24.0,
+							"max_hp": 48.0
+						},
+						"enchant": {
+							"armor": 30.0,
+							"boots": 30.0,
+							"bracelet": 30.0,
+							"cape": 30.0,
+							"earring": 30.0,
+							"gloves": 30.0,
+							"helm": 30.0,
+							"necklace": 30.0,
+							"offhand": 30.0,
+							"pants": 30.0,
+							"ring1": 30.0,
+							"weapon": 30.0
+						},
+						"gear": {
+							"armor": {
+								"class": "Universal",
+								"id": 39.0,
+								"kind": "armor",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "block",
+										"value": 0.565326999858427
+									},
+									{
+										"stat": "armor",
+										"value": 513.05552695713
+									},
+									{
+										"stat": "max_hp",
+										"value": 1595.78766013489
+									}
+								],
+								"name": "Túnica da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 39.0,
+								"serial_date": "2026-11-12"
+							},
+							"boots": {
+								"class": "Ranger",
+								"id": 42.0,
+								"kind": "boots",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 389.740265452671
+									},
+									{
+										"stat": "max_hp",
+										"value": 445.845524538002
+									},
+									{
+										"stat": "dodge",
+										"value": 0.672741212050295
+									}
+								],
+								"name": "Bota da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 42.0,
+								"serial_date": "2026-11-12"
+							},
+							"bracelet": {
+								"class": "Universal",
+								"id": 47.0,
+								"kind": "bracelet",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "block",
+										"value": 0.329695482475948
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.445405158911133
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.841358860059
+									}
+								],
+								"name": "Manilha da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 47.0,
+								"serial_date": "2026-11-12"
+							},
+							"cape": {
+								"class": "Ranger",
+								"id": 48.0,
+								"kind": "cape",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.729777781167984
+									},
+									{
+										"stat": "max_hp",
+										"value": 1018.97072045448
+									},
+									{
+										"stat": "armor",
+										"value": 329.209549211168
+									}
+								],
+								"name": "Manto da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 48.0,
+								"serial_date": "2026-11-12"
+							},
+							"earring": {
+								"class": "Ranger",
+								"id": 45.0,
+								"kind": "earring",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.564016316517639
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.49507809151459
+									}
+								],
+								"name": "Brinco da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 45.0,
+								"serial_date": "2026-11-12"
+							},
+							"gloves": {
+								"class": "Ranger",
+								"id": 43.0,
+								"kind": "gloves",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 114.416438663692
+									},
+									{
+										"stat": "crit_damage",
+										"value": 4.46325375156784
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.600130908047676
+									}
+								],
+								"name": "Luvas da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 43.0,
+								"serial_date": "2026-11-12"
+							},
+							"helm": {
+								"class": "Ranger",
+								"id": 40.0,
+								"kind": "helm",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 1264.85212947418
+									},
+									{
+										"stat": "armor",
+										"value": 347.508624673326
+									},
+									{
+										"stat": "block",
+										"value": 0.586626647524452
+									}
+								],
+								"name": "Elmo da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 40.0,
+								"serial_date": "2026-11-12"
+							},
+							"necklace": {
+								"class": "Universal",
+								"id": 44.0,
+								"kind": "necklace",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 2.62898718623829
+									},
+									{
+										"stat": "attack_damage",
+										"value": 74.523497393074
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.487233300305939
+									}
+								],
+								"name": "Pingente da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 44.0,
+								"serial_date": "2026-11-12"
+							},
+							"offhand": {
+								"class": "Universal",
+								"id": 38.0,
+								"kind": "offhand",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 418.117872696698
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.479408212712717
+									},
+									{
+										"stat": "max_hp",
+										"value": 715.59222965157
+									},
+									{
+										"stat": "block",
+										"value": 0.637584278390122
+									}
+								],
+								"name": "Escudo da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 38.0,
+								"serial_date": "2026-11-12"
+							},
+							"pants": {
+								"class": "Ranger",
+								"id": 41.0,
+								"kind": "pants",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 1159.11062390125
+									},
+									{
+										"stat": "armor",
+										"value": 356.485647211046
+									},
+									{
+										"stat": "move_speed",
+										"value": 256.200463760546
+									}
+								],
+								"name": "Perneira da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 41.0,
+								"serial_date": "2026-11-12"
+							},
+							"ring1": {
+								"class": "Ranger",
+								"id": 46.0,
+								"kind": "ring",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 3.14241608281102
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.475110631093979
+									},
+									{
+										"stat": "dodge",
+										"value": 0.341346755675697
+									}
+								],
+								"name": "Aliança da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 46.0,
+								"serial_date": "2026-11-12"
+							},
+							"weapon": {
+								"class": "Ranger",
+								"id": 37.0,
+								"kind": "weapon",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 3.19595044448137
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.636576398990536
+									},
+									{
+										"stat": "attack_damage",
+										"value": 227.148487740803
+									}
+								],
+								"name": "Montante da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 37.0,
+								"serial_date": "2026-11-12"
+							}
+						},
+						"hp": 53474.2202817846,
+						"id": "ranger",
+						"in_field": true,
+						"key": "ranger",
+						"kind": "hero",
+						"level": 30.0,
+						"points": 0.0,
+						"promoted": true,
+						"revive": 0.0,
+						"xp": 0.0
+					},
+					{
+						"alloc": {
+							"attack_damage": 73.0,
+							"crit_chance": 24.0,
+							"max_hp": 48.0
+						},
+						"enchant": {
+							"armor": 30.0,
+							"boots": 30.0,
+							"bracelet": 30.0,
+							"cape": 30.0,
+							"earring": 30.0,
+							"gloves": 30.0,
+							"helm": 30.0,
+							"necklace": 30.0,
+							"offhand": 30.0,
+							"pants": 30.0,
+							"ring1": 30.0,
+							"weapon": 30.0
+						},
+						"gear": {
+							"armor": {
+								"class": "Arcanist",
+								"id": 51.0,
+								"kind": "armor",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 1236.37912256365
+									},
+									{
+										"stat": "armor",
+										"value": 557.802709929657
+									},
+									{
+										"stat": "block",
+										"value": 0.469462267615342
+									}
+								],
+								"name": "Túnica da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 51.0,
+								"serial_date": "2026-11-12"
+							},
+							"boots": {
+								"class": "Arcanist",
+								"id": 54.0,
+								"kind": "boots",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 337.567145481825
+									},
+									{
+										"stat": "max_hp",
+										"value": 411.560145912895
+									},
+									{
+										"stat": "dodge",
+										"value": 0.53350721437397
+									}
+								],
+								"name": "Bota da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 54.0,
+								"serial_date": "2026-11-12"
+							},
+							"bracelet": {
+								"class": "Universal",
+								"id": 59.0,
+								"kind": "bracelet",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 3.31066196709919
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.539107897557068
+									},
+									{
+										"stat": "block",
+										"value": 0.307077633025646
+									}
+								],
+								"name": "Manilha da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 59.0,
+								"serial_date": "2026-11-12"
+							},
+							"cape": {
+								"class": "Universal",
+								"id": 60.0,
+								"kind": "cape",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.613252600200891
+									},
+									{
+										"stat": "armor",
+										"value": 339.429197467117
+									},
+									{
+										"stat": "max_hp",
+										"value": 1301.7805311528
+									}
+								],
+								"name": "Manto da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 60.0,
+								"serial_date": "2026-11-12"
+							},
+							"earring": {
+								"class": "Arcanist",
+								"id": 57.0,
+								"kind": "earring",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.45811251668129
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.52252677478409
+									}
+								],
+								"name": "Brinco da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 57.0,
+								"serial_date": "2026-11-12"
+							},
+							"gloves": {
+								"class": "Arcanist",
+								"id": 55.0,
+								"kind": "gloves",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 115.297812803564
+									},
+									{
+										"stat": "crit_damage",
+										"value": 5.04273066776276
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.567231586558056
+									}
+								],
+								"name": "Luvas da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 55.0,
+								"serial_date": "2026-11-12"
+							},
+							"helm": {
+								"class": "Arcanist",
+								"id": 52.0,
+								"kind": "helm",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 1288.12002764389
+									},
+									{
+										"stat": "block",
+										"value": 0.554866844297457
+									},
+									{
+										"stat": "armor",
+										"value": 372.22434982594
+									}
+								],
+								"name": "Elmo da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 52.0,
+								"serial_date": "2026-11-12"
+							},
+							"necklace": {
+								"class": "Universal",
+								"id": 56.0,
+								"kind": "necklace",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.462471188954926
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.39626949157214
+									},
+									{
+										"stat": "attack_damage",
+										"value": 60.5514253173923
+									}
+								],
+								"name": "Pingente da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 56.0,
+								"serial_date": "2026-11-12"
+							},
+							"offhand": {
+								"class": "Arcanist",
+								"id": 50.0,
+								"kind": "offhand",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 828.308687302179
+									},
+									{
+										"stat": "block",
+										"value": 0.684886521154976
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.585714564591408
+									},
+									{
+										"stat": "armor",
+										"value": 364.141749043071
+									}
+								],
+								"name": "Escudo da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 50.0,
+								"serial_date": "2026-11-12"
+							},
+							"pants": {
+								"class": "Arcanist",
+								"id": 53.0,
+								"kind": "pants",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 320.943736360095
+									},
+									{
+										"stat": "max_hp",
+										"value": 1023.60068258221
+									},
+									{
+										"stat": "move_speed",
+										"value": 288.377421919376
+									}
+								],
+								"name": "Perneira da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 53.0,
+								"serial_date": "2026-11-12"
+							},
+							"ring1": {
+								"class": "Arcanist",
+								"id": 58.0,
+								"kind": "ring",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.452344866002274
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.85100349749136
+									},
+									{
+										"stat": "dodge",
+										"value": 0.339250713004017
+									}
+								],
+								"name": "Aliança da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 58.0,
+								"serial_date": "2026-11-12"
+							},
+							"weapon": {
+								"class": "Arcanist",
+								"id": 49.0,
+								"kind": "weapon",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.617574501810265
+									},
+									{
+										"stat": "crit_damage",
+										"value": 3.13572859041691
+									},
+									{
+										"stat": "attack_damage",
+										"value": 253.142518621635
+									}
+								],
+								"name": "Montante da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 49.0,
+								"serial_date": "2026-11-12"
+							}
+						},
+						"hp": 52416.0715696417,
+						"id": "arcanist",
+						"in_field": true,
+						"key": "arcanist",
+						"kind": "hero",
+						"level": 30.0,
+						"points": 0.0,
+						"promoted": true,
+						"revive": 0.0,
+						"xp": 0.0
+					},
+					{
+						"alloc": {
+							"attack_damage": 73.0,
+							"crit_chance": 24.0,
+							"max_hp": 48.0
+						},
+						"enchant": {
+							"armor": 30.0,
+							"boots": 30.0,
+							"bracelet": 30.0,
+							"cape": 30.0,
+							"earring": 30.0,
+							"gloves": 30.0,
+							"helm": 30.0,
+							"necklace": 30.0,
+							"offhand": 30.0,
+							"pants": 30.0,
+							"ring1": 30.0,
+							"weapon": 30.0
+						},
+						"gear": {
+							"armor": {
+								"class": "Universal",
+								"id": 63.0,
+								"kind": "armor",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 459.44885845356
+									},
+									{
+										"stat": "max_hp",
+										"value": 1396.09931778955
+									},
+									{
+										"stat": "block",
+										"value": 0.585146667924213
+									}
+								],
+								"name": "Túnica da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 63.0,
+								"serial_date": "2026-11-12"
+							},
+							"boots": {
+								"class": "Arcanist",
+								"id": 66.0,
+								"kind": "boots",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "dodge",
+										"value": 0.550719437502623
+									},
+									{
+										"stat": "max_hp",
+										"value": 427.046670531206
+									},
+									{
+										"stat": "move_speed",
+										"value": 378.933198676443
+									}
+								],
+								"name": "Bota da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 66.0,
+								"serial_date": "2026-11-12"
+							},
+							"bracelet": {
+								"class": "Arcanist",
+								"id": 71.0,
+								"kind": "bracelet",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.499422680971146
+									},
+									{
+										"stat": "block",
+										"value": 0.341257570188189
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.69943896855974
+									}
+								],
+								"name": "Manilha da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 71.0,
+								"serial_date": "2026-11-12"
+							},
+							"cape": {
+								"class": "Universal",
+								"id": 72.0,
+								"kind": "cape",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "max_hp",
+										"value": 1294.34553332672
+									},
+									{
+										"stat": "armor",
+										"value": 347.631157583885
+									},
+									{
+										"stat": "dodge",
+										"value": 0.588518544205904
+									}
+								],
+								"name": "Manto da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 72.0,
+								"serial_date": "2026-11-12"
+							},
+							"earring": {
+								"class": "Arcanist",
+								"id": 69.0,
+								"kind": "earring",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 2.46768064828491
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.435299246773148
+									}
+								],
+								"name": "Brinco da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 69.0,
+								"serial_date": "2026-11-12"
+							},
+							"gloves": {
+								"class": "Arcanist",
+								"id": 67.0,
+								"kind": "gloves",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 97.2269962228489
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.644149297163105
+									},
+									{
+										"stat": "crit_damage",
+										"value": 5.22945322966385
+									}
+								],
+								"name": "Luvas da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 67.0,
+								"serial_date": "2026-11-12"
+							},
+							"helm": {
+								"class": "Arcanist",
+								"id": 64.0,
+								"kind": "helm",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "armor",
+										"value": 404.565624936833
+									},
+									{
+										"stat": "block",
+										"value": 0.683934028682709
+									},
+									{
+										"stat": "max_hp",
+										"value": 1035.7944527597
+									}
+								],
+								"name": "Elmo da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 64.0,
+								"serial_date": "2026-11-12"
+							},
+							"necklace": {
+								"class": "Arcanist",
+								"id": 68.0,
+								"kind": "necklace",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 2.60562668679142
+									},
+									{
+										"stat": "attack_damage",
+										"value": 78.0997381210327
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.557982903785706
+									}
+								],
+								"name": "Pingente da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 68.0,
+								"serial_date": "2026-11-12"
+							},
+							"offhand": {
+								"class": "Arcanist",
+								"id": 62.0,
+								"kind": "offhand",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_chance",
+										"value": 0.626530989618731
+									},
+									{
+										"stat": "block",
+										"value": 0.599756318988991
+									},
+									{
+										"stat": "armor",
+										"value": 376.481275226498
+									},
+									{
+										"stat": "max_hp",
+										"value": 857.674254937668
+									}
+								],
+								"name": "Escudo da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 62.0,
+								"serial_date": "2026-11-12"
+							},
+							"pants": {
+								"class": "Arcanist",
+								"id": 65.0,
+								"kind": "pants",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "move_speed",
+										"value": 256.600693801318
+									},
+									{
+										"stat": "max_hp",
+										"value": 862.443482776327
+									},
+									{
+										"stat": "armor",
+										"value": 361.12572620779
+									}
+								],
+								"name": "Perneira da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 65.0,
+								"serial_date": "2026-11-12"
+							},
+							"ring1": {
+								"class": "Arcanist",
+								"id": 70.0,
+								"kind": "ring",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "crit_damage",
+										"value": 2.78812360019295
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.498934657790375
+									},
+									{
+										"stat": "dodge",
+										"value": 0.376909175567722
+									}
+								],
+								"name": "Aliança da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 70.0,
+								"serial_date": "2026-11-12"
+							},
+							"weapon": {
+								"class": "Universal",
+								"id": 61.0,
+								"kind": "weapon",
+								"level": 30.0,
+								"mods": [
+									{
+										"stat": "attack_damage",
+										"value": 211.085947385502
+									},
+									{
+										"stat": "crit_chance",
+										"value": 0.783782876339722
+									},
+									{
+										"stat": "crit_damage",
+										"value": 2.72881242576122
+									}
+								],
+								"name": "Montante da Coroa",
+								"plus": 10.0,
+								"rarity": 9.0,
+								"serial": 61.0,
+								"serial_date": "2026-11-12"
+							}
+						},
+						"hp": 50605.6892875304,
+						"id": "druid",
+						"in_field": true,
+						"key": "druid",
+						"kind": "hero",
+						"level": 30.0,
+						"points": 0.0,
+						"promoted": true,
+						"revive": 0.0,
+						"xp": 0.0
+					}
+				],
+				"pet": "unicorn",
+				"pet_names": {},
+				"pets": [
+					"unicorn"
+				],
+				"play_seconds": 0.0,
+				"potions": {},
+				"protect": 2.0,
+				"protect_stones": 0.0,
+				"quest_state": {
+					"c_first": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_forge": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_loot": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_lv5": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"c_stage2": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_combo": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_forge3": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_gold": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_kill20": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_kill40": {
+						"base": 0.0,
+						"claimed": false
+					},
+					"q_loot10": {
+						"base": 0.0,
+						"claimed": false
+					}
+				},
+				"rate_v": 2.0,
+				"runes": {},
+				"species": {},
+				"stage": 1.0,
+				"stash": [],
+				"v": 1.0,
+				"vigil": 0.0,
+				"wave": 1.0,
+				"xp_rate": 0.0
+			},
+			"game_stats": [
+				{
+					"key": "knight",
+					"aspect": "",
+					"max_hp": 53946.6161549419,
+					"attack_damage": 4645.80519925686,
+					"attack_speed": 1.09,
+					"crit_chance": 1.0,
+					"crit_damage": 56.5606208702629,
+					"armor": 5910.09943608653,
+					"dodge": 0.6,
+					"block": 0.6,
+					"range": 28.0,
+					"move_speed": 2750.74846962709
+				},
+				{
+					"key": "barbarian",
+					"aspect": "",
+					"max_hp": 51479.2724464884,
+					"attack_damage": 5347.96674820647,
+					"attack_speed": 0.981,
+					"crit_chance": 1.0,
+					"crit_damage": 57.3519893026654,
+					"armor": 6408.73214025986,
+					"dodge": 0.6,
+					"block": 0.6,
+					"range": 30.0,
+					"move_speed": 3049.52396396438
+				},
+				{
+					"key": "paladin",
+					"aspect": "sino",
+					"max_hp": 53989.0309429277,
+					"attack_damage": 4579.96988068301,
+					"attack_speed": 1.09,
+					"crit_chance": 1.0,
+					"crit_damage": 56.1567958677555,
+					"armor": 6397.20986791121,
+					"dodge": 0.6,
+					"block": 0.6,
+					"range": 182.5,
+					"move_speed": 2692.55049981384
+				},
+				{
+					"key": "ranger",
+					"aspect": "",
+					"max_hp": 53474.2202817846,
+					"attack_damage": 5191.93584190355,
+					"attack_speed": 1.2535,
+					"crit_chance": 1.0,
+					"crit_damage": 59.2018150266832,
+					"armor": 6539.68035867511,
+					"dodge": 0.6,
+					"block": 0.6,
+					"range": 222.5,
+					"move_speed": 2725.10415452296
+				},
+				{
+					"key": "arcanist",
+					"aspect": "",
+					"max_hp": 52416.0715696417,
+					"attack_damage": 5364.03243747881,
+					"attack_speed": 0.872,
+					"crit_chance": 1.0,
+					"crit_damage": 60.6971198069444,
+					"armor": 6494.00951836512,
+					"dodge": 0.6,
+					"block": 0.6,
+					"range": 262.5,
+					"move_speed": 2643.64778976553
+				},
+				{
+					"key": "druid",
+					"aspect": "",
+					"max_hp": 50605.6892875304,
+					"attack_damage": 4803.88113613246,
+					"attack_speed": 0.981,
+					"crit_chance": 1.0,
+					"crit_damage": 58.4481721001325,
+					"armor": 6483.02355588503,
+					"dodge": 0.6,
+					"block": 0.6,
+					"range": 222.5,
+					"move_speed": 2682.71086439741
+				}
+			],
+			"game_power": 516627,
+			"stats": [
+				{
+					"max_hp": 53946.6161549419,
+					"attack_damage": 4645.80519925686,
+					"attack_speed": 1.09,
+					"crit_chance": 1.0,
+					"crit_damage": 56.5606208702629,
+					"armor": 5910.09943608653,
+					"dodge": 0.6,
+					"block": 0.6,
+					"range": 28.0,
+					"move_speed": 2750.74846962709,
+					"key": "knight",
+					"ranged": false,
+					"element": "phys",
+					"aspect": "",
+					"undead": false,
+					"resist": 0.25
+				},
+				{
+					"max_hp": 51479.2724464884,
+					"attack_damage": 5347.96674820647,
+					"attack_speed": 0.981,
+					"crit_chance": 1.0,
+					"crit_damage": 57.3519893026655,
+					"armor": 6408.73214025985,
+					"dodge": 0.6,
+					"block": 0.6,
+					"range": 30.0,
+					"move_speed": 3049.52396396438,
+					"key": "barbarian",
+					"ranged": false,
+					"element": "phys",
+					"aspect": "",
+					"undead": false,
+					"resist": 0.25
+				},
+				{
+					"max_hp": 53989.0309429278,
+					"attack_damage": 4579.96988068302,
+					"attack_speed": 1.09,
+					"crit_chance": 1.0,
+					"crit_damage": 56.1567958677555,
+					"armor": 6397.20986791121,
+					"dodge": 0.6,
+					"block": 0.6,
+					"range": 182.5,
+					"move_speed": 2692.55049981384,
+					"key": "paladin",
+					"ranged": true,
+					"element": "phys",
+					"aspect": "sino",
+					"undead": false,
+					"resist": 0.25
+				},
+				{
+					"max_hp": 53474.2202817846,
+					"attack_damage": 5191.93584190355,
+					"attack_speed": 1.2535,
+					"crit_chance": 1.0,
+					"crit_damage": 59.2018150266832,
+					"armor": 6539.68035867511,
+					"dodge": 0.6,
+					"block": 0.6,
+					"range": 222.5,
+					"move_speed": 2725.10415452296,
+					"key": "ranger",
+					"ranged": true,
+					"element": "phys",
+					"aspect": "",
+					"undead": false,
+					"resist": 0.25
+				},
+				{
+					"max_hp": 52416.0715696417,
+					"attack_damage": 5364.0324374788,
+					"attack_speed": 0.872,
+					"crit_chance": 1.0,
+					"crit_damage": 60.6971198069444,
+					"armor": 6494.00951836512,
+					"dodge": 0.6,
+					"block": 0.6,
+					"range": 262.5,
+					"move_speed": 2643.64778976553,
+					"key": "arcanist",
+					"ranged": true,
+					"element": "arcane",
+					"aspect": "",
+					"undead": false,
+					"resist": 0.25
+				},
+				{
+					"max_hp": 50605.6892875303,
+					"attack_damage": 4803.88113613246,
+					"attack_speed": 0.981,
+					"crit_chance": 1.0,
+					"crit_damage": 58.4481721001324,
+					"armor": 6483.02355588503,
+					"dodge": 0.6,
+					"block": 0.6,
+					"range": 222.5,
+					"move_speed": 2682.71086439741,
+					"key": "druid",
+					"ranged": true,
+					"element": "arcane",
+					"aspect": "",
+					"undead": false,
+					"resist": 0.25,
+					"heal": {
+						"every": 4.0,
+						"mult": 3.0
+					}
+				}
+			],
+			"power": 516627,
+			"first": {
+				"won": true,
+				"time": 2.75229357798165,
+				"blows": 25,
+				"standing": 6,
+				"digest": 313634942
+			},
+			"trial": {
+				"floor": 256,
+				"fights": 9,
+				"digest": 697257075
+			}
+		}
+	],
+	"tops": [
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 1,
+			"rarity": 0,
+			"top": 4.6
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 1,
+			"rarity": 4,
+			"top": 15.272
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 1,
+			"rarity": 9,
+			"top": 68.494
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 6,
+			"rarity": 0,
+			"top": 4.6
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 6,
+			"rarity": 4,
+			"top": 15.272
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 6,
+			"rarity": 9,
+			"top": 68.494
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 15,
+			"rarity": 0,
+			"top": 9.568
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 15,
+			"rarity": 4,
+			"top": 31.76576
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 15,
+			"rarity": 9,
+			"top": 142.46752
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 23,
+			"rarity": 0,
+			"top": 13.984
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 23,
+			"rarity": 4,
+			"top": 46.42688
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 23,
+			"rarity": 9,
+			"top": 208.22176
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 30,
+			"rarity": 0,
+			"top": 17.848
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 30,
+			"rarity": 4,
+			"top": 59.25536
+		},
+		{
+			"kind": "weapon",
+			"stat": "attack_damage",
+			"level": 30,
+			"rarity": 9,
+			"top": 265.75672
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.0138
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.045816
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.205482
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.0138
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.045816
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.205482
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.029532
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.09804624
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.43973148
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.043516
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.14447312
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.64795324
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.055752
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.18509664
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.83014728
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.0575
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.1909
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.856175
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.0575
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.1909
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.856175
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.1196
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.397072
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 9,
+			"top": 1.780844
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.1748
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.580336
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 9,
+			"top": 2.602772
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.2231
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.740692
+		},
+		{
+			"kind": "weapon",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 9,
+			"top": 3.321959
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.0138
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.045816
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.205482
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.0138
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.045816
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.205482
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.028704
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.09529728
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.42740256
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.041952
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.13928064
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.62466528
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.053544
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.17776608
+		},
+		{
+			"kind": "offhand",
+			"stat": "block",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.79727016
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 0,
+			"top": 7.7625
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 4,
+			"top": 25.7715
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 9,
+			"top": 115.583625
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 0,
+			"top": 7.7625
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 4,
+			"top": 25.7715
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 9,
+			"top": 115.583625
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 0,
+			"top": 16.146
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 4,
+			"top": 53.60472
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 9,
+			"top": 240.41394
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 0,
+			"top": 23.598
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 4,
+			"top": 78.34536
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 9,
+			"top": 351.37422
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 0,
+			"top": 30.1185
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 4,
+			"top": 99.99342
+		},
+		{
+			"kind": "offhand",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 9,
+			"top": 448.464465
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 0,
+			"top": 17.71
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 4,
+			"top": 58.7972
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 9,
+			"top": 263.7019
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 0,
+			"top": 17.71
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 4,
+			"top": 58.7972
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 9,
+			"top": 263.7019
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 0,
+			"top": 34.1044
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 4,
+			"top": 113.226608
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 9,
+			"top": 507.814516
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 0,
+			"top": 48.6772
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 4,
+			"top": 161.608304
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 9,
+			"top": 724.803508
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 0,
+			"top": 61.4284
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 4,
+			"top": 203.942288
+		},
+		{
+			"kind": "offhand",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 9,
+			"top": 914.668876
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.01035
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.034362
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.1541115
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.01035
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.034362
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.1541115
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.022356
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.07422192
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.33288084
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.033028
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.10965296
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.49178692
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.042366
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.14065512
+		},
+		{
+			"kind": "offhand",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.63082974
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 0,
+			"top": 10.35
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 4,
+			"top": 34.362
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 9,
+			"top": 154.1115
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 0,
+			"top": 10.35
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 4,
+			"top": 34.362
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 9,
+			"top": 154.1115
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 0,
+			"top": 21.528
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 4,
+			"top": 71.47296
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 9,
+			"top": 320.55192
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 0,
+			"top": 31.464
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 4,
+			"top": 104.46048
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 9,
+			"top": 468.49896
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 0,
+			"top": 40.158
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 4,
+			"top": 133.32456
+		},
+		{
+			"kind": "armor",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 9,
+			"top": 597.95262
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 0,
+			"top": 32.2
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 4,
+			"top": 106.904
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 9,
+			"top": 479.458
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 0,
+			"top": 32.2
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 4,
+			"top": 106.904
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 9,
+			"top": 479.458
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 0,
+			"top": 62.008
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 4,
+			"top": 205.86656
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 9,
+			"top": 923.29912
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 0,
+			"top": 88.504
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 4,
+			"top": 293.83328
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 9,
+			"top": 1317.82456
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 0,
+			"top": 111.688
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 4,
+			"top": 370.80416
+		},
+		{
+			"kind": "armor",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 9,
+			"top": 1663.03432
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.01035
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.034362
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.1541115
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.01035
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.034362
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.1541115
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.021528
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.07147296
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.32055192
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.031464
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.10446048
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.46849896
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.040158
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.13332456
+		},
+		{
+			"kind": "armor",
+			"stat": "block",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.59795262
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 0,
+			"top": 25.76
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 4,
+			"top": 85.5232
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 9,
+			"top": 383.5664
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 0,
+			"top": 25.76
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 4,
+			"top": 85.5232
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 9,
+			"top": 383.5664
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 0,
+			"top": 49.6064
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 4,
+			"top": 164.693248
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 9,
+			"top": 738.639296
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 0,
+			"top": 70.8032
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 4,
+			"top": 235.066624
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 9,
+			"top": 1054.259648
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 0,
+			"top": 89.3504
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 4,
+			"top": 296.643328
+		},
+		{
+			"kind": "helm",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 9,
+			"top": 1330.427456
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 0,
+			"top": 7.245
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 4,
+			"top": 24.0534
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 9,
+			"top": 107.87805
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 0,
+			"top": 7.245
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 4,
+			"top": 24.0534
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 9,
+			"top": 107.87805
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 0,
+			"top": 15.0696
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 4,
+			"top": 50.031072
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 9,
+			"top": 224.386344
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 0,
+			"top": 22.0248
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 4,
+			"top": 73.122336
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 9,
+			"top": 327.949272
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 0,
+			"top": 28.1106
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 4,
+			"top": 93.327192
+		},
+		{
+			"kind": "helm",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 9,
+			"top": 418.566834
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.01265
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.041998
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.1883585
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.01265
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.041998
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.1883585
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.025898
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.08598136
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.38562122
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.037674
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.12507768
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.56096586
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.047978
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.15928696
+		},
+		{
+			"kind": "helm",
+			"stat": "block",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.71439242
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 0,
+			"top": 7.245
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 4,
+			"top": 24.0534
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 9,
+			"top": 107.87805
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 0,
+			"top": 7.245
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 4,
+			"top": 24.0534
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 9,
+			"top": 107.87805
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 0,
+			"top": 15.0696
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 4,
+			"top": 50.031072
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 9,
+			"top": 224.386344
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 0,
+			"top": 22.0248
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 4,
+			"top": 73.122336
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 9,
+			"top": 327.949272
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 0,
+			"top": 28.1106
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 4,
+			"top": 93.327192
+		},
+		{
+			"kind": "pants",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 9,
+			"top": 418.566834
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 0,
+			"top": 22.54
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 4,
+			"top": 74.8328
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 9,
+			"top": 335.6206
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 0,
+			"top": 22.54
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 4,
+			"top": 74.8328
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 9,
+			"top": 335.6206
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 0,
+			"top": 43.4056
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 4,
+			"top": 144.106592
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 9,
+			"top": 646.309384
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 0,
+			"top": 61.9528
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 4,
+			"top": 205.683296
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 9,
+			"top": 922.477192
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 0,
+			"top": 78.1816
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 4,
+			"top": 259.562912
+		},
+		{
+			"kind": "pants",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 9,
+			"top": 1164.124024
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 1,
+			"rarity": 0,
+			"top": 5.37625
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 1,
+			"rarity": 4,
+			"top": 17.84915
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 1,
+			"rarity": 9,
+			"top": 80.0523625
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 6,
+			"rarity": 0,
+			"top": 5.37625
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 6,
+			"rarity": 4,
+			"top": 17.84915
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 6,
+			"rarity": 9,
+			"top": 80.0523625
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 15,
+			"rarity": 0,
+			"top": 11.8864
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 15,
+			"rarity": 4,
+			"top": 39.462848
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 15,
+			"rarity": 9,
+			"top": 176.988496
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 23,
+			"rarity": 0,
+			"top": 17.6732
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 23,
+			"rarity": 4,
+			"top": 58.675024
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 23,
+			"rarity": 9,
+			"top": 263.153948
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 30,
+			"rarity": 0,
+			"top": 22.73665
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 30,
+			"rarity": 4,
+			"top": 75.485678
+		},
+		{
+			"kind": "pants",
+			"stat": "move_speed",
+			"level": 30,
+			"rarity": 9,
+			"top": 338.5487185
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 1,
+			"rarity": 0,
+			"top": 6.325
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 1,
+			"rarity": 4,
+			"top": 20.999
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 1,
+			"rarity": 9,
+			"top": 94.17925
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 6,
+			"rarity": 0,
+			"top": 6.325
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 6,
+			"rarity": 4,
+			"top": 20.999
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 6,
+			"rarity": 9,
+			"top": 94.17925
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 15,
+			"rarity": 0,
+			"top": 13.984
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 15,
+			"rarity": 4,
+			"top": 46.42688
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 15,
+			"rarity": 9,
+			"top": 208.22176
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 23,
+			"rarity": 0,
+			"top": 20.792
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 23,
+			"rarity": 4,
+			"top": 69.02944
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 23,
+			"rarity": 9,
+			"top": 309.59288
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 30,
+			"rarity": 0,
+			"top": 26.749
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 30,
+			"rarity": 4,
+			"top": 88.80668
+		},
+		{
+			"kind": "boots",
+			"stat": "move_speed",
+			"level": 30,
+			"rarity": 9,
+			"top": 398.29261
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.01035
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.034362
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.1541115
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.01035
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.034362
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.1541115
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.023598
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.07834536
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.35137422
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.035374
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.11744168
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.52671886
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.045678
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.15165096
+		},
+		{
+			"kind": "boots",
+			"stat": "dodge",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.68014542
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 0,
+			"top": 9.66
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 4,
+			"top": 32.0712
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 9,
+			"top": 143.8374
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 0,
+			"top": 9.66
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 4,
+			"top": 32.0712
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 9,
+			"top": 143.8374
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 0,
+			"top": 18.6024
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 4,
+			"top": 61.759968
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 9,
+			"top": 276.989736
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 0,
+			"top": 26.5512
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 4,
+			"top": 88.149984
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 9,
+			"top": 395.347368
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 0,
+			"top": 33.5064
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 4,
+			"top": 111.241248
+		},
+		{
+			"kind": "boots",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 9,
+			"top": 498.910296
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 1,
+			"rarity": 0,
+			"top": 2.07
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 1,
+			"rarity": 4,
+			"top": 6.8724
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 1,
+			"rarity": 9,
+			"top": 30.8223
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 6,
+			"rarity": 0,
+			"top": 2.07
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 6,
+			"rarity": 4,
+			"top": 6.8724
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 6,
+			"rarity": 9,
+			"top": 30.8223
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 15,
+			"rarity": 0,
+			"top": 4.3056
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 15,
+			"rarity": 4,
+			"top": 14.294592
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 15,
+			"rarity": 9,
+			"top": 64.110384
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 23,
+			"rarity": 0,
+			"top": 6.2928
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 23,
+			"rarity": 4,
+			"top": 20.892096
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 23,
+			"rarity": 9,
+			"top": 93.699792
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 30,
+			"rarity": 0,
+			"top": 8.0316
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 30,
+			"rarity": 4,
+			"top": 26.664912
+		},
+		{
+			"kind": "gloves",
+			"stat": "attack_damage",
+			"level": 30,
+			"rarity": 9,
+			"top": 119.590524
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.0115
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.03818
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.171235
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.0115
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.03818
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.171235
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.025162
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.08353784
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.37466218
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.037306
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.12385592
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.55548634
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.047932
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.15913424
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.71370748
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.092
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.30544
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 9,
+			"top": 1.36988
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.092
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.30544
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 9,
+			"top": 1.36988
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.19136
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.6353152
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 9,
+			"top": 2.8493504
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.27968
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.9285376
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 9,
+			"top": 4.1644352
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.35696
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 4,
+			"top": 1.1851072
+		},
+		{
+			"kind": "gloves",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 9,
+			"top": 5.3151344
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 1,
+			"rarity": 0,
+			"top": 1.38
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 1,
+			"rarity": 4,
+			"top": 4.5816
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 1,
+			"rarity": 9,
+			"top": 20.5482
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 6,
+			"rarity": 0,
+			"top": 1.38
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 6,
+			"rarity": 4,
+			"top": 4.5816
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 6,
+			"rarity": 9,
+			"top": 20.5482
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 15,
+			"rarity": 0,
+			"top": 2.8704
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 15,
+			"rarity": 4,
+			"top": 9.529728
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 15,
+			"rarity": 9,
+			"top": 42.740256
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 23,
+			"rarity": 0,
+			"top": 4.1952
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 23,
+			"rarity": 4,
+			"top": 13.928064
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 23,
+			"rarity": 9,
+			"top": 62.466528
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 30,
+			"rarity": 0,
+			"top": 5.3544
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 30,
+			"rarity": 4,
+			"top": 17.776608
+		},
+		{
+			"kind": "necklace",
+			"stat": "attack_damage",
+			"level": 30,
+			"rarity": 9,
+			"top": 79.727016
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.0092
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.030544
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.136988
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.0092
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.030544
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.136988
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.020378
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.06765496
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.30342842
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.030314
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.10064248
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.45137546
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.039008
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.12950656
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.58082912
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.05175
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.17181
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.7705575
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.05175
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.17181
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.7705575
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.10764
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.3573648
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 9,
+			"top": 1.6027596
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.15732
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.5223024
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 9,
+			"top": 2.3424948
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.20079
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.6666228
+		},
+		{
+			"kind": "necklace",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 9,
+			"top": 2.9897631
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.0092
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.030544
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.136988
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.0092
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.030544
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.136988
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.020378
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.06765496
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.30342842
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.030314
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.10064248
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.45137546
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.039008
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.12950656
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.58082912
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.046
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.15272
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.68494
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.046
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.15272
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.68494
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.09568
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.3176576
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 9,
+			"top": 1.4246752
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.13984
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.4642688
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 9,
+			"top": 2.0822176
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.17848
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.5925536
+		},
+		{
+			"kind": "earring",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 9,
+			"top": 2.6575672
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.0092
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.030544
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.136988
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.0092
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.030544
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.136988
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.020378
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.06765496
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.30342842
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.030314
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.10064248
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.45137546
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.039008
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.12950656
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.58082912
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.06095
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.202354
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.9075455
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.06095
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.202354
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.9075455
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.125948
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.41814736
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 9,
+			"top": 1.87536572
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.183724
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.60996368
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 9,
+			"top": 2.73565036
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.234278
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.77780296
+		},
+		{
+			"kind": "ring",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 9,
+			"top": 3.48839942
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.0069
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.022908
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.102741
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.0069
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.022908
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.102741
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.014766
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.04902312
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.21986574
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.021758
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.07223656
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.32397662
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.027876
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.09254832
+		},
+		{
+			"kind": "ring",
+			"stat": "dodge",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.41507364
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.0092
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.030544
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.136988
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.0092
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.030544
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.136988
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.020378
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.06765496
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.30342842
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.030314
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.10064248
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.45137546
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.039008
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.12950656
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_chance",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.58082912
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.06095
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.202354
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.9075455
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.06095
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.202354
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.9075455
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.125948
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.41814736
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 15,
+			"rarity": 9,
+			"top": 1.87536572
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.183724
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.60996368
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 23,
+			"rarity": 9,
+			"top": 2.73565036
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.234278
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.77780296
+		},
+		{
+			"kind": "bracelet",
+			"stat": "crit_damage",
+			"level": 30,
+			"rarity": 9,
+			"top": 3.48839942
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.0069
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.022908
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.102741
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.0069
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.022908
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.102741
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.014352
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.04764864
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.21370128
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.020976
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.06964032
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.31233264
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.026772
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.08888304
+		},
+		{
+			"kind": "bracelet",
+			"stat": "block",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.39863508
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 0,
+			"top": 25.76
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 4,
+			"top": 85.5232
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 1,
+			"rarity": 9,
+			"top": 383.5664
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 0,
+			"top": 25.76
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 4,
+			"top": 85.5232
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 6,
+			"rarity": 9,
+			"top": 383.5664
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 0,
+			"top": 49.6064
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 4,
+			"top": 164.693248
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 15,
+			"rarity": 9,
+			"top": 738.639296
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 0,
+			"top": 70.8032
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 4,
+			"top": 235.066624
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 23,
+			"rarity": 9,
+			"top": 1054.259648
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 0,
+			"top": 89.3504
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 4,
+			"top": 296.643328
+		},
+		{
+			"kind": "cape",
+			"stat": "max_hp",
+			"level": 30,
+			"rarity": 9,
+			"top": 1330.427456
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 1,
+			"rarity": 0,
+			"top": 0.0115
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 1,
+			"rarity": 4,
+			"top": 0.03818
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 1,
+			"rarity": 9,
+			"top": 0.171235
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 6,
+			"rarity": 0,
+			"top": 0.0115
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 6,
+			"rarity": 4,
+			"top": 0.03818
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 6,
+			"rarity": 9,
+			"top": 0.171235
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 15,
+			"rarity": 0,
+			"top": 0.02599
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 15,
+			"rarity": 4,
+			"top": 0.0862868
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 15,
+			"rarity": 9,
+			"top": 0.3869911
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 23,
+			"rarity": 0,
+			"top": 0.03887
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 23,
+			"rarity": 4,
+			"top": 0.1290484
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 23,
+			"rarity": 9,
+			"top": 0.5787743
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 30,
+			"rarity": 0,
+			"top": 0.05014
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 30,
+			"rarity": 4,
+			"top": 0.1664648
+		},
+		{
+			"kind": "cape",
+			"stat": "dodge",
+			"level": 30,
+			"rarity": 9,
+			"top": 0.7465846
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 0,
+			"top": 6.21
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 4,
+			"top": 20.6172
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 1,
+			"rarity": 9,
+			"top": 92.4669
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 0,
+			"top": 6.21
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 4,
+			"top": 20.6172
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 6,
+			"rarity": 9,
+			"top": 92.4669
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 0,
+			"top": 12.9168
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 4,
+			"top": 42.883776
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 15,
+			"rarity": 9,
+			"top": 192.331152
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 0,
+			"top": 18.8784
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 4,
+			"top": 62.676288
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 23,
+			"rarity": 9,
+			"top": 281.099376
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 0,
+			"top": 24.0948
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 4,
+			"top": 79.994736
+		},
+		{
+			"kind": "cape",
+			"stat": "armor",
+			"level": 30,
+			"rarity": 9,
+			"top": 358.771572
+		}
+	]
+}
