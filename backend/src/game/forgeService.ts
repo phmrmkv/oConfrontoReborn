@@ -9,7 +9,7 @@ import { addGold, addItem, assertNotFavorite, recordItem, takeStack } from '../e
 import { event } from './adventureService';
 import { requireIdle } from './gameService';
 import { npcBuyPrice, percentOf, type Settings } from '../../../shared/economy';
-import { rarityName } from '../../../shared/rarity';
+import { MAX_RARITY, awakenCost, hasRarity, rarityName } from '../../../shared/rarity';
 import { vocationAllowed } from '../../../shared/adventure';
 import { forgeMaterials, forgeableSlots, isForgeable, materialForLevel, reforgeKeptTier, salvageReturn } from '../../../shared/forge';
 type Tx = Prisma.TransactionClient;
@@ -76,7 +76,7 @@ export async function reforge(accountId: number, characterId: number, itemId: nu
       await takeStack(tx, characterId, material.id, qty, 'FORGE_MATERIAL_USE', ref);
       await addGold(tx, characterId, -gold, 'FORGE_REFORGE', ref);
       // O mesmo item (mesma linha, mesmo slot se estiver equipado) passa a ser o novo; o extrato registra a troca.
-      await tx.inventoryItem.update({ where: { id: item.id }, data: { blueprintId: target.id, upgradeTier: tier } });
+      await tx.inventoryItem.update({ where: { id: item.id }, data: { blueprintId: target.id, upgradeTier: tier, upgradeFails: 0 } });
       // A raridade é do exemplar: continua a mesma depois de reforjar.
       await recordItem(tx, characterId, item.blueprintId, -1, 'FORGE_REFORGE_OUT', ref, item.upgradeTier, item.rarity);
       await recordItem(tx, characterId, target.id, 1, 'FORGE_REFORGE_IN', ref, tier, item.rarity);
@@ -109,9 +109,35 @@ export async function salvage(accountId: number, characterId: number, itemId: nu
   });
 }
 
+// Despertar: gasta fragmentos de chefe para subir a raridade de um exemplar em um degrau. Vale para item equipado,
+// favorito e +10 numerado (nada se perde). O extrato registra a troca: sai na raridade antiga e entra na nova.
+export async function awaken(accountId: number, characterId: number, itemId: number, key: string) {
+  integer(itemId);
+  return transaction(async tx => {
+    const c = await lockCharacter(tx, accountId, characterId);
+    return once(tx, characterId, key, ['awaken', itemId], async () => {
+      await requireIdle(tx, characterId);
+      const item = await tx.inventoryItem.findFirst({ where: { id: itemId, characterId }, include: { blueprint: true } });
+      if (!item) throw new GameError(404, 'Item não encontrado.');
+      if (item.quantity !== 1 || !hasRarity(item.blueprint.slot)) throw new GameError(409, 'Só equipamento tem raridade para despertar.');
+      if (item.rarity >= MAX_RARITY) throw new GameError(409, `${item.blueprint.name} já é ${rarityName(MAX_RARITY)}, a raridade mais alta.`);
+      const settings = await loadSettings(tx), target = item.rarity + 1, cost = awakenCost(target, settings['boss.awakenBaseFragments']);
+      if (c.bossFragments < cost) throw new GameError(409, `Faltam fragmentos de chefe: despertar para ${rarityName(target)} pede ${cost} e você tem ${c.bossFragments}.`);
+      const left = await tx.character.update({ where: { id: characterId }, data: { bossFragments: { decrement: cost } }, select: { bossFragments: true } });
+      if (left.bossFragments < 0) throw new GameError(409, 'Fragmentos insuficientes.');
+      await tx.inventoryItem.update({ where: { id: item.id }, data: { rarity: target } });
+      const ref = { type: 'item', id: item.id };
+      await recordItem(tx, characterId, item.blueprintId, -1, 'FORGE_AWAKEN_OUT', ref, item.upgradeTier, item.rarity);
+      await recordItem(tx, characterId, item.blueprintId, 1, 'FORGE_AWAKEN_IN', ref, item.upgradeTier, target);
+      await event(tx, characterId, 'FORGE', `Despertado: ${item.blueprint.name}`, `${rarityName(item.rarity)} → ${rarityName(target)}. Gastou ${cost} fragmento(s) de chefe.`);
+      return { message: `${item.blueprint.name} agora é ${rarityName(target)}.`, rarity: target, fragments: left.bossFragments };
+    });
+  });
+}
+
 // O que a tela do Ferreiro precisa: materiais na mochila e o catálogo que dá para fabricar/reforjar, com os custos já calculados.
 export async function forgeOverview(accountId: number, characterId: number) {
-  const c = await prisma.character.findFirst({ where: { id: characterId, accountId }, select: { level: true } });
+  const c = await prisma.character.findFirst({ where: { id: characterId, accountId }, select: { level: true, bossFragments: true } });
   if (!c) throw new GameError(404, 'Personagem não encontrado.');
   const [settings, materialRows, recipes] = await Promise.all([loadSettings(prisma),
     prisma.itemBlueprint.findMany({ where: { name: { in: forgeMaterials.map(m => m.name) } }, select: { id: true, name: true, spriteUrl: true } }),
@@ -122,7 +148,7 @@ export async function forgeOverview(accountId: number, characterId: number) {
   const stacks = await prisma.inventoryItem.groupBy({ by: ['blueprintId'], where: { characterId, isEquipped: false, blueprintId: { in: materialRows.map(m => m.id) } }, _sum: { quantity: true } });
   const have = new Map(stacks.map(s => [s.blueprintId, s._sum.quantity ?? 0]));
   const materials = forgeMaterials.map(m => { const row = materialRows.find(r => r.name === m.name); return { name: m.name, minLevel: m.minLevel, spriteUrl: row?.spriteUrl ?? '', have: row ? have.get(row.id) ?? 0 : 0 }; });
-  return { level: c.level, craftMaterials: settings['forge.craftMaterials'], salvageMaterials: settings['forge.salvageMaterials'], shopMaxLevel: settings['shop.maxEquipmentLevel'], materials, bag,
+  return { level: c.level, bossFragments: c.bossFragments, fragmentsPerWin: settings['boss.fragmentsPerWin'], awakenBase: settings['boss.awakenBaseFragments'], craftMaterials: settings['forge.craftMaterials'], salvageMaterials: settings['forge.salvageMaterials'], shopMaxLevel: settings['shop.maxEquipmentLevel'], materials, bag,
     recipes: recipes.map(r => ({ id: r.id, name: r.name, slot: r.slot, minLevel: r.minLevel, vocations: r.vocations, spriteUrl: r.spriteUrl, attack: r.attack, defense: r.defense, armor: r.armor, magicAttack: r.magicAttack,
       material: materialForLevel(r.minLevel).name, craftGold: craftCost(r, settings).toString(), reforgeGold: reforgeCost(r, settings).toString() })) };
 }

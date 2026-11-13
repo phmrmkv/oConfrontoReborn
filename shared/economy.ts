@@ -17,6 +17,8 @@ export const itemReasons = {
   MARKET_LIST: 'transfer', MARKET_RETURN: 'transfer', MARKET_BUY: 'transfer',
   // Ferreiro: fabricar cria o item e gasta materiais; reforjar troca o item antigo pelo novo; desmontar destrói o item e devolve materiais.
   FORGE_CRAFT: 'source', FORGE_MATERIAL_USE: 'sink', FORGE_REFORGE_OUT: 'sink', FORGE_REFORGE_IN: 'source', FORGE_SALVAGE: 'sink', FORGE_SALVAGE_MATERIAL: 'source',
+  // Despertar: o mesmo exemplar troca de raridade (sai na antiga e entra na nova, como na reforja).
+  FORGE_AWAKEN_OUT: 'sink', FORGE_AWAKEN_IN: 'source',
   GROUP_HUNT: 'source',
   // Espólio de duelo e resgate: o item muda de dono (soma zero).
   DUEL_LOOT_OUT: 'transfer', DUEL_LOOT_IN: 'transfer', DUEL_RANSOM_OUT: 'transfer', DUEL_RANSOM_IN: 'transfer',
@@ -38,6 +40,9 @@ export const settingDefs = {
   'economy.upgradePricePercent': { default: 100, min: 10, max: 500, label: 'Preço das melhorias do Ferreiro', unit: '%', group: 'Preços' },
   'upgrade.safeUntilTier': { default: 3, min: 0, max: 10, label: 'Melhorias seguras até o nível (+N nunca falha)', unit: '+N', group: 'Ferreiro' },
   'upgrade.breakFromTier': { default: 6, min: 0, max: 10, label: 'Só pode quebrar ao tentar sair de +N ou mais (6 = a partir da tentativa de chegar ao +7)', unit: '+N', group: 'Ferreiro' },
+  // Falha que acumula chance (plano de itens, Fase 2): cada falha soma pontos à próxima tentativa do MESMO exemplar; zera no acerto.
+  'upgrade.failBonusPercent': { default: 5, min: 0, max: 25, label: 'Pontos de chance somados à próxima tentativa do mesmo item a cada falha (0 = desligado)', unit: 'pontos', group: 'Ferreiro' },
+  'upgrade.failBonusMax': { default: 15, min: 0, max: 75, label: 'Teto da chance somada pelas falhas seguidas do mesmo item', unit: 'pontos', group: 'Ferreiro' },
   'upgrade.breakOnFailPercent': { default: 50, min: 0, max: 100, label: 'Chance de o item quebrar quando a melhoria falha', unit: '%', group: 'Ferreiro' },
   'forge.craftPricePercent': { default: 80, min: 0, max: 500, label: 'Fabricar: ouro cobrado sobre o preço de loja do item', unit: '%', group: 'Ferreiro' },
   'forge.reforgePricePercent': { default: 40, min: 0, max: 500, label: 'Reforjar: ouro cobrado sobre o preço de loja do item novo', unit: '%', group: 'Ferreiro' },
@@ -61,6 +66,9 @@ export const settingDefs = {
   'rarity.mythicPer10k': { default: 10, min: 0, max: 10000, label: 'Raridade: equipamentos que caem Míticos', unit: 'por 10 mil', group: 'Raridade' },
   // Loot inteligente (shared/loot.ts): equipamento de outra vocação vira, com esta chance, o equivalente da vocação de quem caçou.
   'loot.ownVocationPercent': { default: 70, min: 0, max: 100, label: 'Loot inteligente: chance de um equipamento de outra vocação virar o equivalente da vocação de quem caçou', unit: '%', group: 'Recompensas' },
+  // Fragmentos de chefe (shared/rarity.ts, awakenCost): o caminho garantido para a raridade, sem depender do sorteio.
+  'boss.fragmentsPerWin': { default: 1, min: 0, max: 20, label: 'Fragmentos de chefe por vitória contra chefe (caçada e Caçada em grupo; 0 = desligado)', unit: '', group: 'Raridade' },
+  'boss.awakenBaseFragments': { default: 5, min: 1, max: 1000, label: 'Fragmentos para despertar um item de Comum para Incomum (dobra a cada degrau: Raro 2×, Épico 4×, Lendário 8×, Mítico 16×)', unit: '', group: 'Raridade' },
   'rarity.bossBoostPercent': { default: 300, min: 100, max: 1000, label: 'Raridade: multiplicador dessas chances quando quem derruba é um chefe', unit: '%', group: 'Raridade' },
   'pvp.levelBandPercent': { default: 10, min: 1, max: 100, label: 'Duelo: diferença máxima de nível entre os dois (% do maior nível)', unit: '%', group: 'Duelo' },
   'pvp.dailyLimit': { default: 10, min: 1, max: 100, label: 'Duelo: duelos por personagem a cada 24 horas', unit: '', group: 'Duelo' },
@@ -151,23 +159,33 @@ export function statsResetCost(level: number, baseGold: number, perLevelSquared:
 // Chance de passar de +N para +N+1. Até o nível seguro (padrão +3) nunca falha; depois, o risco cresce.
 const riskyUpgradeChance = [85, 75, 65, 55, 45, 35, 25] as const; // de +3→+4 até +9→+10
 export const maxUpgradeTier = 10;
-export function upgradeSuccessPercent(currentTier: number, safeUntilTier: number): number {
+// `bonus`: pontos a mais pelas falhas seguidas do mesmo item (upgradeFailBonus); nunca passa de 100%.
+export function upgradeSuccessPercent(currentTier: number, safeUntilTier: number, bonus = 0): number {
   if (!Number.isInteger(currentTier) || currentTier < 0 || currentTier >= maxUpgradeTier) throw new RangeError('Nível inválido.');
   if (currentTier < safeUntilTier) return 100;
-  return riskyUpgradeChance[Math.max(0, Math.min(riskyUpgradeChance.length - 1, currentTier - 3))];
+  return Math.min(100, riskyUpgradeChance[Math.max(0, Math.min(riskyUpgradeChance.length - 1, currentTier - 3))] + Math.max(0, bonus));
 }
 // Pedra de Proteção: item de loot raro (nunca vendido por dinheiro real). Só é gasta quando salva um item que quebraria.
 export const PROTECTION_STONE = 'Pedra de Proteção';
 export type UpgradeOutcome = 'SUCCESS' | 'FAILED' | 'BROKE';
 export type UpgradeResult = UpgradeOutcome | 'PROTECTED';
 // Os dois sorteios (1..100) vêm de fora para a regra ser testável. Falhou: o ouro já foi gasto; o item pode quebrar.
-export interface UpgradeRules { safeUntilTier: number; breakFromTier: number; breakOnFailPercent: number }
-// Chance (0..100) de o item QUEBRAR ao tentar sair de +currentTier: só existe a partir de breakFromTier, e só quando a tentativa falha.
-export function upgradeBreakPercent(currentTier: number, rules: UpgradeRules): number {
-  if (currentTier < rules.breakFromTier) return 0;
-  return (100 - upgradeSuccessPercent(currentTier, rules.safeUntilTier)) * rules.breakOnFailPercent / 100;
+// `failBonusPercent`/`failBonusMax`: falha que acumula chance (upgrade.failBonus*); sem eles, a regra é a antiga.
+export interface UpgradeRules { safeUntilTier: number; breakFromTier: number; breakOnFailPercent: number; failBonusPercent?: number; failBonusMax?: number }
+/** Pontos a mais na chance de sucesso depois de `fails` falhas seguidas do mesmo item. */
+export function upgradeFailBonus(fails: number, rules: Pick<UpgradeRules, 'failBonusPercent' | 'failBonusMax'>): number {
+  return Math.max(0, Math.min(rules.failBonusMax ?? 0, Math.max(0, Math.trunc(fails) || 0) * (rules.failBonusPercent ?? 0)));
 }
-export function resolveUpgrade(currentTier: number, rules: UpgradeRules, rollSuccess: number, rollBreak: number): UpgradeOutcome {
-  if (rollSuccess <= upgradeSuccessPercent(currentTier, rules.safeUntilTier)) return 'SUCCESS';
+/** A partir de quantas falhas seguidas a ajuda para de crescer (0 = sem ajuda). */
+export const upgradeFailCap = (rules: Pick<UpgradeRules, 'failBonusPercent' | 'failBonusMax'>) =>
+  (rules.failBonusPercent ?? 0) > 0 && (rules.failBonusMax ?? 0) > 0 ? Math.ceil((rules.failBonusMax ?? 0) / (rules.failBonusPercent ?? 1)) : 0;
+// Chance (0..100) de o item QUEBRAR ao tentar sair de +currentTier: só existe a partir de breakFromTier, e só quando a tentativa falha.
+export function upgradeBreakPercent(currentTier: number, rules: UpgradeRules, fails = 0): number {
+  if (currentTier < rules.breakFromTier) return 0;
+  return (100 - upgradeSuccessPercent(currentTier, rules.safeUntilTier, upgradeFailBonus(fails, rules))) * rules.breakOnFailPercent / 100;
+}
+// `fails`: falhas seguidas deste item (InventoryItem.upgradeFails), que somam chance pela regra upgrade.failBonus*.
+export function resolveUpgrade(currentTier: number, rules: UpgradeRules, rollSuccess: number, rollBreak: number, fails = 0): UpgradeOutcome {
+  if (rollSuccess <= upgradeSuccessPercent(currentTier, rules.safeUntilTier, upgradeFailBonus(fails, rules))) return 'SUCCESS';
   return currentTier >= rules.breakFromTier && rollBreak <= rules.breakOnFailPercent ? 'BROKE' : 'FAILED';
 }

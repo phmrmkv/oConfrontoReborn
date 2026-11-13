@@ -29,6 +29,12 @@ export const raritySuffix = (rarity: number) => rarity > 0 ? ` · ${rarityName(r
 export const rarityMultiplier = (rarity: number, advantagePercent = 100) =>
   1 + (rarityOf(rarity).budget - 100) * Math.max(0, Math.min(100, advantagePercent)) / 10000;
 
+/**
+ * Fragmentos de chefe para despertar um exemplar até `target` (um degrau acima do atual): dobra a cada degrau.
+ * Com a base padrão de 5: Incomum 5, Raro 10, Épico 20, Lendário 40, Mítico 80 (155 do Comum ao Mítico).
+ */
+export const awakenCost = (target: number, base: number) => target < 1 || target > MAX_RARITY ? 0 : Math.max(1, Math.trunc(base)) * 2 ** (target - 1);
+
 /** Chances, por 10 mil drops de equipamento, de cada raridade acima de Comum: da Incomum à Mítica. */
 export type RarityOdds = readonly [number, number, number, number, number];
 export const rarityOddsOf = (s: Record<string, number>): RarityOdds =>

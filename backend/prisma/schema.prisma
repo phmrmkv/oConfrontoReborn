@@ -104,7 +104,9 @@ model Character {
   agility                Int                    @default(10)
   resistance             Int                    @default(10)
   statPoints             Int                    @default(0)
-  goldInHand             BigInt                 @default(100)
+  goldInHand             BigInt                 @default(100)
+  // Fragmentos de chefe: cada vitória contra chefe dá alguns; o Ferreiro os usa para despertar a raridade de um item (shared/rarity.ts).
+  bossFragments  Int      @default(0)
   goldInBank             BigInt                 @default(0)
   huntMonsterId          Int?
   huntEndsAt             DateTime?
@@ -201,6 +203,8 @@ model InventoryItem {
   upgradeTier  Int           @default(0)
   // Raridade do exemplar: 0 Comum … 5 Mítico (shared/rarity.ts). Só equipamento sai acima de Comum.
   rarity       Int           @default(0)
+  // Falhas seguidas de melhoria deste exemplar (somam chance à próxima, upgrade.failBonus*); zera no acerto.
+  upgradeFails Int           @default(0)
   favorite     Boolean       @default(false)
   rareItemId   Int?          @unique
   rareItem     RareItem?     @relation(fields: [rareItemId], references: [id])

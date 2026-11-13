@@ -289,13 +289,14 @@ async function finish(tx: Tx, b: LockedBattle, fighters: GroupFighter[], outcome
     const xp = scaleInt(scaleInt(scaleInt(hunt.experience, settings['economy.xpRewardPercent']), settings['group.rewardPercent']), 100 + bonus);
     const gold = scaleInt(scaleInt(scaleInt(dice(hunt.goldMin, hunt.goldMax), settings['economy.goldRewardPercent']), settings['group.rewardPercent']), 100 + bonus);
     const gained = gainExperience(c, xp);
-    await tx.character.update({ where: { id: c.id }, data: { hp: Math.min(f.hp, c.maxHp), mana: Math.min(f.mana, c.maxMana), ...gained.data } });
+    const fragments = settings['boss.fragmentsPerWin'];
+    await tx.character.update({ where: { id: c.id }, data: { hp: Math.min(f.hp, c.maxHp), mana: Math.min(f.mana, c.maxMana), ...gained.data, ...(fragments ? { bossFragments: { increment: fragments } } : {}) } });
     await addGold(tx, c.id, BigInt(gold), 'GROUP_HUNT', ref);
     const materials = settings['group.materials'];
     if (material && materials > 0) await addItem(tx, c.id, material.id, materials, 'GROUP_HUNT', ref);
     await tx.groupBattleFighter.update({ where: { id: row.id }, data: { rewarded: true, rewardGold: BigInt(gold), rewardExperience: xp } });
     await event(tx, c.id, 'GROUP', `Vitória em grupo: ${hunt.title}`,
-      `${freed && hunt.bonusText ? `O grupo conseguiu ${hunt.bonusText} (bônus). ` : ''}+${xp.toLocaleString('pt-BR')} XP, +${gold.toLocaleString('pt-BR')} ouro${material && materials ? ` e ${materials}× ${material.name}` : ''}.${fate}`);
+      `${freed && hunt.bonusText ? `O grupo conseguiu ${hunt.bonusText} (bônus). ` : ''}+${xp.toLocaleString('pt-BR')} XP, +${gold.toLocaleString('pt-BR')} ouro${material && materials ? `, ${materials}× ${material.name}` : ''}${fragments ? ` e ${fragments} fragmento(s) de chefe` : ''}.${fate}`);
     await awardAchievements(tx, c.id);
   }
 }

@@ -4,7 +4,7 @@ import { GameError, integer } from '../core/engine';
 import { recordError } from '../core/monitor';
 import { buyNpc, equip } from './inventoryService';
 import { addStat, heal, resetStats, sellNpc, unequip, upgrade, usePotion } from './gameService';
-import { craft, forgeOverview, reforge, salvage } from './forgeService';
+import { awaken, craft, forgeOverview, reforge, salvage } from './forgeService';
 import { advanceDuel, answerDuel, cancelChallenge, challenge, chooseDuelAction, duelHistory, duelRanking, duelState, forfeitDuel, honorCosmeticAction, ransomLoot } from './duelService';
 import { advanceGroupRound, answerInvite, chooseGroupAction, createParty, groupState, inviteFriend, leaveParty, removeMember, startGroupHunt } from './groupHuntService';
 
@@ -59,6 +59,7 @@ export function gameRouter() {
   router.get('/characters/:characterId/forge', handle((a, c) => forgeOverview(a, c)));
   router.post('/characters/:characterId/forge/craft', handle((a, c, req) => craft(a, c, integer(req.body?.blueprintId), req.get('idempotency-key') ?? '')));
   router.post('/characters/:characterId/forge/reforge', handle((a, c, req) => reforge(a, c, integer(req.body?.itemId), integer(req.body?.targetId), req.get('idempotency-key') ?? '')));
+  router.post('/characters/:characterId/forge/awaken', handle((a, c, req) => awaken(a, c, integer(req.body?.itemId), req.get('idempotency-key') ?? '')));
   router.post('/characters/:characterId/forge/salvage', handle((a, c, req) => salvage(a, c, integer(req.body?.itemId), req.body?.confirmUpgraded === true, req.get('idempotency-key') ?? '')));
   return router;
 }
