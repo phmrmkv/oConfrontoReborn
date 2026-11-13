@@ -1,6 +1,10 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-12-app-no-site', date: '2026-11-12', title: 'O app Confrontation aparece no site', items: [
+    'A aba App Confrontation, em Comunidade, mostra o progresso que a sua conta enviou pelo app: fase mais longe, poder da companhia, Vigília, ouro ganho e itens coletados.',
+    'Na mesma aba ficam os rankings do app, desta semana e geral, com a sua posição. O ouro do app e o ouro deste jogo continuam separados.',
+  ] },
   { id: '2026-11-12-retratos-das-criaturas', date: '2026-11-12', title: 'A arte nova saiu da arena', items: [
     'As criaturas aparecem com o retrato da arte nova também na lista de Caçar, no Bestiário, nas Missões, no registro da batalha e na Caçada em grupo.',
     'Na Caçada em grupo, a fera da arena também usa a arte nova, com as mesmas animações da caçada.',

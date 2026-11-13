@@ -43,6 +43,44 @@ test('MySQL: conta — trocar senha exige a atual, encerra os outros acessos e a
   } finally { await new Promise<void>(resolve => server.close(() => resolve())); await prisma.$disconnect(); }
 });
 
+// O app Confrontation visto pelo site (aba App): o resumo do save na nuvem e os rankings, pela conta do cookie.
+test('MySQL: conta — o site mostra o progresso e o ranking do app Confrontation da conta aberta', async () => {
+  assert.match(process.env.DATABASE_URL ?? '', /\/[^/?]*_test(?:\?|$)/, 'Use uma base dedicada terminada em _test.');
+  const tag = randomUUID().slice(0, 8), password = 'Conta-teste-2026!', now = new Date();
+  const withApp = await prisma.account.create({ data: { email: `app-${tag}@example.invalid`, password: await hashPassword(password), characters: { create: { name: `App ${tag}` } } } });
+  await prisma.account.create({ data: { email: `semapp-${tag}@example.invalid`, password: await hashPassword(password), characters: { create: { name: `Sem ${tag}` } } } });
+  await prisma.confrontationSave.create({ data: { accountId: withApp.id, version: 3, data: '{}', sizeBytes: 2, savedAt: now, verifiedAt: now, goldTotal: 1234n, xpTotal: 99n, items: 7, furthest: 5, vigilBest: 0, power: 4321n } });
+  await prisma.confrontationRank.create({ data: { accountId: withApp.id, period: 'all', metric: 'POWER', value: 4321n, reachedAt: now } });
+  const server = createApp().listen(0, '127.0.0.1'); await eventOnce(server, 'listening');
+  const address = server.address(); assert(address && typeof address !== 'string');
+  const base = `http://127.0.0.1:${address.port}/api`, origin = process.env.APP_ORIGIN ?? 'http://localhost:5173';
+  const call = (cookie: string, path: string, body?: unknown) => fetch(base + path, { method: body === undefined ? 'GET' : 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Game-Client': 'oconfronto', Origin: origin, Cookie: cookie }, body: body === undefined ? undefined : JSON.stringify(body) });
+  const login = async (email: string) => (await call('', '/auth/login', { email, password })).headers.get('set-cookie')?.split(';')[0] ?? '';
+  type Board = { items: { name: string; value: string; mine: boolean }[]; me: { rank: number; value: string } | null };
+  try {
+    // Sem conta aberta não há o que mostrar.
+    assert.equal((await call('', '/confrontation/summary')).status, 401);
+    assert.equal((await call('', '/confrontation/rankings?metric=power')).status, 401);
+    const mine = await login(`app-${tag}@example.invalid`);
+    const summary = await (await call(mine, '/confrontation/summary')).json() as { save: { version: number; verified: { power: string; furthest: number; goldTotal: string; items: number } } | null };
+    assert.equal(summary.save?.version, 3);
+    assert.deepEqual(summary.save?.verified && { power: summary.save.verified.power, furthest: summary.save.verified.furthest, goldTotal: summary.save.verified.goldTotal, items: summary.save.verified.items },
+      { power: '4321', furthest: 5, goldTotal: '1234', items: 7 });
+    // O ranking vem com a posição da conta do cookie, 10 por página; quem aparece marcado como "meu" é o personagem dela.
+    const board = await (await call(mine, '/confrontation/rankings?metric=power&period=all')).json() as Board;
+    assert.ok(board.me && board.me.rank >= 1); assert.equal(board.me?.value, '4321');
+    assert.ok(board.items.length <= 10);
+    assert.ok(board.items.filter(row => row.mine).every(row => row.name === `App ${tag}`));
+    assert.equal((await (await call(mine, '/confrontation/rankings?metric=vigil&period=week')).json() as Board).me, null);
+    assert.equal((await call(mine, '/confrontation/rankings?metric=ouro')).status, 400);
+    // Quem nunca usou o app vê "sem progresso" e nenhuma posição.
+    const other = await login(`semapp-${tag}@example.invalid`);
+    assert.equal((await (await call(other, '/confrontation/summary')).json() as { save: unknown }).save, null);
+    assert.equal((await (await call(other, '/confrontation/rankings?metric=power&period=all')).json() as Board).me, null);
+  } finally { await new Promise<void>(resolve => server.close(() => resolve())); await prisma.$disconnect(); }
+});
+
 // Apagar a conta pelo site (Configurações > Apagar a conta): pede a senha e derruba todos os acessos.
 test('MySQL: conta — apagar pelo site pede a senha, encerra os acessos e a conta fica sem e-mail e sem nome', async () => {
   assert.match(process.env.DATABASE_URL ?? '', /\/[^/?]*_test(?:\?|$)/, 'Use uma base dedicada terminada em _test.');

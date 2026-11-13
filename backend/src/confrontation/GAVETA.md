@@ -22,6 +22,14 @@
 
 Todas sem cookie, sem `Origin` e sem `X-Game-Client`: o token vai em `Authorization: Bearer …`, e um site estranho não consegue mandá-lo sozinho (sem CSRF). Corpo até 512 KB; save até 450.000 caracteres.
 
+## Rotas do site (`/api`, com o cookie)
+`siteRoutes.ts`, montado em `server.ts` depois de `authenticate`: é o que a aba **App Confrontation** do site mostra. Só leitura.
+
+| Rota | O quê |
+|---|---|
+| `GET /confrontation/summary` | Resumo do save na nuvem da conta aberta (`saveInfo`), ou `save: null` para quem nunca enviou pelo app. |
+| `GET /confrontation/rankings?metric=…&period=…&page=N` | Os mesmos rankings de `/api/app/rankings`, com a posição da conta do cookie. |
+
 ## Como a validação funciona
 - O token é uma linha da tabela `Session` (a mesma do cookie): redefinir a senha e o banimento derrubam o app também. Validade `confrontation.sessionDays`, renovada com o uso.
 - Cada conta tem um **registro verificado** (`ConfrontationSave`: ouro total, XP total, itens, fase mais longe, Vigília, poder). Um envio só pode crescer cada número até `teto por hora × horas desde o último envio aceito`, pelo **relógio do servidor**. O primeiro envio vale `confrontation.firstSyncHours` (progresso feito antes da conta).
