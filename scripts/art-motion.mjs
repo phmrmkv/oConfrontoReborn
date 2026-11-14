@@ -15,7 +15,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 // Mude ao alterar os efeitos ou a compressão: tudo é refeito no próximo build.
-const RECIPE = 6;
+const RECIPE = 7;
 const WORK = 384, OUT = 128, FRAME_MS = 150;
 
 // Posições em fração do quadro (0 a 1), medidas no original de cada região depois de recortado.
@@ -47,9 +47,12 @@ export const regionMotion = {
   // Cidadela dos Renegados: as janelas acesas piscam.
   citadel: [{ fx: 'pulse', x: .42, y: .37, r: .06, amp: .9, speed: 2 }, { fx: 'pulse', x: .58, y: .37, r: .06, amp: .9, speed: 2, phase: .5 }, { fx: 'glow', x: .42, y: .37, r: .08, color: [255, 190, 90], amp: .9, speed: 2 }, { fx: 'glow', x: .58, y: .37, r: .08, color: [255, 190, 90], amp: .9, speed: 2, phase: .5 }],
   // Santuário Elemental: orbes cintilando.
-  sanctuary: [{ fx: 'glow', x: .21, y: .28, r: .1, color: [255, 120, 50], amp: .7, phase: 0 }, { fx: 'glow', x: .39, y: .13, r: .1, color: [80, 170, 255], amp: .7, phase: .25 },
-    { fx: 'glow', x: .62, y: .15, r: .1, color: [90, 230, 110], amp: .7, phase: .5 }, { fx: 'glow', x: .8, y: .28, r: .1, color: [230, 240, 255], amp: .7, phase: .75 },
-    { fx: 'sparks', kind: 'star', box: [.12, .02, .88, .38], n: 6, color: [255, 255, 230] }],
+  // Santuário Elemental: os quatro orbes (fogo, água, terra e ar) giram em volta do telhado, trocando de lugar sem parar; os de
+  // trás ficam menores e atrás do telhado, os da frente maiores. `at` é o centro de cada orbe na pintura (de onde ele é recortado).
+  sanctuary: [{ fx: 'orbit', x: .5, y: .21, rx: .35, ry: .11, orbs: [
+    { at: [.216, .243], color: [255, 120, 50], angle: 180 }, { at: [.389, .134], color: [80, 170, 255], angle: 270 },
+    { at: [.617, .153], color: [90, 230, 110], angle: 0 }, { at: [.795, .279], color: [230, 240, 255], angle: 90 }] },
+    { fx: 'sparks', kind: 'star', box: [.12, .05, .88, .45], n: 6, color: [255, 255, 230] }],
   // Ruínas da 1ª Era: a runa dourada pulsa.
   era1: [{ fx: 'pulse', x: .53, y: .48, r: .12, amp: .45 }, { fx: 'glow', x: .53, y: .48, r: .17, color: [255, 210, 100], amp: .5 }, { fx: 'sparks', kind: 'star', box: [.35, .3, .7, .65], n: 5, color: [255, 235, 160] }],
   // Geleiras da 2ª Era: a caverna brilha e cai neve.
@@ -110,6 +113,43 @@ function affine(base, scale, rot, dx, dy) {
   return out;
 }
 
+// Orbes soltos (efeito orbit): recorta cada um da pintura pela mancha ligada ao seu centro, apaga do fundo e guarda o recorte.
+function cutOrbs(base, e) {
+  const S = WORK, clean = Buffer.from(base), orbs = [];
+  for (const o of e.orbs) {
+    const sx = Math.round(o.at[0] * S), sy = Math.round(o.at[1] * S), seen = new Uint8Array(S * S), stack = [sy * S + sx], pts = [];
+    if (base[(sy * S + sx) * 4 + 3] < 40) throw new Error(`orbit: o centro ${o.at} não cai em cima do orbe`);
+    seen[sy * S + sx] = 1;
+    while (stack.length) { const q = stack.pop(), x = q % S, y = (q - x) / S; pts.push(q);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + dx, ny = y + dy, r = ny * S + nx; if (nx < 0 || ny < 0 || nx >= S || ny >= S || seen[r] || base[r * 4 + 3] < 40) continue; seen[r] = 1; stack.push(r); } }
+    let x0 = S, y0 = S, x1 = 0, y1 = 0; for (const q of pts) { const x = q % S, y = (q - x) / S; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    // Margem de 3 px para levar junto a borda suave (alfa baixo) do orbe.
+    x0 = Math.max(0, x0 - 3); y0 = Math.max(0, y0 - 3); x1 = Math.min(S - 1, x1 + 3); y1 = Math.min(S - 1, y1 + 3);
+    const w = x1 - x0 + 1, h = y1 - y0 + 1, img = Buffer.alloc(w * h * 4), mask = new Uint8Array(S * S);
+    for (const q of pts) mask[q] = 1;
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+      let near = false; for (let dy = -3; dy <= 3 && !near; dy++) for (let dx = -3; dx <= 3; dx++) { const yy = y + dy, xx = x + dx; if (yy >= 0 && xx >= 0 && yy < S && xx < S && mask[yy * S + xx]) { near = true; break; } }
+      if (!near) continue;
+      const i = (y * S + x) * 4; base.copy(img, ((y - y0) * w + x - x0) * 4, i, i + 4); clean.fill(0, i, i + 4);
+    }
+    orbs.push({ ...o, img, w, h });
+  }
+  return { clean, orbs };
+}
+// Desenha um recorte com zoom em (cx, cy), por cima do que já está em px.
+function stamp(px, o, cx, cy, k) {
+  const S = WORK, W = o.w * k, H = o.h * k, x0 = Math.floor(cx - W / 2), y0 = Math.floor(cy - H / 2);
+  for (let y = Math.max(0, y0); y < Math.min(S, y0 + H + 1); y++) for (let x = Math.max(0, x0); x < Math.min(S, x0 + W + 1); x++) {
+    const u = (x - (cx - W / 2)) / k, v = (y - (cy - H / 2)) / k; if (u < 0 || v < 0 || u >= o.w - 1 || v >= o.h - 1) continue;
+    const iu = Math.floor(u), iv = Math.floor(v), fu = u - iu, fv = v - iv, c = [0, 0, 0, 0];
+    for (const [du, dv, wt] of [[0, 0, (1 - fu) * (1 - fv)], [1, 0, fu * (1 - fv)], [0, 1, (1 - fu) * fv], [1, 1, fu * fv]]) { const j = ((iv + dv) * o.w + iu + du) * 4; const a = o.img[j + 3] * wt; c[0] += o.img[j] * a; c[1] += o.img[j + 1] * a; c[2] += o.img[j + 2] * a; c[3] += a; }
+    if (!c[3]) continue;
+    const a = c[3] / 255, i = (y * S + x) * 4, a0 = px[i + 3] / 255, ao = a + a0 * (1 - a);
+    for (let ch = 0; ch < 3; ch++) px[i + ch] = clamp((c[ch] / c[3] * a + px[i + ch] * a0 * (1 - a)) / ao);
+    px[i + 3] = Math.round(ao * 255);
+  }
+}
+
 function render(base0, effects, t, seed) {
   const S = WORK;
   let scale = 1, rot = 0, dy = 0;
@@ -118,7 +158,19 @@ function render(base0, effects, t, seed) {
     if (e.fx === 'breathe') scale *= 1 + Math.sin(t * TAU) * (e.amp ?? .03);
     if (e.fx === 'sway') rot += Math.sin(t * TAU) * (e.deg ?? 3) * Math.PI / 180;
   }
-  const base = base0, px = Buffer.from(base);
+  let base = base0, px = Buffer.from(base);
+  const orbit = effects.find(e => e.fx === 'orbit');
+  if (orbit) {
+    // Os orbes de trás vão primeiro e a pintura (sem os orbes) por cima deles; os da frente, depois, por cima de tudo.
+    const S = WORK, place = orbit._cut.orbs.map(o => { const th = (o.angle / 360 + t) * TAU, depth = Math.sin(th); return { o, depth, x: (orbit.x + orbit.rx * Math.cos(th)) * S, y: (orbit.y + orbit.ry * depth) * S, k: .78 + .3 * (depth + 1) / 2 }; }).sort((a, b) => a.depth - b.depth);
+    const back = Buffer.alloc(px.length);
+    for (const p of place) if (p.depth < 0) { blob(back, p.x, p.y, p.o.w * p.k * .75, p.o.color, .35); stamp(back, p.o, p.x, p.y, p.k); }
+    const clean = orbit._cut.clean; px = Buffer.from(back);
+    for (let i = 0; i < px.length; i += 4) { const a = clean[i + 3] / 255; if (!a) continue; const a0 = px[i + 3] / 255, ao = a + a0 * (1 - a);
+      for (let ch = 0; ch < 3; ch++) px[i + ch] = clamp((clean[i + ch] * a + px[i + ch] * a0 * (1 - a)) / ao); px[i + 3] = Math.round(ao * 255); }
+    for (const p of place) if (p.depth >= 0) { blob(px, p.x, p.y, p.o.w * p.k * .75, p.o.color, .4); stamp(px, p.o, p.x, p.y, p.k); }
+    base = clean;
+  }
   for (const [n, e] of effects.entries()) {
     const rnd = rand(seed + n * 977);
     if (e.fx === 'spin') {
@@ -183,6 +235,7 @@ function render(base0, effects, t, seed) {
 
 async function animate(sharp, file, effects, frames, seed) {
   const base = await sharp(file).ensureAlpha().resize(WORK, WORK, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 }, kernel: 'lanczos3' }).raw().toBuffer();
+  for (const e of effects) if (e.fx === 'orbit') Object.defineProperty(e, '_cut', { value: cutOrbs(base, e), enumerable: false });
   const list = [];
   for (let f = 0; f < frames; f++) list.push(await sharp(render(base, effects, f / frames, seed), { raw: { width: WORK, height: WORK, channels: 4 } }).resize(OUT, OUT, { kernel: 'lanczos3' }).png().toBuffer());
   return sharp(list, { join: { animated: true } }).webp({ quality: 80, alphaQuality: 90, effort: 6, loop: 0, delay: list.map(() => FRAME_MS) }).toBuffer();

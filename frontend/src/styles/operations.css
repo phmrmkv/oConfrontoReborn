@@ -144,7 +144,8 @@
 .group-hunts{display:grid;gap:10px}.group-hunt{display:grid;grid-template-columns:56px 1fr;gap:12px;padding:12px;border:1px solid #2f4a3e;border-radius:6px}
 .group-hunt h3{margin:3px 0}.group-hunt p{margin:4px 0;font-size:12px}.group-hunt.soon{opacity:.6}
 .role-list{margin:6px 0;padding-left:18px;font-size:12px}.role-list li{margin:2px 0}
-.boss-card{display:flex;gap:14px;align-items:center;margin-bottom:6px}.boss-info{flex:1}.boss-info p{margin:4px 0;font-size:12px}
+/* Chefe da Caçada em grupo (nome próprio: .boss-card é o card de chefe da lista de Caçar). */
+.group-boss-card{display:flex;gap:14px;align-items:center;margin-bottom:6px}.boss-info{flex:1}.boss-info p{margin:4px 0;font-size:12px}
 .gbar{height:8px;border-radius:4px;background:#0e1513;overflow:hidden;border:1px solid #2f4a3e;margin:4px 0}.gbar span{display:block;height:100%;background:#b8463a;transition:width .4s}
 .gbar.hp span{background:#4d9a63}
 .intent{font-weight:600}.intent.warning{color:#e7a54b}

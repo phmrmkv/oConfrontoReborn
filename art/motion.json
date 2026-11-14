@@ -1,5 +1,5 @@
 {
-  "recipe": 6,
+  "recipe": 7,
   "regions/abyss": "73883ddfb927bf6892437d57e376b489e831d3c2c37f4f3c6bb0fbc2e614974d",
   "regions/capriel": "5ccc4a3407ac8cd70981eb9a98b97ae227c2ca089832513c8f2412d662c2f529",
   "regions/citadel": "853381555ee99638245e9745fe3d4e53bb59d92f11e53c47a49ab06ea629f235",
@@ -14,7 +14,7 @@
   "regions/outskirts": "11ed9fdd05ab576f7eb2bb6d9c1b62b294ff154b7191802a21b1d98b48ce0771",
   "regions/quarry": "6688fa6b73003c8551cef3630017f36bea1ea022c4396629d4d7b6e025d65239",
   "regions/ruins": "ae03865d8f165cba18cf7b4a3e9d76e63241bda07e761a72736dd8c4c4b61134",
-  "regions/sanctuary": "2fab89c24a9bc455512bc20f33814ae0fcf844019da3922ef209ad362304d38b",
+  "regions/sanctuary": "81bcbb59ef6a548a6268bbd2b4fe5b4fa940bc2f082bd739de746f82dbf5d3e5",
   "regions/swamp": "8b0803798ec0263d66370afe0e5b5afa2ff3721e7970f49e8c63b981bbf9c244",
   "powers/d-raizes": "bc2a9b0bce8e89b2b5535b9cceb137a1f3298632bbc1cda4347a46eab3776485",
   "powers/d1-espinhos": "a81231f33b2c9876a774a73d9f8851e98267acfcd4b1cc3a9b00776f50e7719e",

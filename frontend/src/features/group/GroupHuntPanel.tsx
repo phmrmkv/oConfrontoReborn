@@ -116,7 +116,7 @@ function BattleView({b,hero,remaining,busy,choose,openProfile}:{b:Battle;hero:He
   const me=b.fighters.find(f=>f.characterId===hero.id);
   return <section className="panel group-battle"><div className="section-title"><h2>{b.name}</h2><span>{b.isFinished?outcomeLabel[b.outcome]??b.outcome:`Rodada ${b.round} · ${remaining}s`}</span></div>
     <GroupStage b={b}/>
-    <div className="boss-card"><CreatureIcon name={b.sprite} size={80}/><div className="boss-info">
+    <div className="group-boss-card"><CreatureIcon name={b.sprite} size={80}/><div className="boss-info">
       <div className="gbar"><span style={{width:bar(b.bossHp,b.bossMaxHp)}}/></div><p>{b.bossHp.toLocaleString('pt-BR')} / {b.bossMaxHp.toLocaleString('pt-BR')} de vida</p>
       <p className={b.freed||b.choice==='SLEEP'?'pos':'muted'}>{mechanicLine(b)}</p>
       {!b.isFinished&&b.phase==='FIGHT'&&<p className={b.intent.kind==='STOMP'?'intent warning':'intent'}>{b.intent.label}</p>}</div></div>
