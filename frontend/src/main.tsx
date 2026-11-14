@@ -12,6 +12,7 @@ import './styles/duel.css';
 import './styles/fire.css';
 import './styles/cover.css';
 import './styles/wiki.css';
+import './styles/guild.css';
 import { applyMotion, applyTheme, savedMotion, savedTheme } from './lib/theme';
 applyTheme(savedTheme(), false);
 applyMotion(savedMotion(), false);

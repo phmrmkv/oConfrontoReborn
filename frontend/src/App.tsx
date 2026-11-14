@@ -43,10 +43,12 @@ const PremiumPanel=lazy(()=>import('./features/premium/PremiumPanel'));
 const RaresPanel=lazy(()=>import('./features/rares/RaresPanel'));
 const AppPanel=lazy(()=>import('./features/confrontation/AppPanel'));
 const RankingPanel=lazy(()=>import('./features/ranking/RankingPanel'));
+const GuildPanel=lazy(()=>import('./features/guild/GuildPanel'));
+const FriendsPanel=lazy(()=>import('./features/guild/FriendsPanel'));
 const WikiPanel=lazy(()=>import('./features/wiki/WikiPanel'));
 export default function App(){
  const [signed,setSigned]=useState(false),[checking,setChecking]=useState(true),[register,setRegister]=useState(false);
- const [hero,setHero]=useState<Hero|null>(null),[tab,setTab]=useState<Tab>(()=>tabFromPath(location.pathname)??'journey'),[busy,setBusy]=useState(false),[notice,setNotice]=useState(''),[error,setError]=useState('');
+ const [guildTarget,setGuildTarget]=useState<number|null>(null),[hero,setHero]=useState<Hero|null>(null),[tab,setTab]=useState<Tab>(()=>tabFromPath(location.pathname)??'journey'),[busy,setBusy]=useState(false),[notice,setNotice]=useState(''),[error,setError]=useState('');
  const [monsters,setMonsters]=useState<Monster[]>([]),[shop,setShop]=useState<Blueprint[]>([]),[inventory,setInventory]=useState<{items:Item[];total:number;page:number}>({items:[],total:0,page:1});
  const [market,setMarket]=useState<MarketPage>(emptyPage<Listing>()),[tasks,setTasks]=useState<Task[]>([]),[battle,setBattle]=useState<Battle|null>(null),[selected,setSelected]=useState<Item|null>(null),[price,setPrice]=useState('100'),[search,setSearch]=useState('');
  const [atlasSearch,setAtlasSearch]=useState('');
@@ -114,7 +116,8 @@ export default function App(){
  const openSlot=(slot:string)=>{const f={slot,q:'',fav:false};setBagFilter(f);bagFilterRef.current=f;setSelected(null);setTab('bag');if(hero)void perform(()=>refresh(hero.id,1),'');};
  const openProfile=(name:string)=>{setRouteParam(name);setTab('profile');window.scrollTo(0,0);};
  const openPost=(id:string)=>{setRouteParam(id);setTab('forum');window.scrollTo(0,0);};
- const goTab=(id:Tab)=>{setRouteParam('');setTab(id);setSearch('');setSelected(null);window.scrollTo(0,0);};
+ const openGuild=(id:number)=>{goTab('guilds');setGuildTarget(id);};
+ const goTab=(id:Tab)=>{setRouteParam('');setGuildTarget(null);setTab(id);setSearch('');setSelected(null);window.scrollTo(0,0);};
  const logout=()=>void perform(async()=>{await api('/auth/logout',{});setSigned(false);setHero(null);heroId.current=null;setBattle(null);setStaff(false);setPremiumActive(false);setPremiumSoon(false);},'');
  return <div className={`shell ${hero.profileFrame?`frame-${hero.profileFrame}`:''}`}><a className="skip-link" href="#conteudo">Pular para o conteúdo</a><header className="topbar"><div className="wordmark">O CONFRONTO<span>CRÔNICAS DE UM AVENTUREIRO</span></div><div className="top-meta"><ThemeToggle/><span className="online-dot"/> Mundo local <span className="separator">|</span><Icon name="Gold Coin" size={24}/><b>{fmt(hero.goldInHand)}</b><button className="quiet logout" onClick={logout}>Sair</button>
   <button type="button" className="menu-button" aria-label="Abrir menu" aria-expanded={menuOpen} aria-controls="mobile-menu" onClick={()=>setMenuOpen(true)}><span/><span/><span/>{hero.statPoints>0&&<i className="menu-dot" aria-label="Pontos de atributo para distribuir"/>}</button></div></header>
@@ -145,6 +148,8 @@ export default function App(){
  {tab==='group'&&<GroupHuntPanel hero={hero} perform={perform} openProfile={openProfile}/>}
  {tab==='duel'&&<DuelPanel hero={hero} openProfile={openProfile}/>}
  {tab==='ranking'&&<RankingPanel hero={hero} openProfile={openProfile}/>}
+ {tab==='guilds'&&<GuildPanel hero={hero} openProfile={openProfile} initialGuildId={guildTarget}/>}
+ {tab==='friends'&&<FriendsPanel hero={hero} openProfile={openProfile} openGuild={openGuild}/>}
  {tab==='wiki'&&<WikiPanel/>}
  {tab==='rares'&&<RaresPanel openProfile={openProfile}/>}
  {tab==='app'&&<AppPanel openProfile={openProfile}/>}

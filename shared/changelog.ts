@@ -1,6 +1,11 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-14-guildas-e-amigos', date: '2026-11-14', title: 'Guildas e lista de amigos', items: [
+    'Nova aba Guildas, em Comunidade, no estilo dos fóruns antigos: funde a sua guilda (a partir do nível 20), peça entrada em outra ou aceite um convite.',
+    'Cada guilda tem líder, vice-líderes e membros, aviso do líder, lista de membros com a última visita e um quadro de tópicos só para quem é da guilda.',
+    'Nova aba Amigos: veja quem está online, quando cada amigo visitou o jogo pela última vez e a guilda dele, e peça ou aceite amizades num lugar só.',
+  ] },
   { id: '2026-11-14-avisos-perto-do-botao', date: '2026-11-14', title: 'Avisos perto do botão', items: [
     'As mensagens de sucesso (como "Etapa concluída!" com o XP e o ouro ganhos) agora aparecem num balão logo acima do botão que você usou, em vez de uma faixa no alto da página que passava despercebida.',
     'O balão some sozinho em alguns segundos; passe o mouse para ele ficar, clique no X ou aperte Esc para fechar.',
