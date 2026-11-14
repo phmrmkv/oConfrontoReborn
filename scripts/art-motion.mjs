@@ -15,11 +15,12 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 // Mude ao alterar os efeitos ou a compressão: tudo é refeito no próximo build.
-const RECIPE = 4;
-const WORK = 384, OUT = 128, FRAME_MS = 75;
+const RECIPE = 6;
+const WORK = 384, OUT = 128, FRAME_MS = 150;
 
 // Posições em fração do quadro (0 a 1), medidas no original de cada região depois de recortado.
-// Movimento do desenho inteiro (vem antes dos outros): bob (flutua para cima e para baixo), breathe (cresce e encolhe de
+// Toda região flutua de leve (o portal da 4ª Era respira), para o movimento aparecer mesmo no ícone pequeno da lista.
+// Movimento do desenho inteiro (aplicado por último, com os efeitos já desenhados): bob (flutua para cima e para baixo), breathe (cresce e encolhe de
 // leve), sway (balança girando poucos graus). Efeitos: spin (gira o miolo de um disco), flame (chama tremendo numa caixa), glow (brilho pulsando), pulse (a pintura
 // clareia e escurece num disco), sparks (partículas: ember sobe, snow cai, bubble sobe devagar, firefly vagueia, dust sobe e
 // some, star cintila parada), mist (faixa de névoa andando de lado), smoke (fumaça subindo e abrindo).
@@ -117,7 +118,7 @@ function render(base0, effects, t, seed) {
     if (e.fx === 'breathe') scale *= 1 + Math.sin(t * TAU) * (e.amp ?? .03);
     if (e.fx === 'sway') rot += Math.sin(t * TAU) * (e.deg ?? 3) * Math.PI / 180;
   }
-  const base = scale === 1 && !rot && !dy ? base0 : affine(base0, scale, rot, 0, dy), px = Buffer.from(base);
+  const base = base0, px = Buffer.from(base);
   for (const [n, e] of effects.entries()) {
     const rnd = rand(seed + n * 977);
     if (e.fx === 'spin') {
@@ -176,7 +177,8 @@ function render(base0, effects, t, seed) {
       for (let p = 0; p < 4; p++) { const u = (t + p / 4) % 1; blob(px, e.x * S + Math.sin(u * TAU) * 6 + u * 10, e.y * S - u * S * .25, (9 + u * 20), e.color, .6 * Math.sin(u * Math.PI), 'over'); }
     }
   }
-  return px;
+  // O desenho inteiro (já com os efeitos) flutua, cresce ou balança: o brilho e a chama andam junto com a pintura.
+  return scale === 1 && !rot && !dy ? px : affine(px, scale, rot, 0, dy);
 }
 
 async function animate(sharp, file, effects, frames, seed) {
@@ -201,7 +203,7 @@ export async function buildMotion(root, { log = console.log, force = false } = {
   const manifest = fs.existsSync(manifestFile) ? JSON.parse(fs.readFileSync(manifestFile, 'utf8')) : {};
   if (manifest.recipe !== RECIPE) { force = true; }
   const jobs = [
-    ['regions', 'frontend/public/assets/regions', name => regionMotion[name], regionMotion.frames],
+    ['regions', 'frontend/public/assets/regions', name => regionMotion[name] && [name === 'era4' ? { fx: 'breathe', amp: .035 } : { fx: 'bob', amp: .035 }, ...regionMotion[name]], regionMotion.frames],
     ['powers', 'frontend/public/assets/powers', null, powerMotion.frames],
   ];
   let made = 0; const next = { recipe: RECIPE };

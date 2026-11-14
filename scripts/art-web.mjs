@@ -16,9 +16,9 @@ import { fileURLToPath } from 'node:url';
 // Mude ao alterar a limpeza ou a compressão: todas as saídas são refeitas no próximo build.
 export const RECIPE = 1;
 // Receita do retrato (enquadramento e tamanho); mudar refaz só os retratos, sem recomprimir as folhas.
-const PORTRAIT = 2, PORTRAIT_SIDE = 128;
+const PORTRAIT = 3, PORTRAIT_SIDE = 128;
 // Retrato vivo: ida e volta pelos 4 quadros da linha 1 (1-2-3-4-3-2), sem pulo no fim da volta.
-const LIVE_ORDER = [0, 1, 2, 3, 2, 1], LIVE_DELAY = 170;
+const LIVE_ORDER = [0, 1, 2, 3, 2, 1], LIVE_DELAY = 340;
 const COLS = 4, ROWS = 6, SHEET_W = 1024, SHEET_H = 1536;
 // O gerador devolve o fundo com uma névoa quase invisível (alfa 1 a 15) e o corpo com alfa 240 a 254. A névoa pesa no arquivo
 // e suja o contorno; a curva abaixo zera o que é névoa, deixa o corpo opaco e preserva a suavização das bordas.
