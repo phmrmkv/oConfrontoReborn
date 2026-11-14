@@ -1,6 +1,12 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-14-beneficios-da-guilda', date: '2026-11-14', title: 'Benefícios da guilda', items: [
+    'Cofre da guilda: os membros doam ouro e o nível da guilda sobe até o 10. Cada nível dá mais vagas, mais tópicos fixados no quadro e um bônus no ouro dos baús.',
+    'Baú do dia: uma vez por dia (renova à meia-noite de Brasília), cada membro coleta ouro e poções de vida. Vale depois de 24 horas na guilda.',
+    'Baú da semana: se a guilda juntar a meta de doações da semana, cada membro coleta ouro e material de ferreiro. Vale depois de 72 horas na guilda.',
+    'Os maiores doadores da semana aparecem na aba Benefícios, e as doações e os baús ficam registrados no Extrato.',
+  ] },
   { id: '2026-11-14-guildas-e-amigos', date: '2026-11-14', title: 'Guildas e lista de amigos', items: [
     'Nova aba Guildas, em Comunidade, no estilo dos fóruns antigos: funde a sua guilda (a partir do nível 20), peça entrada em outra ou aceite um convite.',
     'Cada guilda tem líder, vice-líderes e membros, aviso do líder, lista de membros com a última visita e um quadro de tópicos só para quem é da guilda.',

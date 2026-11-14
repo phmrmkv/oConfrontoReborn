@@ -6,13 +6,14 @@ import {LimitedRows} from '../../ui/ShowMore';
 import {canGuild,canKick,guildLimits,guildRanks,isOnline,type GuildRank} from '../../../../shared/guild';
 import {Avatar,Counter,Crumbs,RankBadge,Seen,Table,classText,dateOnly,type Act,type Card} from './guildBits';
 import GuildBoard from './GuildBoard';
+import GuildBenefits from './GuildBenefits';
 import type {Me} from './GuildPanel';
 
 export type Member=Card&{rank:GuildRank;joinedAt:string;lastSeenAt:string|null;online:boolean};
 type Application={id:number;kind:'REQUEST'|'INVITE';createdAt:string;character:Card};
 type Detail={id:number;name:string;tag:string;description:string;announcement:string|null;createdAt:string;leaderId:number;memberLimit:number;members:Member[];
   viewerRank:GuildRank|null;viewerInGuild:boolean;viewerApplication:{id:number;kind:'REQUEST'|'INVITE'}|null;applications:Application[]};
-type Inner='members'|'board'|'apps'|'manage';
+type Inner='members'|'board'|'benefits'|'apps'|'manage';
 
 // Página de uma guilda: migalhas, cabeçalho, aviso do líder e as abas Membros, Quadro, Pedidos e Gerenciar.
 export default function GuildPage({hero,gid,me,version,act,openProfile,onHall,onChanged,onLeft}:{hero:Hero;gid:number;me:Me|null;version:number;act:Act;openProfile:(name:string)=>void;onHall:()=>void;onChanged:()=>void;onLeft:()=>void}){
@@ -24,7 +25,7 @@ export default function GuildPage({hero,gid,me,version,act,openProfile,onHall,on
     {missing?<><p className="error" role="alert">{missing}</p><button type="button" onClick={onHall}>Voltar ao Salão das Guildas</button></>:<p className="muted">Carregando a guilda…</p>}</section>;
   const rank=g.viewerRank,member=!!rank,app=g.viewerApplication,leader=g.members.find(m=>m.rank==='LEADER');
   const pending=g.applications.filter(a=>a.kind==='REQUEST').length,tabs:[Inner,string][]=[['members','Membros']];
-  if(member)tabs.push(['board','Quadro']);
+  if(member)tabs.push(['board','Quadro'],['benefits','Benefícios']);
   if(canGuild(rank,'accept'))tabs.push(['apps',`Pedidos${pending?` (${pending})`:''}`]);
   if(canGuild(rank,'announce'))tabs.push(['manage','Gerenciar']);
   const current=tabs.some(t=>t[0]===inner)?inner:'members';
@@ -47,6 +48,7 @@ export default function GuildPage({hero,gid,me,version,act,openProfile,onHall,on
     <div className="gx-tabs" role="tablist" aria-label="Seções da guilda">{tabs.map(([id,label])=><button key={id} type="button" role="tab" aria-selected={current===id} className={current===id?'active-chip':''} onClick={()=>setInner(id)}>{label}</button>)}</div>
     {current==='members'&&<Members g={g} hero={hero} act={act} openProfile={openProfile} post={post}/>}
     {current==='board'&&member&&<GuildBoard hero={hero} gid={g.id} members={g.members} act={act} openProfile={openProfile}/>}
+    {current==='benefits'&&member&&<GuildBenefits hero={hero} act={act} openProfile={openProfile} onChanged={changed}/>}
     {current==='apps'&&<Applications g={g} act={act} openProfile={openProfile} post={post}/>}
     {current==='manage'&&<Manage g={g} act={act} post={post} onLeft={onLeft}/>}
   </section>;

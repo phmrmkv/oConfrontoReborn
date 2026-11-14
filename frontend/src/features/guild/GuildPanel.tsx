@@ -12,7 +12,8 @@ type Row={id:number;name:string;tag:string;description:string;leader:string;memb
 export type Me={guild:GuildRef|null;rank:'LEADER'|'VICE'|'MEMBER'|null;level:number;canCreate:boolean;minLevel:number;invites:{id:number;guild:GuildRef;createdAt:string}[];requests:{id:number;guild:GuildRef;createdAt:string}[]};
 
 // Aba Guildas, no jeito dos fóruns antigos: Salão das Guildas (diretório, convites, fundar) e a página de cada guilda.
-export default function GuildPanel({hero,openProfile,initialGuildId=null}:{hero:Hero;openProfile:(name:string)=>void;initialGuildId?:number|null}){
+// `refreshHero`: recarrega o personagem no App (doar e coletar baú mudam o ouro e a mochila).
+export default function GuildPanel({hero,openProfile,initialGuildId=null,refreshHero}:{hero:Hero;openProfile:(name:string)=>void;initialGuildId?:number|null;refreshHero?:()=>void}){
   const [me,setMe]=useState<Me|null>(null),[view,setView]=useState<number|'hall'|null>(initialGuildId),[tick,setTick]=useState(0),act=useAct();
   const base=`/characters/${hero.id}/guild`,setError=act.setError;
   const loadMe=useCallback(()=>api<Me>(base).then(setMe).catch(e=>setError(msg(e))),[base,setError]);
@@ -23,7 +24,7 @@ export default function GuildPanel({hero,openProfile,initialGuildId=null}:{hero:
   return <div className="gx">
     {act.error&&<p className="error" role="alert">{act.error}</p>}
     {act.toast}
-    {shown?<GuildPage key={shown} hero={hero} gid={shown} me={me} version={tick} act={act} openProfile={openProfile} onHall={()=>setView('hall')} onChanged={refresh}
+    {shown?<GuildPage key={shown} hero={hero} gid={shown} me={me} version={tick} act={act} openProfile={openProfile} onHall={()=>setView('hall')} onChanged={()=>{refresh();refreshHero?.();}}
         onLeft={()=>{setView('hall');refresh();}}/>
       :<Hall hero={hero} me={me} act={act} onOpen={id=>setView(id)} onChanged={refresh} onCreated={id=>{setView(id);refresh();}}/>}
   </div>;

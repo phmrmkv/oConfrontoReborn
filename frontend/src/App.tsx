@@ -148,7 +148,7 @@ export default function App(){
  {tab==='group'&&<GroupHuntPanel hero={hero} perform={perform} openProfile={openProfile}/>}
  {tab==='duel'&&<DuelPanel hero={hero} openProfile={openProfile}/>}
  {tab==='ranking'&&<RankingPanel hero={hero} openProfile={openProfile}/>}
- {tab==='guilds'&&<GuildPanel hero={hero} openProfile={openProfile} initialGuildId={guildTarget}/>}
+ {tab==='guilds'&&<GuildPanel hero={hero} openProfile={openProfile} initialGuildId={guildTarget} refreshHero={()=>void refresh(hero.id,bagPage.current).catch(()=>{})}/>}
  {tab==='friends'&&<FriendsPanel hero={hero} openProfile={openProfile} openGuild={openGuild}/>}
  {tab==='wiki'&&<WikiPanel/>}
  {tab==='rares'&&<RaresPanel openProfile={openProfile}/>}

@@ -114,3 +114,23 @@ td.gx-actions button{font-size:11px;padding:4px 8px;margin:2px 0 2px 4px}
   .gx-headactions{width:100%}
 }
 @media(prefers-reduced-motion:no-preference){.gx-table tbody tr td{transition:background .12s}}
+/* Aba Benefícios: barras simples, baús lado a lado e estado do baú. */
+.gx-benefits{display:grid;gap:10px}
+.gx-benefits .gx-box{margin:0}
+.gx-meter{height:12px;border:1px solid var(--gx-line);background:var(--gx-row-a);border-radius:2px;overflow:hidden}
+.gx-meter>span{display:block;height:100%;background:linear-gradient(90deg,#7a5f2a,#d0b16d)}
+:root[data-theme="light"] .gx-meter>span{background:linear-gradient(90deg,#8c6224,#c9962f)}
+.gx-note{font-size:12px;color:var(--gx-soft);margin:6px 0 0;line-height:1.5}
+.gx-chests{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.gx-chest{display:grid;gap:10px;align-content:start}
+.gx-reward{display:flex;gap:10px;align-items:center}
+.gx-reward b{display:block;font-size:13px;color:var(--gx-ink);overflow-wrap:anywhere}
+.gx-reward small{display:block;font-size:11px;color:var(--gx-soft);margin-top:2px}
+.gx-goal{display:grid;gap:5px;font-size:12px;color:var(--gx-ink)}
+.gx-met{color:var(--gx-gold)}
+.gx-chestfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.gx-state{font-size:12px;font-weight:700;color:var(--gx-soft)}
+.gx-state.ready{color:var(--gx-gold)}
+.gx-state.done{color:var(--gx-dot)}
+.gx-sub{font-size:13px;color:var(--gx-gold);margin:6px 0 0}
+.gx-benefits input[type="number"]{max-width:100%}
