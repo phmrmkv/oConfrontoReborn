@@ -2,6 +2,13 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import { GameError } from '../core/engine';
 const API = 'https://api.mercadopago.com';
 export const mpConfigured = () => !!(process.env.MP_ACCESS_TOKEN && process.env.MP_WEBHOOK_SECRET);
+// Credencial de teste (sandbox) do Mercado Pago: a tela avisa que a compra é de mentira.
+export const mpTestMode = () => (process.env.MP_ACCESS_TOKEN ?? '').startsWith('TEST-');
+// O que falta para a compra funcionar, em linguagem de jogador (null = tudo certo).
+export function mpMissing(): string | null {
+  if (mpConfigured()) return null;
+  return 'A compra de gemas ainda não foi ligada neste servidor (falta configurar o Mercado Pago). Suas gemas e seu Premium continuam valendo.';
+}
 
 // Manifesto documentado pelo Mercado Pago: id:<data.id em minúsculas>;request-id:<x-request-id>;ts:<ts>;
 // `maxAgeSeconds` (opcional) recusa notificações cujo `ts` esteja longe demais de `now` (replay). O Mercado Pago manda o ts
@@ -36,10 +43,11 @@ async function call<T>(path: string, init: RequestInit & { idempotencyKey?: stri
 }
 export interface MpPayment { id: number | string; status: string; status_detail?: string; external_reference?: string | null; transaction_amount?: number; currency_id?: string }
 export const fetchPayment = (id: string) => call<MpPayment>(`/v1/payments/${encodeURIComponent(id)}`);
-export async function createPreference(order: { id: number; amountCents: number; days: number }, baseUrl: string) {
+// Checkout Pro: a página do Mercado Pago oferece Pix e cartão. O pedido vai em external_reference; o webhook reconsulta tudo na API.
+export async function createPreference(order: { id: number; amountCents: number; gems: number; packKey: string | null }, baseUrl: string) {
   const https = baseUrl.startsWith('https://');
-  return call<{ id: string; init_point: string }>('/checkout/preferences', { method: 'POST', idempotencyKey: `premium-order-${order.id}`, body: JSON.stringify({
-    items: [{ id: `premium-${order.days}d`, title: `O Confronto Premium — ${order.days} dias`, quantity: 1, currency_id: 'BRL', unit_price: order.amountCents / 100 }],
+  return call<{ id: string; init_point: string }>('/checkout/preferences', { method: 'POST', idempotencyKey: `gems-order-${order.id}`, body: JSON.stringify({
+    items: [{ id: `gems-${order.packKey ?? order.gems}`, title: `O Confronto: ${order.gems} gemas`, quantity: 1, currency_id: 'BRL', unit_price: order.amountCents / 100 }],
     external_reference: String(order.id),
     notification_url: `${baseUrl}/api/webhooks/mercadopago`,
     back_urls: { success: `${baseUrl}/?premium=ok`, pending: `${baseUrl}/?premium=pendente`, failure: `${baseUrl}/?premium=falhou` },

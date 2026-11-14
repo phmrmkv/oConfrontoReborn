@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
 import { layoutPeriods, premiumPhase } from '../../../shared/premium';
 import { verifySignature } from './mercadopago';
+import { gemPacks, isGemPackKey } from '../../../shared/gems';
 
 const DAY = 86_400_000, t0 = new Date('2026-11-01T12:00:00Z');
 const at = (days: number) => new Date(t0.getTime() + days * DAY);
@@ -67,4 +68,13 @@ test('assinatura do Mercado Pago: com tolerância, recusa ts antigo ou futuro (e
   assert.equal(ok('abc'), false);
   // Sem tolerância pedida, o comportamento antigo continua (só a assinatura).
   assert.equal(verifySignature({ xSignature: sign('555', 'req-1', '1'), xRequestId: 'req-1', dataId: '555', secret }), true);
+});
+
+test('pacotes de gemas: só os com preço entram na loja, e o bônus é comparado ao pacote mais caro por gema', () => {
+  const base = { 'gems.pack1.gems': 100, 'gems.pack1.cents': 500, 'gems.pack2.gems': 220, 'gems.pack2.cents': 1000, 'gems.pack3.gems': 600, 'gems.pack3.cents': 2500, 'gems.pack4.gems': 1300, 'gems.pack4.cents': 5000 };
+  const packs = gemPacks(base);
+  assert.deepEqual(packs.map(p => [p.key, p.gems, p.cents, p.bonusPercent]), [['pack1', 100, 500, 0], ['pack2', 220, 1000, 10], ['pack3', 600, 2500, 20], ['pack4', 1300, 5000, 30]]);
+  assert.deepEqual(gemPacks({ ...base, 'gems.pack1.cents': 0, 'gems.pack3.cents': 0 }).map(p => p.key), ['pack2', 'pack4']);
+  assert.equal(gemPacks({ ...base, 'gems.pack1.cents': 0 })[0].bonusPercent, 0); // o pacote 2 vira a referência
+  assert.equal(isGemPackKey('pack2'), true); assert.equal(isGemPackKey('pack9'), false); assert.equal(isGemPackKey(2), false);
 });

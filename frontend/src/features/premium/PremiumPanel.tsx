@@ -6,10 +6,15 @@ import type {Tab} from '../../lib/tabs';
 import {useAction,Feedback} from '../../ui/Feedback';
 import Icon from '../../ui/GameIcon';
 import {Limited} from '../../ui/ShowMore';
+import {Pager,usePaged} from '../../ui/Pager';
 import {premiumBenefits,frames,profileTitles,emblems,titleName,premiumPhase,type PremiumPhase} from '../../../../shared/premium';
+import {gemReasons,type GemPack} from '../../../../shared/gems';
 import {vocationLabel} from '../../../../shared/adventure';
-type Overview={enabled:boolean;priceCents:number;days:number;active:boolean;until:string|null;upcoming:string|null;lastEndedAt:string|null;pendingCheckout:boolean;emailVerified:boolean;
-  orders:{id:number;status:string;amountCents:number;days:number;createdAt:string;paidAt:string|null}[];perks:{presetLimit:number;charactersFree:number;charactersPremium:number}};
+import './gems.css';
+type Overview={enabled:boolean;disabledReason:string|null;testMode:boolean;gems:number;gemPrice:number;days:number;packs:GemPack[];active:boolean;until:string|null;upcoming:string|null;lastEndedAt:string|null;
+  pendingPack:string|null;emailVerified:boolean;perks:{presetLimit:number;charactersFree:number;charactersPremium:number}};
+type Order={id:number;status:string;amountCents:number;days:number;gems:number;packKey:string|null;createdAt:string;paidAt:string|null;refundedAt:string|null};
+type GemEntry={id:number;delta:number;balanceAfter:number;reason:string;createdAt:string};
 type Preset={id:number;name:string};
 type Stats={days:number;totals:{battles:number;victories:number;defeats:number;flees:number;gold:string;experience:number;winRate:number};byMonster:{name:string;battles:number;victories:number;gold:string;experience:number}[];byDay:{day:string;battles:number;victories:number;gold:string;experience:number}[]};
 export type PaymentReturn='ok'|'pendente'|'falhou';
@@ -20,20 +25,25 @@ const where:Record<string,{tab?:Tab;anchor?:string;label:string}>={appearance:{a
   diary:{anchor:'premium-diary',label:'Ver o diário'},profile:{anchor:'premium-profile',label:'Editar perfil'},characters:{tab:'characters',label:'Criar personagem'}};
 const day=(d:string|null)=>d?new Date(d).toLocaleDateString('pt-BR'):'—';
 const scrollTo=(id:string)=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+const gemsLabel=(n:number)=>`${fmt(n)} ${Math.abs(n)===1?'gema':'gemas'}`;
+// Gema desenhada aqui mesmo (arte própria, sem sprite de terceiros).
+export function GemIcon({size=20}:{size?:number}){
+  return <svg className="gem-icon" width={size} height={size} viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l4 6-10 12L2 9z" fill="#3fb6a8"/><path d="M2 9h20L12 21z" fill="#23897e"/><path d="M6 3l3 6h6l3-6z" fill="#7fe0d3"/><path d="M9 9l3 12 3-12z" fill="#2fa294"/></svg>;
+}
 const WATCH_MS=5000,WATCH_TRIES=36;
 export default function PremiumPanel({hero,onChanged,go,returning,onReturnSeen}:{hero:Hero;onChanged:()=>Promise<void>|void;go:(t:Tab)=>void;returning:PaymentReturn|null;onReturnSeen:()=>void}) {
-  const [o,setO]=useState<Overview|null>(null),[loadError,setLoadError]=useState(''),[celebrate,setCelebrate]=useState(false),{busy,error,ok,run}=useAction();
-  const [watching,setWatching]=useState(returning==='ok'||returning==='pendente'),baseline=useRef<{active:boolean;until:string|null}|null>(null);
-  const load=()=>api<Overview>('/premium').then(r=>{setO(r);if(!baseline.current)baseline.current={active:r.active,until:r.until};return r;});
+  const [o,setO]=useState<Overview|null>(null),[loadError,setLoadError]=useState(''),[celebrate,setCelebrate]=useState<null|'gems'|'premium'>(null),[refresh,setRefresh]=useState(0),{busy,error,ok,run}=useAction();
+  const [watching,setWatching]=useState(returning==='ok'||returning==='pendente'),baseline=useRef<{gems:number}|null>(null),activateKey=useRef<string|null>(null);
+  const load=()=>api<Overview>('/premium').then(r=>{setO(r);if(!baseline.current)baseline.current={gems:r.gems};return r;});
   useEffect(()=>{load().catch(e=>setLoadError(msg(e)));},[]);
-  // Na volta do Mercado Pago o webhook pode levar alguns segundos: consulta até o acesso mudar (no máximo 3 minutos).
+  // Na volta do Mercado Pago o webhook pode levar alguns segundos: consulta até as gemas chegarem (no máximo 3 minutos).
   useEffect(()=>{if(!watching)return;let tries=0;
     const timer=setInterval(()=>{tries++;load().then(r=>{const b=baseline.current;
-      if(r.active&&(!b?.active||r.until!==b.until)){setWatching(false);setCelebrate(true);onReturnSeen();void onChanged();}
+      if(b&&r.gems>b.gems){setWatching(false);setCelebrate('gems');setRefresh(x=>x+1);onReturnSeen();}
       else if(tries>=WATCH_TRIES){setWatching(false);onReturnSeen();}}).catch(()=>{});},WATCH_MS);
     return()=>clearInterval(timer);},[watching]);
   if(!o)return <section className="panel">{loadError?<p className="error" role="alert">{loadError}</p>:<p>Carregando…</p>}</section>;
-  const {phase,daysLeft}=premiumPhase(o),unlocked=o.active,p=o.perks;
+  const {phase,daysLeft}=premiumPhase(o),unlocked=o.active,p=o.perks,missing=Math.max(0,o.gemPrice-o.gems),canActivate=o.gemPrice>0&&missing===0;
   const statusLine:Record<PremiumPhase,string>={
     free:'Organização, personalização e conveniência para quem quer apoiar o jogo. Ele não altera as regras de combate: XP, ouro e drops são iguais para todos.',
     active:`Liberado até ${when(o.until)}. Renovar soma ${o.days} dias ao final do período atual, sem perder nenhum dia.`,
@@ -41,11 +51,18 @@ export default function PremiumPanel({hero,onChanged,go,returning,onReturnSeen}:
     queued:`Seu próximo período começa em ${when(o.upcoming)}.`,
     ended:`Terminou em ${day(o.lastEndedAt)}. Seus conjuntos, favoritos e perfil ficaram guardados e voltam assim que você renovar.`};
   const jump=(key:string)=>{const w=where[key];if(w.tab)go(w.tab);else if(w.anchor)scrollTo(w.anchor);};
-  const checkout=()=>void run(async()=>{const r=await api<{url:string}>('/premium/checkout',{});window.location.assign(r.url);});
+  const renewing=unlocked||phase==='queued';
+  const activate=()=>{
+    if(!window.confirm(`${renewing?'Renovar':'Ativar'} o Premium por ${o.days} dias usando ${gemsLabel(o.gemPrice)}? Você fica com ${gemsLabel(o.gems-o.gemPrice)}.`))return;
+    activateKey.current??=crypto.randomUUID();
+    void run(async()=>{const r=await api<{endsAt:string}>('/premium/activate',{},activateKey.current!);activateKey.current=null;await load();setRefresh(x=>x+1);setCelebrate('premium');await onChanged();return `Premium liberado até ${when(r.endsAt)}.`;});};
+  const actionLabel=renewing?'Renovar':phase==='ended'?'Voltar ao Premium':'Ativar Premium';
   return <div className="premium-page">
-    {celebrate&&<section className="panel premium-celebrate" role="status"><Icon name="Crown Helmet" size={48}/><div><h2>Premium ativado!</h2><p className="muted">Obrigado por apoiar O Confronto. Seus benefícios já estão liberados abaixo.</p></div><button className="quiet" onClick={()=>setCelebrate(false)}>Fechar</button></section>}
-    {watching&&<div className="notice premium-watch" role="status"><i className="premium-spinner" aria-hidden="true"/>{returning==='pendente'?'Pagamento pendente.':'Pagamento recebido.'} Aguardando a confirmação do Mercado Pago. Esta página atualiza sozinha.</div>}
-    {!watching&&!celebrate&&returning&&<div className="notice" role="status">{returning==='falhou'?'O pagamento não foi concluído. Você pode tentar de novo quando quiser.':'A confirmação ainda não chegou. Se o pagamento foi aprovado, o Premium é liberado automaticamente; volte em alguns minutos ou fale com o Suporte.'} <button className="link-button" onClick={onReturnSeen}>Fechar</button></div>}
+    {celebrate&&<section className="panel premium-celebrate" role="status">{celebrate==='gems'?<GemIcon size={48}/>:<Icon name="Crown Helmet" size={48}/>}<div>
+      <h2>{celebrate==='gems'?'Gemas recebidas!':'Premium ativado!'}</h2><p className="muted">{celebrate==='gems'?`Seu saldo agora é de ${gemsLabel(o.gems)}. ${canActivate&&!unlocked?'Já dá para ativar o Premium aqui em cima.':'Obrigado por apoiar O Confronto.'}`:'Obrigado por apoiar O Confronto. Seus benefícios já estão liberados abaixo.'}</p></div>
+      <button className="quiet" onClick={()=>setCelebrate(null)}>Fechar</button></section>}
+    {watching&&<div className="notice premium-watch" role="status"><i className="premium-spinner" aria-hidden="true"/>{returning==='pendente'?'Pagamento pendente.':'Pagamento recebido.'} Aguardando a confirmação do Mercado Pago para creditar suas gemas. Esta página atualiza sozinha.</div>}
+    {!watching&&!celebrate&&returning&&<div className="notice" role="status">{returning==='falhou'?'O pagamento não foi concluído. Você pode tentar de novo quando quiser.':'A confirmação ainda não chegou. Se o pagamento foi aprovado, as gemas entram automaticamente; volte em alguns minutos ou fale com o Suporte.'} <button className="link-button" onClick={onReturnSeen}>Fechar</button></div>}
     <section className={`panel premium-hero phase-${phase}`} id="premium-top">
       <div className="premium-status"><div className="premium-crown"><Icon name="Crown Helmet" size={64}/></div><div>
         <span className="eyebrow">{unlocked?`PREMIUM ATIVO · ${daysLeft} ${daysLeft===1?'DIA RESTANTE':'DIAS RESTANTES'}`:`PASSE DE ${o.days} DIAS`}</span>
@@ -53,22 +70,50 @@ export default function PremiumPanel({hero,onChanged,go,returning,onReturnSeen}:
         {unlocked&&<div className="premium-meter"><progress max={o.days} value={Math.min(daysLeft,o.days)} aria-label="Dias restantes do Premium"/><small>até {day(o.until)}</small></div>}
       </div></div>
       <Feedback error={error} ok={ok}/>
-      {o.enabled?<>
-        {(!unlocked||watching||!o.emailVerified)&&<ol className="premium-steps" aria-label="Como ativar">
-          <li className={o.emailVerified?'done':'current'}><b>{o.emailVerified?'✓':'1'}</b><div><strong>Confirmar e-mail</strong><span>{o.emailVerified?'E-mail confirmado.':<>Confirme pelo link que enviamos. <button className="link-button" disabled={busy} onClick={()=>void run(async()=>(await api<{message:string}>('/auth/resend-verification',{})).message)}>Reenviar link</button></>}</span></div></li>
-          <li className={o.emailVerified&&!watching?'current':watching?'done':''}><b>{watching?'✓':'2'}</b><div><strong>Pagar no Mercado Pago</strong><span>Pix ou cartão, na página segura do Mercado Pago.</span></div></li>
-          <li className={watching?'current':''}><b>3</b><div><strong>Liberação automática</strong><span>O servidor confirma o pagamento e libera o acesso. No Pix, em instantes.</span></div></li>
-        </ol>}
-        <div className="premium-cta"><button className="primary" disabled={busy||!o.emailVerified||watching} onClick={checkout}>{o.pendingCheckout?'Continuar pagamento':unlocked||phase==='queued'?'Renovar':phase==='ended'?'Voltar ao Premium':'Ativar Premium'} · {brl(o.priceCents)}</button>
-          <small className="muted">{o.days} dias de acesso · pagamento único, sem renovação automática.</small></div>
-      </>:unlocked?<p className="muted">A renovação pelo Mercado Pago ainda não está aberta. Seu acesso atual continua normalmente.</p>:<p className="muted premium-soon">O Premium ainda não está à venda. Em breve, via Mercado Pago (Pix e cartão). Enquanto isso, veja abaixo tudo o que ele vai oferecer e experimente o visual do seu perfil.</p>}
+      <div className="gem-activate">
+        <div className="gem-balance"><GemIcon size={28}/><div><small className="muted">Seu saldo</small><strong className={o.gems<0?'neg':''}>{gemsLabel(o.gems)}</strong></div></div>
+        {o.gemPrice>0?<div className="premium-cta"><button className="primary" disabled={busy||!canActivate} onClick={activate}>{actionLabel} · {gemsLabel(o.gemPrice)}</button>
+          <small className="muted">{missing>0?<>Faltam {gemsLabel(missing)}. <button className="link-button" onClick={()=>scrollTo('premium-gems')}>Comprar gemas</button></>:`${o.days} dias de acesso · sem renovação automática.`}</small></div>
+          :<p className="muted">A ativação do Premium com gemas está desligada no momento.</p>}
+      </div>
+      {o.gems<0&&<p className="notice">Seu saldo ficou negativo porque uma compra foi reembolsada depois de usada. Ele volta ao normal com a próxima compra de gemas.</p>}
       <div className="benefit-grid premium-benefits">{premiumBenefits.map(b=><div key={b.key} className={unlocked?'unlocked':''}><Icon name={b.icon} size={32}/><strong>{b.title}</strong><span>{b.description}</span>
         {unlocked?<button className="link-button" onClick={()=>jump(b.key)}>{where[b.key].label} →</button>:<small className="pill">Premium</small>}</div>)}</div>
     </section>
+    <GemShop o={o} watching={watching}/>
     {unlocked?<><PresetSection hero={hero} limit={p.presetLimit} onChanged={onChanged}/><ProfileSection hero={hero} onChanged={onChanged}/><StatsSection hero={hero}/></>
       :<><CompareSection perks={p}/><ProfileSection hero={hero} onChanged={onChanged} locked onUnlock={()=>scrollTo('premium-top')}/></>}
-    {o.orders.length>0&&<section className="panel"><div className="section-title"><h2>Seus pedidos</h2></div>{o.orders.map(x=><div className="ledger-row" key={x.id}><span>#{x.id} · {when(x.createdAt)}</span><span>{x.days} dias · {brl(x.amountCents)}</span><b className={`order-${x.status.toLowerCase()}`}>{orderStatus[x.status]??x.status}</b></div>)}</section>}
+    <PurchaseHistory refresh={refresh}/>
   </div>;
+}
+function GemShop({o,watching}:{o:Overview;watching:boolean}) {
+  const {busy,error,ok,run}=useAction();
+  const onBuy=(pack:string)=>void run(async()=>{const r=await api<{url:string}>('/gems/checkout',{pack});window.location.assign(r.url);});
+  const onResend=()=>void run(async()=>(await api<{message:string}>('/auth/resend-verification',{})).message);
+  return <section className="panel gem-shop" id="premium-gems"><div className="section-title"><h2>Loja de gemas</h2>{o.testMode&&<span className="pill">Modo de teste</span>}</div><Feedback error={error} ok={ok}/>
+    <p className="muted">Gemas ativam e renovam o Premium. Elas não viram ouro, XP nem item. Pagamento único pelo Mercado Pago, com Pix ou cartão; as gemas entram assim que o Mercado Pago confirma.</p>
+    {o.testMode&&<p className="notice">Modo de teste (sandbox): o Mercado Pago não cobra de verdade. Use uma conta compradora de teste.</p>}
+    {!o.enabled?<p className="notice gem-off" role="status">{o.disabledReason}</p>:<>
+      {!o.emailVerified&&<p className="notice">Confirme seu e-mail para comprar gemas. <button className="link-button" disabled={busy} onClick={onResend}>Reenviar link</button></p>}
+      <div className="gem-packs">{o.packs.map(pk=><div className="gem-pack" key={pk.key}>
+        <GemIcon size={40}/><strong>{fmt(pk.gems)} gemas</strong>{pk.bonusPercent>0?<small className="pill">+{pk.bonusPercent}% de bônus</small>:<small className="muted">pacote básico</small>}
+        <b>{brl(pk.cents)}</b>
+        <button className="primary" disabled={busy||watching||!o.emailVerified} onClick={()=>onBuy(pk.key)}>{o.pendingPack===pk.key?'Continuar pagamento':'Comprar'}</button></div>)}</div>
+    </>}
+  </section>;
+}
+function PurchaseHistory({refresh}:{refresh:number}) {
+  const orders=usePaged<Order>('/gems/orders',refresh),ledger=usePaged<GemEntry>('/gems/history',refresh);
+  if(!orders.total&&!ledger.total)return null;
+  return <section className="panel"><div className="section-title"><h2>Compras e extrato de gemas</h2></div>
+    {orders.error&&<p className="error" role="alert">{orders.error}</p>}
+    {orders.total>0&&<><h3>Suas compras</h3>{orders.items.map(x=><div className="ledger-row" key={x.id}><span>#{x.id} · {when(x.createdAt)}</span>
+      <span>{x.gems>0?gemsLabel(x.gems):`Premium ${x.days} dias`} · {brl(x.amountCents)}</span><b className={`order-${x.status.toLowerCase()}`}>{orderStatus[x.status]??x.status}</b></div>)}
+      <Pager page={orders.page} pages={orders.pages} onPage={p=>void orders.go(p)} busy={orders.loading}/></>}
+    {ledger.total>0&&<><h3>Extrato de gemas</h3>{ledger.items.map(g=><div className="ledger-row" key={g.id}><span>{when(g.createdAt)}</span><span>{gemReasons[g.reason as keyof typeof gemReasons]??g.reason}</span>
+      <b className={g.delta<0?'neg':'pos'}>{g.delta>0?'+':''}{fmt(g.delta)}</b><small>saldo {fmt(g.balanceAfter)}</small></div>)}
+      <Pager page={ledger.page} pages={ledger.pages} onPage={p=>void ledger.go(p)} busy={ledger.loading}/></>}
+  </section>;
 }
 function CompareSection({perks}:{perks:Overview['perks']}) {
   const rows:[string,string,string][]=[['Combate, XP, ouro e drops','Iguais para todos','Iguais para todos'],['Personagens por conta',String(perks.charactersFree),String(perks.charactersPremium)],

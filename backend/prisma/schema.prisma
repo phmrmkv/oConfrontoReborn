@@ -32,6 +32,9 @@ model Account {
   punishments     Punishment[]
   premiumPeriods  PremiumPeriod[]
   premiumOrders   PremiumOrder[]
+  // Gemas: moeda da conta comprada com dinheiro real (premium/gems.ts). Só muda por addGems, com GemLedger na mesma transação.
+  gems            Int             @default(0)
+  gemLedger       GemLedger[]
   tickets         SupportTicket[]
   analyticsEvents AnalyticsEvent[]
   confrontationSave  ConfrontationSave?
@@ -524,6 +527,9 @@ model PremiumOrder {
   updatedAt            DateTime       @updatedAt
   paidAt               DateTime?
   refundedAt           DateTime?
+  // Pacote de gemas (gems > 0). Pedido com gems = 0 é a venda direta do Premium em reais (legado).
+  gems                 Int            @default(0)
+  packKey              String?        @db.VarChar(16)
   period               PremiumPeriod?
 
   @@index([accountId, id])
@@ -546,8 +552,26 @@ model PremiumPeriod {
   revokedAt    DateTime?
   revokedById  Int?
   revokeReason String?       @db.VarChar(500)
+  // Gemas gastas para ativar este período (source GEMS).
+  gemsSpent    Int           @default(0)
 
   @@index([accountId, endsAt])
+}
+
+model GemLedger {
+  id           Int      @id @default(autoincrement())
+  accountId    Int
+  account      Account  @relation(fields: [accountId], references: [id])
+  delta        Int
+  balanceAfter Int
+  reason       String   @db.VarChar(24)
+  refType      String?  @db.VarChar(24)
+  refId        Int?
+  note         String?  @db.VarChar(500)
+  createdAt    DateTime @default(now())
+
+  @@index([accountId, id])
+  @@index([reason, createdAt])
 }
 
 model PaymentEvent {

@@ -10,6 +10,7 @@ import { metrics } from '../core/monitor';
 import { once } from '../core/operations';
 import { goldDrift, itemDrift } from '../economy/reconcile';
 import { applyRefund } from '../premium/premiumService';
+import { addGems } from '../premium/gems';
 import { can, permissionsOf, type Permission } from '../../../shared/permissions';
 import { settingDefs, settingKeys, validSetting, settingsConflict, goldReasons, itemReasons, type SettingKey } from '../../../shared/economy';
 
@@ -58,16 +59,17 @@ adminRoutes.get('/admin/accounts', need('accounts.read'), asyncRoute(async (req,
 }));
 adminRoutes.get('/admin/accounts/:id', need('accounts.read'), asyncRoute(async (req, res) => {
   const id = integer(Number(req.params.id));
-  const account = await prisma.account.findUnique({ where: { id }, select: { id: true, email: true, role: true, emailVerifiedAt: true, createdAt: true,
+  const account = await prisma.account.findUnique({ where: { id }, select: { id: true, email: true, role: true, emailVerifiedAt: true, createdAt: true, gems: true,
     characters: { select: { id: true, name: true, level: true, vocation: true, goldInHand: true, goldInBank: true } } } });
   if (!account) throw new GameError(404, 'Conta não encontrada.');
-  const [punishments, periods, orders, tickets, premium] = await Promise.all([
+  const [punishments, periods, orders, tickets, premium, gemLedger] = await Promise.all([
     prisma.punishment.findMany({ where: { accountId: id }, orderBy: { id: 'desc' }, take: 30 }),
     prisma.premiumPeriod.findMany({ where: { accountId: id }, orderBy: { id: 'desc' }, take: 20 }),
     prisma.premiumOrder.findMany({ where: { accountId: id }, orderBy: { id: 'desc' }, take: 20 }),
     prisma.supportTicket.findMany({ where: { accountId: id }, orderBy: { id: 'desc' }, take: 10, select: { id: true, kind: true, subject: true, status: true } }),
-    premiumStatus(prisma, id)]);
-  res.json({ ...account, premium, punishments, periods, orders, tickets });
+    premiumStatus(prisma, id),
+    prisma.gemLedger.findMany({ where: { accountId: id }, orderBy: { id: 'desc' }, take: 10 })]);
+  res.json({ ...account, premium, punishments, periods, orders, tickets, gemLedger });
 }));
 
 // ----- Punições -----
@@ -147,6 +149,20 @@ adminRoutes.post('/admin/accounts/:id/premium', need('premium.grant'), asyncRout
     });
   }));
 }));
+// ----- Gemas: ajuste da equipe (compra que não chegou, correção), com motivo e auditoria -----
+adminRoutes.post('/admin/accounts/:id/gems', need('premium.grant'), asyncRoute(async (req, res) => {
+  const accountId = integer(Number(req.params.id)), reason = reasonOf(req.body), delta = num(req.body?.delta, 0, -1_000_000, 1_000_000);
+  if (delta === 0) throw new GameError(400, 'Informe quantas gemas somar ou tirar.');
+  const key = opKey(req);
+  res.status(201).json(await transaction(async tx => {
+    await lockAccount(tx, accountId);
+    return once(tx, -accountId, key, ['gems', accountId, delta, reason], async () => {
+      const balance = await addGems(tx, accountId, delta, 'ADMIN', { type: 'admin', id: actor(res) }, { note: reason });
+      await audit(tx, actor(res), 'GEMS_ADJUST', 'ACCOUNT', accountId, reason, { delta, balance });
+      return { gems: balance };
+    });
+  }));
+}));
 adminRoutes.post('/admin/premium-periods/:id/revoke', need('premium.grant'), asyncRoute(async (req, res) => {
   const id = integer(Number(req.params.id)), reason = reasonOf(req.body);
   await transaction(async tx => {
@@ -159,7 +175,11 @@ adminRoutes.post('/admin/premium-periods/:id/revoke', need('premium.grant'), asy
 }));
 adminRoutes.get('/admin/orders', need('orders.read'), asyncRoute(async (req, res) => {
   const status = typeof req.query.status === 'string' && /^[A-Z]{4,12}$/.test(req.query.status) ? req.query.status : undefined;
-  res.json(await prisma.premiumOrder.findMany({ where: { status }, orderBy: { id: 'desc' }, take: 50, include: { account: { select: { email: true } } } }));
+  const { page, skip, take } = pageOf(req.query);
+  const [items, total] = await Promise.all([
+    prisma.premiumOrder.findMany({ where: { status }, orderBy: { id: 'desc' }, skip, take, include: { account: { select: { email: true } } } }),
+    prisma.premiumOrder.count({ where: { status } })]);
+  res.json(paged(items, total, page));
 }));
 // Para reembolsos feitos direto no painel do Mercado Pago quando o aviso automático não chegou.
 adminRoutes.post('/admin/orders/:id/refund', need('orders.manage'), asyncRoute(async (req, res) => {

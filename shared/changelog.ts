@@ -1,6 +1,12 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-gemas', date: '2026-11-13', title: 'Gemas e Premium', items: [
+    'Chegaram as gemas: compre um pacote na aba Premium, pague com Pix ou cartão pelo Mercado Pago e as gemas entram sozinhas assim que o pagamento é confirmado. Os pacotes maiores vêm com gemas de bônus.',
+    'Com gemas você ativa o Premium por 30 dias ou renova antes de acabar: os dias novos começam quando os atuais terminam, sem perder nenhum.',
+    'A aba Premium mostra o seu saldo, todas as suas compras e o extrato de gemas, em páginas.',
+    'Gemas não viram ouro, XP nem item, e o Premium continua sem mexer em combate, XP, ouro ou drops.',
+  ] },
   { id: '2026-11-13-wiki', date: '2026-11-13', title: 'Wiki do jogo', items: [
     'Nova aba Wiki, em Comunidade: todos os itens, criaturas e regiões do jogo num lugar só.',
     'Itens com nível, vocações, ataque, defesa, atributos secundários, conjunto, preço no Mercador e de quais criaturas caem, com a chance de cada uma.',

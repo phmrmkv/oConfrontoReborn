@@ -3,7 +3,7 @@ import { asyncRoute } from '../core/http';
 import { prisma, transaction, lockCharacter } from '../core/db';
 import { GameError, integer } from '../core/engine';
 import { isPremium } from './premium';
-import { premiumOverview, startCheckout } from './premiumService';
+import { premiumOverview, startGemCheckout, activatePremiumWithGems, gemOrders, gemHistory } from './premiumService';
 import { loadSettings } from '../core/settings';
 import { frames, profileTitles, emblems } from '../../../shared/premium';
 import { honorCosmetics } from '../../../shared/pvp';
@@ -20,7 +20,11 @@ async function ownedCharacter(req: { params: Record<string, string> }, accountId
   return id;
 }
 premiumRoutes.get('/premium', asyncRoute(async (_req, res) => { res.json(await premiumOverview(res.locals.accountId)); }));
-premiumRoutes.post('/premium/checkout', asyncRoute(async (_req, res) => { res.json(await startCheckout(res.locals.accountId)); }));
+// Gemas: comprar um pacote (Mercado Pago), ativar/renovar o Premium com gemas, pedidos e extrato (paginados).
+premiumRoutes.post('/gems/checkout', asyncRoute(async (req, res) => { res.json(await startGemCheckout(res.locals.accountId, req.body?.pack)); }));
+premiumRoutes.post('/premium/activate', asyncRoute(async (req, res) => { res.json(await activatePremiumWithGems(res.locals.accountId, req.get('idempotency-key') ?? '')); }));
+premiumRoutes.get('/gems/orders', asyncRoute(async (req, res) => { res.json(await gemOrders(res.locals.accountId, req.query)); }));
+premiumRoutes.get('/gems/history', asyncRoute(async (req, res) => { res.json(await gemHistory(res.locals.accountId, req.query)); }));
 
 // ----- Conjuntos de equipamento -----
 premiumRoutes.get('/characters/:id/presets', asyncRoute(async (req, res) => {

@@ -12,11 +12,11 @@ export async function recomputePeriods(tx: Prisma.TransactionClient, accountId: 
       await tx.premiumPeriod.update({ where: { id: slot.id }, data: { startsAt: slot.startsAt, endsAt: slot.endsAt } });
   }
 }
-export async function grantPeriod(tx: Prisma.TransactionClient, input: { accountId: number; days: number; source: 'PURCHASE' | 'PROMO' | 'CORRECTION'; orderId?: number; reason?: string; createdById?: number }) {
+export async function grantPeriod(tx: Prisma.TransactionClient, input: { accountId: number; days: number; source: 'PURCHASE' | 'GEMS' | 'PROMO' | 'CORRECTION'; orderId?: number; reason?: string; createdById?: number; gemsSpent?: number }) {
   await lockAccount(tx, input.accountId);
   const now = new Date();
   const period = await tx.premiumPeriod.create({ data: { accountId: input.accountId, source: input.source, orderId: input.orderId ?? null, days: input.days,
-    startsAt: now, endsAt: new Date(now.getTime() + input.days * DAY), reason: input.reason ?? null, createdById: input.createdById ?? null, createdAt: now } });
+    startsAt: now, endsAt: new Date(now.getTime() + input.days * DAY), reason: input.reason ?? null, createdById: input.createdById ?? null, gemsSpent: input.gemsSpent ?? 0, createdAt: now } });
   await recomputePeriods(tx, input.accountId);
   return tx.premiumPeriod.findUniqueOrThrow({ where: { id: period.id } });
 }

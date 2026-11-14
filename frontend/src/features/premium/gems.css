@@ -1,0 +1,9 @@
+/* Gemas: saldo, ativação do Premium e loja de pacotes (PremiumPanel). Cores por currentColor e color-mix, valem nos dois temas. */
+.gem-icon{flex:0 0 auto;filter:drop-shadow(0 3px 4px #0004)}
+.gem-activate{display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px;padding:14px 16px;border-radius:12px;border:1px solid color-mix(in srgb,#3fb6a8 40%,transparent);background:color-mix(in srgb,#3fb6a8 8%,transparent)}
+.gem-balance{display:flex;align-items:center;gap:10px}.gem-balance div{display:flex;flex-direction:column}.gem-balance strong{font-size:20px}.gem-balance strong.neg{color:#b3402a}
+.gem-packs{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:14px}
+.gem-pack{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:16px 12px;border-radius:12px;border:1px solid color-mix(in srgb,currentColor 18%,transparent);background:color-mix(in srgb,#3fb6a8 6%,transparent)}
+.gem-pack strong{font-size:18px}.gem-pack b{font-size:16px}.gem-pack button{width:100%}
+.gem-off{margin:12px 0 0}
+@media(max-width:560px){.gem-activate{flex-direction:column;align-items:stretch}.gem-packs{grid-template-columns:1fr 1fr}}

@@ -1,26 +1,28 @@
 # Gaveta `premium`
 
-**Para que serve:** Passe Premium (30 dias), pagamentos Mercado Pago, benefícios só estéticos/organizacionais.
+**Para que serve:** Gemas (moeda da conta, compradas no Mercado Pago), Passe Premium (30 dias) ativado com gemas, benefícios só estéticos/organizacionais.
 
 ## Arquivos
 - `premium.ts` – períodos encadeados, `premiumStatus`/`isPremium`
 - `shared/premium.ts` – benefícios (com sprite), títulos, molduras e `premiumPhase` (ativo / terminando / agendado / encerrado), usado pela tela e testado em `premium.test.ts`
-- `premiumService.ts` – checkout, processamento de pagamento, reembolso
+- `gems.ts` – `addGems`: único jeito de mudar `Account.gems`, sempre com `GemLedger` na mesma transação (conta travada)
+- `shared/gems.ts` – pacotes (`gemPacks`, chaves `gems.packN.*` em `loadSettings`) e motivos do extrato
+- `premiumService.ts` – loja (`startGemCheckout`), ativação com gemas (`activatePremiumWithGems`, idempotente pela chave), compras e extrato paginados, webhook (`processMercadoPagoPayment`), reembolso
 - `mercadopago.ts` – API, assinatura HMAC
 - `webhookRoutes.ts` – `POST /webhooks/mercadopago`
 - `premiumRoutes.ts` – painel Premium, conjuntos de equipamento, favoritos, perfil, estatísticas
 
 ## Rotas
-`/premium`, `/premium/checkout`, presets, favorito, perfil, hunt-stats, `/webhooks/mercadopago`.
+`/premium`, `/gems/checkout`, `/premium/activate`, `/gems/orders`, `/gems/history`, presets, favorito, perfil, hunt-stats, `/webhooks/mercadopago`. Admin: `/admin/accounts/:id/gems`, `/admin/orders` (paginado).
 
 ## Dependências permitidas
 Depende de `core` (e `economy` se precisar).
 
 ## Regras que não podem quebrar
-Premium nunca altera combate, XP, ouro ou drops. Acesso só após webhook com assinatura válida e pagamento reconsultado na API. Eventos repetidos são idempotentes.
+Premium nunca altera combate, XP, ouro ou drops; gemas nunca viram ouro, XP nem item. Gemas só entram após webhook com assinatura válida e pagamento reconsultado na API; eventos repetidos são idempotentes (PaymentEvent + pedido travado). Pedido com `gems = 0` é a venda direta antiga do Premium e continua sendo honrado. Reembolso/estorno tira as gemas mesmo que já gastas (saldo pode ficar negativo; nada se ativa com saldo negativo). Sem `MP_ACCESS_TOKEN` e `MP_WEBHOOK_SECRET` a loja fica desligada com mensagem.
 
 ## Testes
-`npm test` (premium.test) · `npm run mp:sim` · `MERCADOPAGO-TESTE.md`
+`npm test` (premium.test) · `backend/tests/gems-integration.ts` (base `_test`) · `npm run mp:sim` · `MERCADOPAGO-TESTE.md`
 
 ## Modelo de prompt de manutenção
 ```

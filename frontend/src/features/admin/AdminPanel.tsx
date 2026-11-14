@@ -7,6 +7,7 @@ import {reasonLabel} from '../ledger/reasonLabel';
 import type {Permission} from '../../../../shared/permissions';
 import {Pager,usePaged} from '../../ui/Pager';
 import {outcomeLabels,type DuelOutcome} from '../../../../shared/pvp';
+import {gemReasons} from '../../../../shared/gems';
 const msg=(e:unknown)=>e instanceof Error?e.message:'Ocorreu um erro.';
 type Me={role:string;permissions:Permission[]};
 const roleName:Record<string,string>={SUPPORT:'Apoio',MODERATOR:'Moderação',ADMIN:'Administração'};
@@ -65,13 +66,14 @@ function Tickets({can}:{can:boolean}) {
 }
 
 type AccountRow={id:number;email:string;role:string;emailVerifiedAt:string|null;createdAt:string;characters:{id:number;name:string;level:number;vocation:string}[]};
-type AccountFull=Omit<AccountRow,"characters">&{premium:{active:boolean;until:string|null};characters:{id:number;name:string;level:number;vocation:string;goldInHand:string;goldInBank:string}[];punishments:{id:number;kind:string;reason:string;createdAt?:string;startsAt:string;expiresAt:string|null;revokedAt:string|null}[];periods:{id:number;source:string;days:number;startsAt:string;endsAt:string;revokedAt:string|null;reason:string|null}[];orders:{id:number;status:string;amountCents:number;createdAt:string}[];tickets:{id:number;subject:string;status:string}[]};
+type AccountFull=Omit<AccountRow,"characters">&{premium:{active:boolean;until:string|null};characters:{id:number;name:string;level:number;vocation:string;goldInHand:string;goldInBank:string}[];punishments:{id:number;kind:string;reason:string;createdAt?:string;startsAt:string;expiresAt:string|null;revokedAt:string|null}[];periods:{id:number;source:string;days:number;startsAt:string;endsAt:string;revokedAt:string|null;reason:string|null}[];gems:number;gemLedger:{id:number;delta:number;balanceAfter:number;reason:string;note:string|null;createdAt:string}[];orders:{id:number;status:string;amountCents:number;days:number;gems:number;createdAt:string;providerPaymentId:string|null}[];tickets:{id:number;subject:string;status:string}[]};
 type GoldEntry={id:number;delta:string;balanceAfter:string;reason:string;createdAt:string};
 type ItemEntry={id:number;delta:number;item:string;reason:string;upgradeTier:number;createdAt:string};
 // Uma chave por tentativa: o mesmo clique repetido reenvia a mesma chave (o servidor aplica uma vez); mudar os dados gera outra.
 function useOpKey(){const ref=useRef<{sig:string;key:string}|null>(null);return{get:(sig:string)=>{if(!ref.current||ref.current.sig!==sig)ref.current={sig,key:crypto.randomUUID()};return ref.current.key;},clear:()=>{ref.current=null;}};}
 function Accounts({has}:{has:(p:Permission)=>boolean}) {
-  const goldKey=useOpKey(),premiumKey=useOpKey();
+  const goldKey=useOpKey(),premiumKey=useOpKey(),gemKey=useOpKey();
+  const [gemDelta,setGemDelta]=useState('');
   const [q,setQ]=useState(''),[rows,setRows]=useState<AccountRow[]>([]),[acc,setAcc]=useState<AccountFull|null>(null),a=useAct();
   const [reason,setReason]=useState(''),[kind,setKind]=useState('WARNING'),[hours,setHours]=useState(''),[days,setDays]=useState('7'),[delta,setDelta]=useState(''),[charId,setCharId]=useState<number|null>(null),[gold,setGold]=useState<GoldEntry[]>([]),[items,setItems]=useState<ItemEntry[]>([]);
   const open=(id:number)=>api<AccountFull>(`/admin/accounts/${id}`).then(setAcc);
@@ -89,7 +91,12 @@ function Accounts({has}:{has:(p:Permission)=>boolean}) {
       {has('punish.apply')&&<><h3>Punições</h3><Limited items={acc.punishments} label="Ver mais" render={p=><div className="ledger-row" key={p.id}><span>{p.kind} · {when(p.startsAt)}</span><span>{p.reason}</span><b>{p.revokedAt?'revogada':p.expiresAt?`até ${when(p.expiresAt)}`:'sem prazo'}</b>{!p.revokedAt&&<button disabled={a.busy} onClick={()=>void act(()=>api(`/admin/punishments/${p.id}/revoke`,{reason}),'Punição revogada.')}>Revogar</button>}</div>}/>
         <form className="ops-inline" onSubmit={e=>{e.preventDefault();void act(()=>api(`/admin/accounts/${acc.id}/punishments`,{kind,reason,...(hours?{hours:Number(hours)}:{})}),'Punição aplicada.');}}><select aria-label="Tipo" value={kind} onChange={e=>setKind(e.target.value)}><option value="WARNING">Advertência</option><option value="MARKET_BAN">Bloquear mercado</option><option value="PVP_BLOCK">Proibir duelos</option><option value="BAN">Banir conta</option></select><input aria-label="Horas" inputMode="numeric" placeholder="Horas (vazio = sem prazo)" value={hours} onChange={e=>setHours(e.target.value)}/><button disabled={a.busy}>Aplicar</button></form></>}
       {has('premium.grant')&&<><h3>Premium</h3><Limited items={acc.periods} label="Ver mais" render={p=><div className="ledger-row" key={p.id}><span>{p.source} · {p.days} dias</span><span>{when(p.startsAt)} → {when(p.endsAt)}</span><b>{p.revokedAt?'revogado':'ativo'}</b>{!p.revokedAt&&<button disabled={a.busy} onClick={()=>void act(()=>api(`/admin/premium-periods/${p.id}/revoke`,{reason}),'Período revogado.')}>Revogar</button>}</div>}/>
-        <form className="ops-inline" onSubmit={e=>{e.preventDefault();void act(()=>api(`/admin/accounts/${acc.id}/premium`,{days:Number(days),reason},premiumKey.get(`${acc.id}|${days}|${reason}`)).then(r=>{premiumKey.clear();return r;}),'Dias concedidos.');}}><input aria-label="Dias" inputMode="numeric" value={days} onChange={e=>setDays(e.target.value)} required/><button disabled={a.busy}>Conceder dias de Premium</button></form></>}
+        <form className="ops-inline" onSubmit={e=>{e.preventDefault();void act(()=>api(`/admin/accounts/${acc.id}/premium`,{days:Number(days),reason},premiumKey.get(`${acc.id}|${days}|${reason}`)).then(r=>{premiumKey.clear();return r;}),'Dias concedidos.');}}><input aria-label="Dias" inputMode="numeric" value={days} onChange={e=>setDays(e.target.value)} required/><button disabled={a.busy}>Conceder dias de Premium</button></form>
+        <h3>Gemas · saldo {fmt(acc.gems)}</h3>{acc.gemLedger.map(g=><div className="ledger-row" key={g.id}><span>{when(g.createdAt)}</span><span>{gemReasons[g.reason as keyof typeof gemReasons]??g.reason}{g.note?` · ${g.note}`:''}</span><b className={g.delta<0?'neg':'pos'}>{g.delta>0?'+':''}{fmt(g.delta)}</b><small>saldo {fmt(g.balanceAfter)}</small></div>)}
+        {!acc.gemLedger.length&&<p className="empty">Nenhuma movimentação de gemas.</p>}
+        <form className="ops-inline" onSubmit={e=>{e.preventDefault();void act(()=>api(`/admin/accounts/${acc.id}/gems`,{delta:Number(gemDelta),reason},gemKey.get(`${acc.id}|${gemDelta}|${reason}`)).then(r=>{gemKey.clear();setGemDelta('');return r;}),'Gemas ajustadas.');}}><input aria-label="Gemas" inputMode="numeric" placeholder="Ex.: 100 ou -100" value={gemDelta} onChange={e=>setGemDelta(e.target.value)} required/><button disabled={a.busy}>Ajustar gemas</button></form>
+        <h3>Compras</h3><Limited items={acc.orders} label="Ver mais" render={o=><div className="ledger-row" key={o.id}><span>#{o.id} · {when(o.createdAt)}</span><span>{o.gems>0?`${fmt(o.gems)} gemas`:`Premium ${o.days} d`} · {brl(o.amountCents)}</span><b>{o.status}</b><small>{o.providerPaymentId??'—'}</small></div>}/>
+        {!acc.orders.length&&<p className="empty">Nenhuma compra.</p>}</>}
       {acc.tickets.length>0&&<><h3>Atendimentos</h3><Limited items={acc.tickets} label="Ver mais" render={t=><div key={t.id}>#{t.id} · {t.subject} <span className="pill">{t.status}</span></div>}/></>}</section>}</>;
 }
 
@@ -129,15 +136,14 @@ function Settings({canWrite}:{canWrite:boolean}) {
       {canWrite&&<div className="ops-inline"><input aria-label="Motivo" placeholder="Motivo da alteração (obrigatório)" value={reason} onChange={e=>setReason(e.target.value)} minLength={5} maxLength={500} required/><button className="primary" disabled={a.busy||!Object.keys(changed).length}>Salvar {Object.keys(changed).length||''} alteração(ões)</button></div>}</form></section>;
 }
 
-type OrderRow={id:number;status:string;amountCents:number;days:number;createdAt:string;paidAt:string|null;providerPaymentId:string|null;account:{email:string}};
+type OrderRow={id:number;status:string;amountCents:number;days:number;gems:number;createdAt:string;paidAt:string|null;providerPaymentId:string|null;account:{email:string}};
 function Orders({canManage}:{canManage:boolean}) {
-  const [rows,setRows]=useState<OrderRow[]>([]),[reason,setReason]=useState(''),a=useAct();
-  const load=()=>api<OrderRow[]>('/admin/orders').then(setRows).catch(()=>{});
-  useEffect(()=>{void load();},[]);
-  return <section className="panel"><div className="section-title"><h2>Pedidos do Premium</h2><button onClick={()=>void load()}>Atualizar</button></div><Msg error={a.error} ok={a.ok}/>
+  const [status,setStatus]=useState(''),[reason,setReason]=useState(''),a=useAct(),rows=usePaged<OrderRow>(`/admin/orders${status?`?status=${status}`:''}`);
+  const load=()=>rows.reload();
+  return <section className="panel"><div className="section-title"><h2>Compras (gemas e Premium)</h2><span><select aria-label="Status" value={status} onChange={e=>setStatus(e.target.value)}><option value="">Todos</option><option value="PENDING">Aguardando</option><option value="PAID">Pagos</option><option value="FAILED">Não concluídos</option><option value="REFUNDED">Reembolsados</option></select> <button onClick={()=>void load()}>Atualizar</button></span></div><Msg error={a.error||rows.error} ok={a.ok}/>
     {canManage&&<input aria-label="Motivo" placeholder="Motivo (para marcar reembolso)" value={reason} onChange={e=>setReason(e.target.value)} maxLength={500} style={{marginBottom:10,width:'100%'}}/>}
-    <table className="admin-table"><thead><tr><th>#</th><th>Conta</th><th>Valor</th><th>Status</th><th>Pagamento</th><th/></tr></thead><tbody><LimitedRows items={rows} cols={10} render={o=><tr key={o.id}><td>{o.id}</td><td>{o.account.email}</td><td>{brl(o.amountCents)} · {o.days} d</td><td>{o.status}</td><td>{o.providerPaymentId??'—'}</td><td>{canManage&&o.status==='PAID'&&<button disabled={a.busy} onClick={()=>void a.run(async()=>{await api(`/admin/orders/${o.id}/refund`,{reason});await load();},'Reembolso registrado; acesso revogado.')}>Registrar reembolso</button>}</td></tr>}/></tbody></table>
-    <p className="muted">O reembolso em si é feito no painel do Mercado Pago. Normalmente o aviso automático já revoga o acesso; use o botão apenas se ele não chegar.</p></section>;
+    <table className="admin-table"><thead><tr><th>#</th><th>Conta</th><th>Valor</th><th>Status</th><th>Pagamento</th><th/></tr></thead><tbody>{rows.items.map(o=><tr key={o.id}><td>{o.id}</td><td>{o.account.email}</td><td>{brl(o.amountCents)} · {o.gems>0?`${fmt(o.gems)} gemas`:`${o.days} d`}</td><td>{o.status}</td><td>{o.providerPaymentId??'—'}</td><td>{canManage&&o.status==='PAID'&&<button disabled={a.busy} onClick={()=>void a.run(async()=>{await api(`/admin/orders/${o.id}/refund`,{reason});await load();},'Reembolso registrado; gemas ou acesso retirados.')}>Registrar reembolso</button>}</td></tr>)}</tbody></table><Pager page={rows.page} pages={rows.pages} onPage={p=>void rows.go(p)} busy={rows.loading}/>
+    <p className="muted">O reembolso em si é feito no painel do Mercado Pago. Normalmente o aviso automático já tira as gemas (ou revoga o acesso, nos pedidos antigos de Premium direto); use o botão apenas se ele não chegar. Se as gemas já foram gastas, o saldo da conta fica negativo.</p></section>;
 }
 
 type AuditRow={id:number;actorAccountId:number;action:string;targetType:string;targetId:number|null;reason:string;details:unknown;createdAt:string};
