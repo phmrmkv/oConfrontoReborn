@@ -10,7 +10,7 @@
 - `characterService.ts`, `characterRoutes.ts` – criar/trocar personagens e promover classe
 - `adventureService.ts`, `adventureRoutes.ts`, `taskRoutes.ts` – jornada, conquistas, diário, tarefas
 - `duelEngine.ts` (puro, com testes) e `duelService.ts` – Duelo entre amigos: desafio, rodadas com prazo, rendição, histórico, ranking de honra, varredura `expireDuels` (server.ts). Regras em `shared/pvp.ts`, números em `pvp.*`. Nunca altera vida, mana ou XP. Duelo valendo: aposta de ouro (DUEL_WAGER/PRIZE/REFUND/FEE), espólio com resgate (`DuelLoot`, DUEL_LOOT_*/DUEL_RANSOM*), honra tipo Elo e marcas (`CharacterCosmetic`). Teste: `backend/tests/duel-stakes-integration.ts`. Teste: `backend/tests/duel-integration.ts`; equilíbrio: `npm run duel:simulate`.
-- `wikiService.ts` – aba Wiki (`GET /wiki`): catálogo inteiro só leitura; preços e recompensas por `loadSettings`, o que o item soma ao herói por `combatStats.ts`
+- `wikiService.ts` – aba Wiki (`GET /wiki`): catálogo e regras inteiros, só leitura (itens, criaturas, regiões, missões, classes, Ferreiro, raridade, grupo, duelo e comércio); números de configuração por `loadSettings` e contas pelas funções de sempre (`combatStats.ts`, `upgradePrice`, `classCost`, `rollRarity`), nunca refeitas
 - `forgeService.ts` – Ferreiro além da melhoria: fabricar com materiais, reforjar para item de nível maior (guarda metade da melhoria), desmontar em materiais; `GET /characters/:id/forge` monta a tela
 
 ## Rotas

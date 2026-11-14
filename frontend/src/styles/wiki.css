@@ -34,3 +34,16 @@
 :root[data-theme="light"] .wiki-stats.secondary,:root[data-theme="light"] .wiki-drops summary,:root[data-theme="light"] .wiki-drops li>b{color:#633113}
 :root[data-theme="light"] .wiki-set{color:#5d4a26}
 :root[data-theme="light"] .wiki-drops li,:root[data-theme="light"] .wiki-creatures li{border-color:#ddc89c}
+/* Partes de regra (WikiRules.tsx): seções e tabelas. */
+.wiki-views{margin-bottom:10px}
+.wiki-wide{grid-column:1/-1}
+.wiki-section{margin-top:18px}
+.wiki-section>h3{font-family:Georgia,serif;font-size:17px;font-weight:400;margin-bottom:6px}
+.wiki-table-wrap{overflow-x:auto;margin:8px 0}
+.wiki-table{width:100%;border-collapse:collapse;font-size:12px}
+.wiki-table th{text-align:left;color:#a99871;font-weight:600;padding:6px 8px;border-bottom:1px solid #3b4649;white-space:nowrap}
+.wiki-table td{padding:6px 8px;border-bottom:1px solid #2f3b3c;color:#c9d4c5;vertical-align:top;line-height:1.5}
+.wiki-table td .sprite{vertical-align:middle}
+.wiki-creatures li>span.muted{text-align:right}
+:root[data-theme="light"] .wiki-table th{color:#633113;border-color:#b9892f}
+:root[data-theme="light"] .wiki-table td{color:#4a2a10;border-color:#ddc89c}

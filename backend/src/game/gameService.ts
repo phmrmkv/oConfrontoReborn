@@ -11,7 +11,7 @@ import { randomInt } from 'node:crypto';
 import { makeRare, retireRare, RARE_TIER } from '../economy/rare';
 import { BASE_ATTRIBUTE } from '../../../shared/progression';
 // Cada ponto em Vitalidade dá +15 de vida máxima; em Resistência, +15 de mana máxima.
-const STAT_BONUS = 15;
+export const STAT_BONUS = 15; // vida (Vitalidade) ou mana (Resistência) por ponto; a aba Wiki mostra este número
 import { statsResetCost, npcSellPrice, percentOf, resolveUpgrade, upgradeSuccessPercent, upgradeFailBonus, PROTECTION_STONE, type UpgradeOutcome, type UpgradeResult } from '../../../shared/economy';
 import { rarityName } from '../../../shared/rarity';
 

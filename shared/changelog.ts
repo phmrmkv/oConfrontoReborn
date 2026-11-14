@@ -1,6 +1,11 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-wiki-completa', date: '2026-11-13', title: 'Wiki completa', items: [
+    'A Wiki agora tem as 4 vocações com golpes, poder, números e as 8 classes de cada uma, com o nível e o custo de cada classe.',
+    'Novas partes: Missões e Jornada, Ferreiro e raridade (chance de cada melhoria e de cada raridade), Conjuntos das Eras, Combate e níveis, Grupo e Duelo, Comércio e conta.',
+    'As fichas de item mostram o custo da melhoria até +10 e o efeito das poções; as de criatura mostram a missão dela e a fala do chefe.',
+  ] },
   { id: '2026-11-13-gemas', date: '2026-11-13', title: 'Gemas e Premium', items: [
     'Chegaram as gemas: compre um pacote na aba Premium, pague com Pix ou cartão pelo Mercado Pago e as gemas entram sozinhas assim que o pagamento é confirmado. Os pacotes maiores vêm com gemas de bônus.',
     'Com gemas você ativa o Premium por 30 dias ou renova antes de acabar: os dias novos começam quando os atuais terminam, sem perder nenhum.',

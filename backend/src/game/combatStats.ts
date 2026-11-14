@@ -5,6 +5,8 @@ import { setBonuses } from '../../../shared/itemSets';
 interface CombatCharacter { strength:number; agility:number; resistance:number; level:number; vocation:string; classTier?:number }
 interface Gear { upgradeTier:number; rarity?:number; blueprint:{attack:number;defense:number;armor:number;magicAttack:number;criticalChance:number;fireResistance:number;speed:number;
   critDamage?:number;lifeSteal?:number;healPower?:number;statusResistance?:number;setKey?:string|null} }
+// Tetos do herói (a aba Wiki mostra estes mesmos números): crítico, esquiva e resistência a fogo, em %; crítico-base 10.
+export const combatCaps={critical:45,dodge:20,fireResistance:75,baseCritical:10} as const;
 // `rarityPercent` e `upgradePercent`: quanto da vantagem da raridade e da melhoria +N vale nesta conta.
 // 100 na caçada (e na Caçada em grupo); o duelo passa `pvp.rarityPercent` e `pvp.upgradePercent`, para o equipamento não decidir sozinho.
 export function combatStats(c:CombatCharacter, equipment:Gear[], opts:{rarityPercent?:number;upgradePercent?:number;setPercent?:number}={}) {
@@ -32,6 +34,6 @@ export function combatStats(c:CombatCharacter, equipment:Gear[], opts:{rarityPer
   const set=setBonuses(pieces,opts.setPercent??100);
   // Bônus de conjunto: % sobre o ataque e a defesa finais; secundários somados aos dos itens, com os mesmos tetos.
   return { attack:Math.floor(Math.floor((base+weapon+Math.floor(c.level*1.5))*profile.attackScale*(up?promotion.attackScale:1)*atkClass)*(1+set.attackPercent/100)), defense:Math.floor(Math.floor(defense*profile.defenseScale*(up?promotion.defenseScale:1)*defClass)*(1+set.defensePercent/100)),armor,magic,
-    criticalChance:Math.min(45,10+Math.floor(c.agility/4)+critical+profile.critical+(up?promotion.critical:0)+extra*classBonus.critical), fireResistance:Math.min(75,fireResistance),dodgeChance:Math.min(20,speed+profile.dodge),
+    criticalChance:Math.min(combatCaps.critical,combatCaps.baseCritical+Math.floor(c.agility/4)+critical+profile.critical+(up?promotion.critical:0)+extra*classBonus.critical), fireResistance:Math.min(combatCaps.fireResistance,fireResistance),dodgeChance:Math.min(combatCaps.dodge,speed+profile.dodge),
     critDamage:Math.min(secondaryCap.critDamage,Math.floor(critDamage+set.critDamage)),lifeSteal:Math.min(secondaryCap.lifeSteal,Math.floor(lifeSteal+set.lifeSteal)),healPower:Math.min(secondaryCap.healPower,Math.floor(healPower+set.healPower)),statusResistance:Math.min(secondaryCap.statusResistance,Math.floor(statusResistance+set.statusResistance)), sets:set.active };
 }
