@@ -1,6 +1,12 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-13-wiki', date: '2026-11-13', title: 'Wiki do jogo', items: [
+    'Nova aba Wiki, em Comunidade: todos os itens, criaturas e regiões do jogo num lugar só.',
+    'Itens com nível, vocações, ataque, defesa, atributos secundários, conjunto, preço no Mercador e de quais criaturas caem, com a chance de cada uma.',
+    'Criaturas e chefes com vida, ataque, defesa, elemento, XP, ouro e o que derrubam. Regiões com a faixa de nível e quem vive em cada uma.',
+    'Busca e filtros por tipo, vocação, conjunto, região e chefe; clicar numa criatura ou num item abre a ficha dele.',
+  ] },
   { id: '2026-11-13-icones-animados', date: '2026-11-13', title: 'Ícones com vida', items: [
     'Os locais de caça ganharam ícones novos, pintados e animados: o portal do Abismo da 4ª Era gira, as fogueiras tremem e soltam brasas, cai neve nas Terras Geladas e há vaga-lumes no Pântano Sombrio.',
     'As criaturas e os heróis agora respiram nas listas do jogo (Caçar, missões, Bestiário e outras), não só na arena.',

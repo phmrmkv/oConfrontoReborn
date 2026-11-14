@@ -1,0 +1,36 @@
+/* Wiki do jogo (features/wiki): fichas de itens, criaturas e regiões. Escuro é o padrão; o claro fica no fim, só em data-theme="light". */
+.wiki-views{display:flex;flex-wrap:wrap;gap:6px}
+.wiki-views button{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:7px 10px}
+.wiki-filters{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:14px 0 6px}
+.wiki-filters input{width:220px;padding:9px 12px;font-size:12px}
+.wiki-filters label{display:flex;align-items:center;gap:6px;font-size:12px;color:#9aaba6}
+.wiki-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.wiki-grid>.show-more{grid-column:1/-1}
+.wiki-card{border:1px solid #364345;border-radius:6px;background:linear-gradient(160deg,#252e31,#1d2528);padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.wiki-head{display:flex;align-items:center;gap:12px}
+.wiki-head>div{min-width:0}
+.wiki-head h3{font-family:Georgia,serif;font-size:17px;font-weight:400;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.wiki-head p{font-size:12px;color:#8d9a9a;margin-top:4px;line-height:1.5}
+.wiki-stats{font-size:12px;color:#c9d4c5;line-height:1.6}
+.wiki-stats.secondary{color:#c6ae77}
+.wiki-set{font-size:12px;color:#a9b89f}
+.wiki-facts{grid-template-columns:repeat(5,1fr);margin:6px 0}
+.wiki-drops summary{cursor:pointer;font-size:12px;color:#c6ae77}
+.wiki-drops ul,.wiki-creatures{list-style:none;margin:8px 0 0;padding:0}
+.wiki-drops li,.wiki-creatures li{display:flex;align-items:center;gap:8px;font-size:12px;padding:5px 0;border-bottom:1px solid #2f3b3c}
+.wiki-drops li>span{flex:1;min-width:0}
+.wiki-drops li>b{color:#d6bd7b;font-variant-numeric:tabular-nums}
+.wiki-creatures li{justify-content:space-between}
+.wiki-creatures .link-button{display:inline-flex;align-items:center;gap:6px;text-align:left}
+.wiki-card>.show-more{align-self:flex-start}
+@media(max-width:760px){
+  .wiki-grid{grid-template-columns:minmax(0,1fr)}
+  .wiki-filters input{width:100%}
+  .wiki-facts{grid-template-columns:repeat(3,1fr);row-gap:10px}
+}
+:root[data-theme="light"] .wiki-card{background:#f4e2bd;border-color:#b9892f}
+:root[data-theme="light"] .wiki-head p,:root[data-theme="light"] .wiki-filters label{color:#7a5a32}
+:root[data-theme="light"] .wiki-stats{color:#4a2a10}
+:root[data-theme="light"] .wiki-stats.secondary,:root[data-theme="light"] .wiki-drops summary,:root[data-theme="light"] .wiki-drops li>b{color:#633113}
+:root[data-theme="light"] .wiki-set{color:#5d4a26}
+:root[data-theme="light"] .wiki-drops li,:root[data-theme="light"] .wiki-creatures li{border-color:#ddc89c}

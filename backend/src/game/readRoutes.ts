@@ -11,6 +11,7 @@ import { npcBuyPrice } from '../../../shared/economy';
 import { MAX_RARITY } from '../../../shared/rarity';
 import { forgeableSlots } from '../../../shared/forge';
 import { combatStats } from './combatStats';
+import { wikiCatalog } from './wikiService';
 export const readRoutes = Router();
 readRoutes.get('/me', asyncRoute(async (_req, res) => {
   const characters = await prisma.character.findMany({ where: { accountId: res.locals.accountId }, select: { id: true, name: true, level: true, vocation: true, classTier: true } });
@@ -52,6 +53,8 @@ readRoutes.get('/monsters', asyncRoute(async (_req,res) => { res.json(await pris
 readRoutes.get('/items/names', asyncRoute(async (_req,res) => {
   res.json({ items: await prisma.itemBlueprint.findMany({ select: { name: true, slot: true, spriteUrl: true }, orderBy: { name: 'asc' }, take: 1000 }) });
 }));
+// Aba Wiki: o catálogo inteiro (itens, criaturas com o loot e regiões), só leitura.
+readRoutes.get('/wiki', asyncRoute(async (_req,res) => { res.json(await wikiCatalog()); }));
 readRoutes.get('/shop', asyncRoute(async (_req,res) => {
   // Equipamento acima do nível configurado só sai do Ferreiro (fabricar/reforjar) ou do loot.
   const settings = await loadSettings(prisma);
