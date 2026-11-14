@@ -1,4 +1,4 @@
-import {useEffect,useMemo,useState} from 'react';
+import {useEffect,useMemo,useRef,useState} from 'react';
 import Icon from '../../ui/GameIcon';
 import CreatureIcon from '../../ui/CreatureIcon';
 import RegionIcon from '../../ui/RegionIcon';
@@ -28,6 +28,28 @@ const views:{key:View;label:string;icon:string}[]=[
   {key:'group',label:'Grupo e Duelo',icon:'Warlord Sword|Fire Sword'},{key:'trade',label:'Comércio e conta',icon:'Gold Coin'}];
 const vocationText=(v:string)=>v.split(',').map(x=>x.trim()).includes('ALL')?'Todas as vocações':v.split(',').map(x=>vocations[x.trim() as BaseVocation]?.name??x).join(', ');
 const elementText=(m:Monster)=>`${m.element==='FIRE'?'Dano de fogo':'Dano físico'}${m.status?` · ${statusWarning[m.status]}`:''}`;
+
+// No computador, as 10 partes como botões. No celular, só as MOBILE_CHIPS primeiras viram botões e o resto fica no menu "Mais"
+// (sem faixa rolando para o lado). Quem escolhe uma parte do menu vê o nome dela no próprio botão do menu.
+const MOBILE_CHIPS=2;
+function ViewMenu({view,onChange}:{view:View;onChange:(v:View)=>void}){
+  const [open,setOpen]=useState(false),box=useRef<HTMLDivElement>(null);
+  useEffect(()=>{if(!open)return;
+    const out=(e:MouseEvent)=>{if(!box.current?.contains(e.target as Node))setOpen(false);},esc=(e:KeyboardEvent)=>{if(e.key==='Escape')setOpen(false);};
+    document.addEventListener('mousedown',out);document.addEventListener('keydown',esc);
+    return ()=>{document.removeEventListener('mousedown',out);document.removeEventListener('keydown',esc);};},[open]);
+  const rest=views.slice(MOBILE_CHIPS),current=rest.find(v=>v.key===view);
+  const pick=(v:View)=>{onChange(v);setOpen(false);};
+  return <div className="wiki-views" role="tablist" aria-label="Assunto">
+    {views.map((v,i)=><button key={v.key} type="button" role="tab" aria-selected={view===v.key} className={[view===v.key?'active-chip':'',i>=MOBILE_CHIPS?'wiki-extra':''].filter(Boolean).join(' ')} onClick={()=>pick(v.key)}>
+      <Icon name={v.icon} size={20}/> <span>{v.label}</span></button>)}
+    <div className="wiki-more" ref={box}>
+      <button type="button" className={current?'active-chip':''} aria-haspopup="menu" aria-expanded={open} onClick={()=>setOpen(o=>!o)}>
+        <span>{current?.label??'Mais'}</span> <b aria-hidden="true">▾</b></button>
+      {open&&<div className="wiki-more-menu" role="menu">{rest.map(v=><button key={v.key} type="button" role="menuitem" className={view===v.key?'active-chip':''} onClick={()=>pick(v.key)}>
+        <Icon name={v.icon} size={20}/> {v.label}</button>)}</div>}
+    </div></div>;
+}
 
 function Stat({label,value}:{label:string;value:string|number}){return <span><b>{value}</b>{label}</span>;}
 
@@ -87,9 +109,8 @@ export default function WikiPanel(){
   const openRegion=(key:string)=>{setMonsterQ('');setRegion(key);setBoss('');setView('monsters');};
   if(error&&!data)return <section className="panel"><h2>Wiki</h2><p className="error" role="alert">{error}</p></section>;
   if(!data)return <section className="panel">Abrindo a wiki…</section>;
-  return <section className="panel wiki-panel"><div className="section-title"><h2>Wiki</h2></div>
-    <div className="wiki-views" role="tablist" aria-label="Assunto">{views.map(v=><button key={v.key} type="button" role="tab" aria-selected={view===v.key} className={view===v.key?'active-chip':''} onClick={()=>setView(v.key)}>
-      <Icon name={v.icon} size={20}/> {v.label}</button>)}</div>
+  return <section className="panel wiki-panel">
+    <ViewMenu view={view} onChange={setView}/>
     <p className="muted">Tudo o que existe no jogo, com os números de agora: itens, criaturas, regiões, vocações e classes, missões, Ferreiro, combate, grupo, duelo e comércio.</p>
 
     {view==='items'&&<>

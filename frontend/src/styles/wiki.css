@@ -36,14 +36,50 @@
 :root[data-theme="light"] .wiki-drops li,:root[data-theme="light"] .wiki-creatures li{border-color:#ddc89c}
 /* Partes de regra (WikiRules.tsx): seções e tabelas. */
 .wiki-views{margin-bottom:10px}
+/* Menu "Mais" das partes: só aparece no celular. */
+.wiki-more{display:none;position:relative}
+.wiki-more>button{display:inline-flex;align-items:center;gap:6px;font-size:12px}
+.wiki-more-menu{position:absolute;right:0;top:calc(100% + 4px);z-index:20;min-width:220px;display:flex;flex-direction:column;gap:4px;padding:6px;
+  background:#1b2125;border:1px solid #3b4649;border-radius:6px;box-shadow:0 12px 30px #0007}
+.wiki-more-menu button{display:flex;align-items:center;justify-content:flex-start;gap:8px;font-size:13px;text-align:left;padding:9px 10px}
+:root[data-theme="light"] .wiki-more-menu{background:#f4e2bd;border-color:#b9892f;box-shadow:0 12px 30px #63311340}
 .wiki-wide{grid-column:1/-1}
 .wiki-section{margin-top:18px}
 .wiki-section>h3{font-family:Georgia,serif;font-size:17px;font-weight:400;margin-bottom:6px}
 .wiki-table-wrap{overflow-x:auto;margin:8px 0}
 .wiki-table{width:100%;border-collapse:collapse;font-size:12px}
 .wiki-table th{text-align:left;color:#a99871;font-weight:600;padding:6px 8px;border-bottom:1px solid #3b4649;white-space:nowrap}
-.wiki-table td{padding:6px 8px;border-bottom:1px solid #2f3b3c;color:#c9d4c5;vertical-align:top;line-height:1.5}
-.wiki-table td .sprite{vertical-align:middle}
+.wiki-table.stack td{padding:6px 8px;border-bottom:1px solid #2f3b3c;color:#c9d4c5;vertical-align:top;line-height:1.5}
+.wiki-table.stack td .sprite{vertical-align:middle}
 .wiki-creatures li>span.muted{text-align:right}
 :root[data-theme="light"] .wiki-table th{color:#633113;border-color:#b9892f}
-:root[data-theme="light"] .wiki-table td{color:#4a2a10;border-color:#ddc89c}
+:root[data-theme="light"] .wiki-table.stack td{color:#4a2a10;border-color:#ddc89c}
+/* Celular: 2 partes como botões e o resto no menu "Mais"; tabelas de texto viram cartões com o rótulo de cada campo. */
+@media(max-width:760px){
+  .wiki-panel{padding:14px}
+  .wiki-views{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:6px}
+  .wiki-views .wiki-extra{display:none}
+  .wiki-views button{padding:7px 10px;justify-content:center;min-width:0;white-space:nowrap}
+  .wiki-more{display:block}
+  .wiki-more>button{width:100%;height:100%;justify-content:space-between;white-space:normal;text-align:left;line-height:1.25}
+  .wiki-filters{gap:8px}
+  .wiki-filters label{flex:1 1 calc(50% - 8px);min-width:0}
+  .wiki-filters label select{flex:1;min-width:0;max-width:100%}
+  .wiki-card{padding:12px}
+  .wiki-head h3{font-size:16px}
+  .wiki-section>h3{font-size:16px}
+  .wiki-table th,.wiki-table td{padding:5px 6px}
+  .wiki-table th{white-space:normal}
+  .wiki-table.stack thead{display:none}
+  .wiki-table.stack,.wiki-table.stack tbody,.wiki-table.stack tr,.wiki-table.stack td{display:block;width:100%}
+  .wiki-table.stack tr{border:1px solid #2f3b3c;border-radius:5px;padding:6px 10px;margin-bottom:8px;background:#1b2427}
+  .wiki-table.stack td{display:flex;gap:10px;justify-content:space-between;text-align:right;border:0;padding:4px 0}
+  .wiki-table.stack td::before{content:attr(data-label);color:#a99871;font-weight:600;text-align:left;flex-shrink:0;max-width:45%}
+  .wiki-table.stack td:first-child{justify-content:flex-start;text-align:left;font-weight:600;color:#e0e6e3;border-bottom:1px solid #2f3b3c;padding-bottom:6px;margin-bottom:2px}
+  .wiki-table.stack td:first-child::before{display:none}
+  .wiki-creatures li{flex-wrap:wrap}
+  .wiki-creatures li>span.muted{text-align:left}
+  :root[data-theme="light"] .wiki-table.stack tr{background:#f8ecd2;border-color:#ddc89c}
+  :root[data-theme="light"] .wiki-table.stack td::before{color:#633113}
+  :root[data-theme="light"] .wiki-table.stack td:first-child{color:#4a2a10;border-color:#ddc89c}
+}
