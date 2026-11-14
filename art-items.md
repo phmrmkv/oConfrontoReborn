@@ -10,7 +10,7 @@ O catálogo reúne 190 itens com um prompt completo por folha. São 125 itens-ba
 
 Leia as seis linhas da esquerda para a direita, de cima para baixo. A lógica dos personagens vira um ciclo de exposição para o inventário. O gesto é próprio de cada objeto e ocupa 24 quadros. Sugestão de reprodução de 12 quadros por segundo, com o quadro 01 quando as animações estiverem desligadas.
 
-Destinos propostos em frontend/public/assets/items/. A exibição das folhas e camadas no jogo depende de integração na interface.
+Destinos: o GIF em frontend/public/assets/items/ (é o que o site usa) e o PNG mestre em art/items/ (original de ~1 MB, fora do site: tudo o que fica em public/ vai para o ar). A exibição das folhas e camadas no jogo depende de integração na interface.
 
 ## Raridade e efeitos
 
