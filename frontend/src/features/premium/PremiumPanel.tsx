@@ -73,7 +73,7 @@ export default function PremiumPanel({hero,onChanged,go,returning,onReturnSeen}:
       <div className="gem-activate">
         <div className="gem-balance"><GemIcon size={28}/><div><small className="muted">Seu saldo</small><strong className={o.gems<0?'neg':''}>{gemsLabel(o.gems)}</strong></div></div>
         {o.gemPrice>0?<div className="premium-cta"><button className="primary" disabled={busy||!canActivate} onClick={activate}>{actionLabel} · {gemsLabel(o.gemPrice)}</button>
-          <small className="muted">{missing>0?<>Faltam {gemsLabel(missing)}. <button className="link-button" onClick={()=>scrollTo('premium-gems')}>Comprar gemas</button></>:`${o.days} dias de acesso · sem renovação automática.`}</small></div>
+          {missing>0?<div className="gem-shortfall"><small className="muted">Faltam {gemsLabel(missing)}</small><button className="gem-buy-cta" onClick={()=>scrollTo('premium-gems')}><GemIcon size={18}/>Comprar gemas</button></div>:<small className="muted">{o.days} dias de acesso · sem renovação automática.</small>}</div>
           :<p className="muted">A ativação do Premium com gemas está desligada no momento.</p>}
       </div>
       {o.gems<0&&<p className="notice">Seu saldo ficou negativo porque uma compra foi reembolsada depois de usada. Ele volta ao normal com a próxima compra de gemas.</p>}
@@ -88,18 +88,20 @@ export default function PremiumPanel({hero,onChanged,go,returning,onReturnSeen}:
 }
 function GemShop({o,watching}:{o:Overview;watching:boolean}) {
   const {busy,error,ok,run}=useAction();
+  const bestPack=o.packs.reduce<GemPack|null>((best,pack)=>!best||pack.gems/pack.cents>best.gems/best.cents?pack:best,null);
   const onBuy=(pack:string)=>void run(async()=>{const r=await api<{url:string}>('/gems/checkout',{pack});window.location.assign(r.url);});
   const onResend=()=>void run(async()=>(await api<{message:string}>('/auth/resend-verification',{})).message);
   return <section className="panel gem-shop" id="premium-gems"><div className="section-title"><h2>Loja de gemas</h2>{o.testMode&&<span className="pill">Modo de teste</span>}</div><Feedback error={error} ok={ok}/>
     <p className="muted">Gemas ativam e renovam o Premium. Elas não viram ouro, XP nem item. Pagamento único pelo Mercado Pago, com Pix ou cartão; as gemas entram assim que o Mercado Pago confirma.</p>
     {o.testMode&&<p className="notice">Modo de teste (sandbox): o Mercado Pago não cobra de verdade. Use uma conta compradora de teste.</p>}
-    {!o.enabled?<p className="notice gem-off" role="status">{o.disabledReason}</p>:<>
-      {!o.emailVerified&&<p className="notice">Confirme seu e-mail para comprar gemas. <button className="link-button" disabled={busy} onClick={onResend}>Reenviar link</button></p>}
-      <div className="gem-packs">{o.packs.map(pk=><div className="gem-pack" key={pk.key}>
-        <GemIcon size={40}/><strong>{fmt(pk.gems)} gemas</strong>{pk.bonusPercent>0?<small className="pill">+{pk.bonusPercent}% de bônus</small>:<small className="muted">pacote básico</small>}
-        <b>{brl(pk.cents)}</b>
-        <button className="primary" disabled={busy||watching||!o.emailVerified} onClick={()=>onBuy(pk.key)}>{o.pendingPack===pk.key?'Continuar pagamento':'Comprar'}</button></div>)}</div>
-    </>}
+    {!o.enabled&&o.packs.length>0&&<p className="notice gem-off" role="status">{o.disabledReason}</p>}
+    {o.enabled&&!o.emailVerified&&<p className="notice">Confirme seu e-mail para comprar gemas. <button className="link-button" disabled={busy} onClick={onResend}>Reenviar link</button></p>}
+    {o.packs.length?<div className="gem-packs">{o.packs.map((pk,index)=>{const gems=Math.min(4,index+1),best=pk.key===bestPack?.key;return <div className={`gem-pack ${best?'gem-pack-best':''}`} key={pk.key}>
+      {best&&<span className="gem-best">Mais vantajoso</span>}<div className={`gem-stack gem-stack-${gems}`} aria-hidden="true">{Array.from({length:gems},(_,i)=><GemIcon key={i} size={34+i*4}/>)}</div>
+      <strong>{fmt(pk.gems)} gemas</strong>{pk.bonusPercent>0?<small className="pill">+{pk.bonusPercent}% de bônus</small>:<small className="muted">pacote básico</small>}
+      <b>{brl(pk.cents)}</b>
+      <button className="primary" disabled={!o.enabled||busy||watching||!o.emailVerified} onClick={()=>onBuy(pk.key)}>{!o.enabled?'Em breve':o.pendingPack===pk.key?'Continuar pagamento':'Comprar'}</button></div>;})}</div>
+      :<p className="notice gem-off" role="status">{o.disabledReason}</p>}
   </section>;
 }
 function PurchaseHistory({refresh}:{refresh:number}) {
