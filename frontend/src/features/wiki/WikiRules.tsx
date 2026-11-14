@@ -21,6 +21,7 @@ import {has,n,type Open,type Wiki} from './wikiTypes';
 // As partes de regra da Wiki. Textos e tabelas vêm de shared/ (as mesmas regras que o jogo usa) e os números que dependem de
 // configuração vêm de GET /wiki já calculados; aqui nada é recalculado.
 const voc=Object.keys(vocations) as BaseVocation[];
+const x=(v:number)=>`×${v.toLocaleString('pt-BR')}`;
 const Section=({title,children,note}:{title:string;children?:ReactNode;note?:ReactNode})=><section className="wiki-section"><h3>{title}</h3>{note&&<p className="muted">{note}</p>}{children}</section>;
 function Table({head,rows}:{head:string[];rows:ReactNode[][]}){
   return <div className="wiki-table-wrap"><table className="wiki-table"><thead><tr>{head.map(h=><th key={h}>{h}</th>)}</tr></thead>
@@ -35,11 +36,11 @@ export function VocationsView({data}:{data:Wiki}){
     const group=(Object.keys(groupActions) as (keyof typeof groupActions)[]).filter(a=>groupActions[a].only===v);
     return <article key={v} className="wiki-card wiki-wide"><div className="wiki-head"><Icon name={p.icon} size={56}/><div><h3>{p.name}</h3><p>{p.role}</p></div></div>
       <p className="wiki-stats">{p.description}</p>
-      <div className="monster-facts wiki-facts"><span><b>×{p.attackScale}</b>Ataque</span><span><b>×{p.defenseScale}</b>Defesa</span><span><b>+{p.critical}</b>Crítico</span><span><b>{p.dodge}%</b>Esquiva</span><span><b>×{p.healing}</b>Cura</span></div>
+      <div className="monster-facts wiki-facts"><span><b>{x(p.attackScale)}</b>Ataque</span><span><b>{x(p.defenseScale)}</b>Defesa</span><span><b>+{p.critical}</b>Crítico</span><span><b>{p.dodge}%</b>Esquiva</span><span><b>{x(p.healing)}</b>Cura</span></div>
       <p className="muted">Começa com <Icon name={p.starter} size={20}/> {p.starter}. Distribuição típica dos pontos: Força {split[0]*100}%, Vitalidade {split[1]*100}%, Agilidade {split[2]*100}%, Resistência {split[3]*100}%.</p>
       <Section title="Golpes da caçada"><Table head={['Golpe','Mana','O que faz']} rows={(Object.keys(labels) as (keyof typeof labels)[]).map(k=>[labels[k],costs[k]||'—',skillHelp[k]??''])
         .concat([[`${pw.name} (poder)`,pw.mana,`${pw.help} Espera ${pw.cooldown} turno(s).`],[powers.MEDITATE.name,powers.MEDITATE.mana||'—',`${powers.MEDITATE.help} Espera ${powers.MEDITATE.cooldown} turno(s).`]])}/></Section>
-      <Section title="Classes" note={`A 1ª é a promoção (vira ${promotedNames[promotedOf[v]]}): ataque e defesa ×${promotion.attackScale}, crítico +${promotion.critical}. Cada classe seguinte soma +${classBonus.attack*100}% de ataque, +${classBonus.defense*100}% de defesa e +${classBonus.critical} de crítico.`}>
+      <Section title="Classes" note={`A 1ª é a promoção (vira ${promotedNames[promotedOf[v]]}): ataque e defesa ${x(promotion.attackScale)}, crítico +${promotion.critical}. Cada classe seguinte soma +${classBonus.attack*100}% de ataque, +${classBonus.defense*100}% de defesa e +${classBonus.critical} de crítico.`}>
         <Table head={['Classe','Nome','Nível','Custo']} rows={r.classes.map(c=>[`${c.tier}ª`,classNames[v][c.tier-1],c.level,`${n(c.cost)} ouro`])}/></Section>
       {group.length>0&&<p className="muted">Na Caçada em grupo: {group.map(a=>`${groupActions[a].label} (${groupActions[a].mana} de mana): ${groupActions[a].help}`).join(' ')}</p>}
     </article>;})}</>;
