@@ -156,3 +156,6 @@
 :root[data-theme="light"] .xp-detail { color: #745927; }
 :root[data-theme="light"] .search-results { background: #f4e2bd; }
 :root[data-theme="light"] .nav-group+.nav-group { border-color: #c5a46d; } :root[data-theme="light"] .nav-title { color: #8c5b24; }
+:root[data-theme="light"] .toast { color: #51451d; background: #f6ecc4; border-color: #ac9853; box-shadow: 0 10px 24px #63311361, 0 2px 5px #6331132e; }
+:root[data-theme="light"] .toast-mark { background: #8a7a2d; }
+:root[data-theme="light"] .toast-close:hover, :root[data-theme="light"] .toast-close:focus-visible { background: #6331131a; }

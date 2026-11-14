@@ -3,6 +3,7 @@ import {api,ApiError} from './lib/api';
 import {trackPageView,trackSelect} from './lib/analytics';
 import {fmt} from './lib/format';
 import ThemeToggle from './ui/ThemeToggle';
+import Toast from './ui/Toast';
 import Icon from './ui/GameIcon';
 import {emptyPage,type Page} from './ui/Pager';
 import {tabs,adminTab,pathForTab,tabFromPath,paramFromPath,type Tab} from './lib/tabs';
@@ -120,7 +121,7 @@ export default function App(){
  <MobileDrawer open={menuOpen} onClose={()=>setMenuOpen(false)} hero={hero} roster={roster} busy={busy} fighting={fighting} tabs={allTabs} tab={tab} onTab={goTab} onSelectCharacter={id=>void selectCharacter(id)} onLogout={logout}/>
  <MobileBar tabs={allTabs} tab={tab} fighting={fighting} onTab={goTab}/>
  <div className="game-layout"><Sidebar hero={hero} premiumSoon={premiumSoon} roster={roster} busy={busy} fighting={fighting} tabs={allTabs} tab={tab} onTab={goTab} onSelectCharacter={id=>void selectCharacter(id)}/>
- <main id="conteudo" tabIndex={-1}><NoticeBanner onOpenNews={()=>setTab('news')} onOpenRares={()=>setTab('rares')}/><div className="page-heading"><div><span className="eyebrow">{fighting?'COMBATE EM ANDAMENTO':'PREPARE SEU PRÓXIMO PASSO'}</span><h1>{allTabs.find(t=>t[0]===tab)?.[1]}</h1></div><span className="world-tag">CAPRIEL · AVENTUREIROS</span></div>{error&&<div className="error notice" role="alert">{error}</div>}{notice&&<div className="success notice" role="status">{notice}</div>}{landing&&<div className="success notice" role="status">{landing} <button className="link-button" onClick={()=>setLanding('')}>Fechar</button></div>}{fighting&&tab!=='hunt'&&<div className="notice">Seu combate continua ativo. <button className="link-button" onClick={()=>setTab('hunt')}>Voltar ao combate</button></div>}
+ <main id="conteudo" tabIndex={-1}><NoticeBanner onOpenNews={()=>setTab('news')} onOpenRares={()=>setTab('rares')}/><div className="page-heading"><div><span className="eyebrow">{fighting?'COMBATE EM ANDAMENTO':'PREPARE SEU PRÓXIMO PASSO'}</span><h1>{allTabs.find(t=>t[0]===tab)?.[1]}</h1></div><span className="world-tag">CAPRIEL · AVENTUREIROS</span></div>{error&&<div className="error notice" role="alert">{error}</div>}{notice&&<Toast text={notice} onClose={()=>setNotice('')}/>}{landing&&<div className="success notice" role="status">{landing} <button className="link-button" onClick={()=>setLanding('')}>Fechar</button></div>}{fighting&&tab!=='hunt'&&<div className="notice">Seu combate continua ativo. <button className="link-button" onClick={()=>setTab('hunt')}>Voltar ao combate</button></div>}
  <Suspense fallback={<section className="panel"><p className="muted" role="status">Abrindo…</p></section>}>
  {tab==='journey'&&<JourneyPanel hero={hero} state={journeyState} busy={busy} command={command} go={setTab}/>}
  {tab==='journal'&&<JournalPanel characterId={hero.id}/>}

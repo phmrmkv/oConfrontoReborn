@@ -1,6 +1,10 @@
 // Histórico de atualizações mostrado na página "Novidades". A mais recente primeiro; `id` nunca muda (a tela usa para marcar o que já foi lido).
 export interface ChangelogEntry { id: string; date: string; title: string; items: string[] }
 export const changelog: ChangelogEntry[] = [
+  { id: '2026-11-14-avisos-perto-do-botao', date: '2026-11-14', title: 'Avisos perto do botão', items: [
+    'As mensagens de sucesso (como "Etapa concluída!" com o XP e o ouro ganhos) agora aparecem num balão logo acima do botão que você usou, em vez de uma faixa no alto da página que passava despercebida.',
+    'O balão some sozinho em alguns segundos; passe o mouse para ele ficar, clique no X ou aperte Esc para fechar.',
+  ] },
   { id: '2026-11-13-wiki-completa', date: '2026-11-13', title: 'Wiki completa', items: [
     'A Wiki agora tem as 4 vocações com golpes, poder, números e as 8 classes de cada uma, com o nível e o custo de cada classe.',
     'Novas partes: Missões e Jornada, Ferreiro e raridade (chance de cada melhoria e de cada raridade), Conjuntos das Eras, Combate e níveis, Grupo e Duelo, Comércio e conta.',
