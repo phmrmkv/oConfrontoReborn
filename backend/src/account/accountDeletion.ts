@@ -9,6 +9,7 @@ import { prisma, transaction, lockAccount, lockCharacter } from '../core/db';
 import { GameError } from '../core/engine';
 import { hashPassword, verifyPassword } from '../core/password';
 import { notifyMail } from '../core/mailer';
+import { leaveGuildOnDelete } from '../community/guildService';
 
 /** E-mail que ninguém recebe, único por conta, no lugar do endereço da pessoa. */
 export const deletedEmail = (accountId: number) => `apagada-${accountId}@conta-apagada.invalid`;
@@ -35,6 +36,8 @@ export async function deleteAccount(accountId: number, password: unknown): Promi
     await tx.profileTestimonial.deleteMany({ where: { OR: [{ profileId: mine }, { authorId: mine }] } });
     await tx.friendship.deleteMany({ where: { OR: [{ requesterId: mine }, { addresseeId: mine }] } });
     await tx.profileVisit.deleteMany({ where: { OR: [{ profileId: mine }, { visitorId: mine }] } });
+    // A guilda: ele sai dela (passa a liderança, ou a guilda some se era o último) e os pedidos e convites dele caem.
+    for (const id of ids) await leaveGuildOnDelete(tx, id);
     for (const id of ids)
       await tx.character.update({ where: { id }, data: { name: deletedName(id), profileAvatar: null, profileAbout: null, profileTitle: null, profileEmblem: null, profileBio: null, profileFrame: null, profileHideVisits: true, fameHidden: true } });
     // Dados ligados só à conta.

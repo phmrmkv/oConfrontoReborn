@@ -3,9 +3,11 @@ import { asyncRoute, pageOf } from '../core/http';
 import { integer } from '../core/engine';
 import { createComment, createPost, deleteOwn, getPost, listPosts, markSolved, vote } from './forumService';
 import { ranking } from './rankingService';
+import { guildRoutes } from './guildRoutes';
 import { blockCharacter, unblockCharacter, decideTestimonial, deleteScrap, myCommunity, profileList, publicProfile, reportContent, requestFriend, respondFriend, searchCharacters, updateCommunityProfile, writeScrap, writeTestimonial } from './communityService';
 
 export const communityRoutes = Router();
+communityRoutes.use(guildRoutes);
 const id = (v: unknown) => integer(Number(v));
 // Leituras: perfil público pelo nome (?as=<personagem que está olhando>) e busca de personagens.
 communityRoutes.get('/community/profiles/:name', asyncRoute(async (req, res) => {

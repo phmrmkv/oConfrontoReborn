@@ -22,6 +22,9 @@ readRoutes.get('/characters/:id', asyncRoute(async (req, res) => {
   // Leitura sem bloqueio: o painel consulta com frequência e não deve competir com as mutações do personagem.
   const c = await prisma.character.findFirst({ where: { id, accountId: res.locals.accountId } });
   if (!c) throw new GameError(404, 'Personagem não encontrado.');
+  // Última visita (listas de amigos e de guilda): no máximo uma gravação a cada 2 minutos por personagem.
+  const now = new Date();
+  if (!c.lastSeenAt || now.getTime() - c.lastSeenAt.getTime() > 120_000) void prisma.character.updateMany({ where: { id, OR: [{ lastSeenAt: null }, { lastSeenAt: { lt: new Date(now.getTime() - 120_000) } }] }, data: { lastSeenAt: now } }).catch(() => {});
   const [equipment, active, stones] = await Promise.all([
     prisma.inventoryItem.findMany({ where: { characterId: id, isEquipped: true }, include: { blueprint: true, rareItem: { select: { id: true, serial: true, status: true } } } }),
     prisma.battle.findFirst({ where: { characterId: id, isFinished: false }, select: { id: true } }),

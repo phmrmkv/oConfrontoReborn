@@ -116,6 +116,11 @@ model Character {
   guildId                Int?
   guild                  Guild?                 @relation(fields: [guildId], references: [id])
   guildRank              String                 @default("MEMBER")
+  guildJoinedAt          DateTime?
+  lastSeenAt             DateTime?
+  guildApplications      GuildApplication[]     @relation("GuildApplicant")
+  guildPosts             GuildPost[]            @relation("GuildPostAuthor")
+  guildReplies           GuildReply[]           @relation("GuildReplyAuthor")
   pvpWins                Int                    @default(0)
   pvpLosses              Int                    @default(0)
   promotedAt             DateTime?
@@ -362,6 +367,53 @@ model Guild {
   losses      Int         @default(0)
   members     Character[]
   createdAt   DateTime    @default(now())
+  announcement String?    @db.Text
+  applications GuildApplication[]
+  posts        GuildPost[]
+}
+
+// Guildas (aba Guildas): pedido de entrada (REQUEST, do jogador) ou convite (INVITE, da guilda). Decidido, a linha some.
+model GuildApplication {
+  id          Int       @id @default(autoincrement())
+  guildId     Int
+  guild       Guild     @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  characterId Int
+  character   Character @relation("GuildApplicant", fields: [characterId], references: [id], onDelete: Cascade)
+  kind        String    @db.VarChar(8)
+  createdAt   DateTime  @default(now())
+
+  @@unique([guildId, characterId])
+  @@index([characterId])
+}
+
+// Quadro da guilda (fórum interno, só para membros): tópicos fixáveis e respostas em ordem.
+model GuildPost {
+  id          Int          @id @default(autoincrement())
+  guildId     Int
+  guild       Guild        @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  authorId    Int
+  author      Character    @relation("GuildPostAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  title       String       @db.VarChar(80)
+  body        String       @db.Text
+  pinned      Boolean      @default(false)
+  replyCount  Int          @default(0)
+  createdAt   DateTime     @default(now())
+  lastReplyAt DateTime     @default(now())
+  replies     GuildReply[]
+
+  @@index([guildId, pinned, lastReplyAt])
+}
+
+model GuildReply {
+  id        Int       @id @default(autoincrement())
+  postId    Int
+  post      GuildPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  Int
+  author    Character @relation("GuildReplyAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  body      String    @db.Text
+  createdAt DateTime  @default(now())
+
+  @@index([postId, id])
 }
 
 model KingdomState {
