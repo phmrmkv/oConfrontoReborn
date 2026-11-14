@@ -13,12 +13,12 @@ import {vocationLabel} from '../../../../shared/adventure';
 import './gems.css';
 type Overview={enabled:boolean;disabledReason:string|null;testMode:boolean;gems:number;gemPrice:number;days:number;packs:GemPack[];active:boolean;until:string|null;upcoming:string|null;lastEndedAt:string|null;
   pendingPack:string|null;emailVerified:boolean;perks:{presetLimit:number;charactersFree:number;charactersPremium:number}};
-type Order={id:number;status:string;amountCents:number;days:number;gems:number;packKey:string|null;createdAt:string;paidAt:string|null;refundedAt:string|null};
+type Order={id:number;status:string;amountCents:number;days:number;gems:number;packKey:string|null;createdAt:string;paidAt:string|null;refundedAt:string|null;providerPaymentId:string|null};
 type GemEntry={id:number;delta:number;balanceAfter:number;reason:string;createdAt:string};
 type Preset={id:number;name:string};
 type Stats={days:number;totals:{battles:number;victories:number;defeats:number;flees:number;gold:string;experience:number;winRate:number};byMonster:{name:string;battles:number;victories:number;gold:string;experience:number}[];byDay:{day:string;battles:number;victories:number;gold:string;experience:number}[]};
 export type PaymentReturn='ok'|'pendente'|'falhou';
-const orderStatus:Record<string,string>={PENDING:'Aguardando pagamento',PAID:'Pago',FAILED:'Não concluído',REFUNDED:'Reembolsado',CANCELLED:'Cancelado'};
+const orderStatus:Record<string,string>={PENDING:'Aguardando pagamento',EXPIRED:'Expirado',PAID:'Pago',FAILED:'Não concluído',REFUNDED:'Reembolsado',CANCELLED:'Cancelado'};
 const headline:Record<PremiumPhase,string>={free:'Mais conforto para sua jornada',active:'Seu Premium está ativo',expiring:'Seu Premium está terminando',queued:'Seu Premium já está agendado',ended:'Seu Premium terminou'};
 // Onde cada benefício fica: uma seção desta página ou outra aba do jogo.
 const where:Record<string,{tab?:Tab;anchor?:string;label:string}>={appearance:{anchor:'premium-profile',label:'Escolher moldura'},presets:{anchor:'premium-presets',label:'Montar conjuntos'},bag:{tab:'bag',label:'Abrir a mochila'},
@@ -30,16 +30,20 @@ const gemsLabel=(n:number)=>`${fmt(n)} ${Math.abs(n)===1?'gema':'gemas'}`;
 export function GemIcon({size=20}:{size?:number}){
   return <svg className="gem-icon" width={size} height={size} viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l4 6-10 12L2 9z" fill="#3fb6a8"/><path d="M2 9h20L12 21z" fill="#23897e"/><path d="M6 3l3 6h6l3-6z" fill="#7fe0d3"/><path d="M9 9l3 12 3-12z" fill="#2fa294"/></svg>;
 }
-const WATCH_MS=5000,WATCH_TRIES=36;
+const WATCH_MS=5000,WATCH_TRIES=36,BEFORE_KEY='oc_gems_before';
+// Saldo de antes de ir ao Mercado Pago: se o webhook chegar antes de a tela voltar, o aumento ainda é percebido.
+const savedBefore=()=>{try{const v=sessionStorage.getItem(BEFORE_KEY);return v===null?null:Number(v);}catch{return null;}};
+const saveBefore=(n:number)=>{try{sessionStorage.setItem(BEFORE_KEY,String(n));}catch{/* sem armazenamento: cai no saldo da primeira leitura */}};
+const clearBefore=()=>{try{sessionStorage.removeItem(BEFORE_KEY);}catch{/* nada a limpar */}};
 export default function PremiumPanel({hero,onChanged,go,returning,onReturnSeen}:{hero:Hero;onChanged:()=>Promise<void>|void;go:(t:Tab)=>void;returning:PaymentReturn|null;onReturnSeen:()=>void}) {
   const [o,setO]=useState<Overview|null>(null),[loadError,setLoadError]=useState(''),[celebrate,setCelebrate]=useState<null|'gems'|'premium'>(null),[refresh,setRefresh]=useState(0),{busy,error,ok,run}=useAction();
   const [watching,setWatching]=useState(returning==='ok'||returning==='pendente'),baseline=useRef<{gems:number}|null>(null),activateKey=useRef<string|null>(null);
-  const load=()=>api<Overview>('/premium').then(r=>{setO(r);if(!baseline.current)baseline.current={gems:r.gems};return r;});
+  const load=()=>api<Overview>('/premium').then(r=>{setO(r);if(!baseline.current){const before=returning?savedBefore():null;baseline.current={gems:before??r.gems};if(before!==null&&r.gems>before&&returning){setWatching(false);setCelebrate('gems');clearBefore();onReturnSeen();}}return r;});
   useEffect(()=>{load().catch(e=>setLoadError(msg(e)));},[]);
   // Na volta do Mercado Pago o webhook pode levar alguns segundos: consulta até as gemas chegarem (no máximo 3 minutos).
   useEffect(()=>{if(!watching)return;let tries=0;
     const timer=setInterval(()=>{tries++;load().then(r=>{const b=baseline.current;
-      if(b&&r.gems>b.gems){setWatching(false);setCelebrate('gems');setRefresh(x=>x+1);onReturnSeen();}
+      if(b&&r.gems>b.gems){setWatching(false);setCelebrate('gems');setRefresh(x=>x+1);clearBefore();onReturnSeen();}
       else if(tries>=WATCH_TRIES){setWatching(false);onReturnSeen();}}).catch(()=>{});},WATCH_MS);
     return()=>clearInterval(timer);},[watching]);
   if(!o)return <section className="panel">{loadError?<p className="error" role="alert">{loadError}</p>:<p>Carregando…</p>}</section>;
@@ -89,7 +93,7 @@ export default function PremiumPanel({hero,onChanged,go,returning,onReturnSeen}:
 function GemShop({o,watching}:{o:Overview;watching:boolean}) {
   const {busy,error,ok,run}=useAction();
   const bestPack=o.packs.reduce<GemPack|null>((best,pack)=>!best||pack.gems/pack.cents>best.gems/best.cents?pack:best,null);
-  const onBuy=(pack:string)=>void run(async()=>{const r=await api<{url:string}>('/gems/checkout',{pack});window.location.assign(r.url);});
+  const onBuy=(pack:string)=>void run(async()=>{const r=await api<{url:string}>('/gems/checkout',{pack});saveBefore(o.gems);window.location.assign(r.url);});
   const onResend=()=>void run(async()=>(await api<{message:string}>('/auth/resend-verification',{})).message);
   return <section className="panel gem-shop" id="premium-gems"><div className="section-title"><h2>Loja de gemas</h2>{o.testMode&&<span className="pill">Modo de teste</span>}</div><Feedback error={error} ok={ok}/>
     <p className="muted">Gemas ativam e renovam o Premium. Elas não viram ouro, XP nem item. Pagamento único pelo Mercado Pago, com Pix ou cartão; as gemas entram assim que o Mercado Pago confirma.</p>
@@ -110,7 +114,7 @@ function PurchaseHistory({refresh}:{refresh:number}) {
   return <section className="panel"><div className="section-title"><h2>Compras e extrato de gemas</h2></div>
     {orders.error&&<p className="error" role="alert">{orders.error}</p>}
     {orders.total>0&&<><h3>Suas compras</h3>{orders.items.map(x=><div className="ledger-row" key={x.id}><span>#{x.id} · {when(x.createdAt)}</span>
-      <span>{x.gems>0?gemsLabel(x.gems):`Premium ${x.days} dias`} · {brl(x.amountCents)}</span><b className={`order-${x.status.toLowerCase()}`}>{orderStatus[x.status]??x.status}</b></div>)}
+      <span>{x.gems>0?gemsLabel(x.gems):`Premium ${x.days} dias`} · {brl(x.amountCents)}</span><b className={`order-${x.status.toLowerCase()}`}>{orderStatus[x.status]??x.status}</b>{(x.paidAt||x.refundedAt||x.providerPaymentId)&&<small className="gem-receipt">{x.paidAt&&<>Pago em {when(x.paidAt)}. </>}{x.refundedAt&&<>Reembolsado em {when(x.refundedAt)}. </>}{x.providerPaymentId&&<>Pagamento nº {x.providerPaymentId} no Mercado Pago.</>} Cite o pedido nº {x.id} no Suporte.</small>}</div>)}
       <Pager page={orders.page} pages={orders.pages} onPage={p=>void orders.go(p)} busy={orders.loading}/></>}
     {ledger.total>0&&<><h3>Extrato de gemas</h3>{ledger.items.map(g=><div className="ledger-row" key={g.id}><span>{when(g.createdAt)}</span><span>{gemReasons[g.reason as keyof typeof gemReasons]??g.reason}</span>
       <b className={g.delta<0?'neg':'pos'}>{g.delta>0?'+':''}{fmt(g.delta)}</b><small>saldo {fmt(g.balanceAfter)}</small></div>)}

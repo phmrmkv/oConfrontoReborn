@@ -20,6 +20,7 @@ import { adminRoutes } from './admin/adminRoutes';
 import { publicNoticeRoutes } from './admin/noticeRoutes';
 import { communityRoutes } from './community/communityRoutes';
 import { expireListings } from './economy/marketService';
+import { expireStaleOrders } from './premium/premiumService';
 import { expireDuels } from './game/duelService';
 import { requestId } from './core/monitor';
 import { appRouter } from './confrontation/appRoutes';
@@ -88,6 +89,7 @@ if (require.main === module) {
   const port = Number(process.env.PORT ?? 3333);
   const sweep = setInterval(() => {
     void expireListings().catch(e => console.error('[mercado] varredura falhou:', e instanceof Error ? e.message : e));
+    void expireStaleOrders().catch(e => console.error('[pagamentos] varredura falhou:', e instanceof Error ? e.message : e));
     void expireDuels().catch(e => console.error('[duelo] varredura falhou:', e instanceof Error ? e.message : e));
   }, 60_000);
   sweep.unref();

@@ -43,8 +43,15 @@ async function call<T>(path: string, init: RequestInit & { idempotencyKey?: stri
 }
 export interface MpPayment { id: number | string; status: string; status_detail?: string; external_reference?: string | null; transaction_amount?: number; currency_id?: string }
 export const fetchPayment = (id: string) => call<MpPayment>(`/v1/payments/${encodeURIComponent(id)}`);
+// Pagamentos de um pedido (external_reference): recupera o aviso que se perdeu. Mais recentes primeiro.
+export async function searchPaymentsByReference(reference: string): Promise<MpPayment[]> {
+  const found = await call<{ results?: MpPayment[] }>(`/v1/payments/search?external_reference=${encodeURIComponent(reference)}&sort=date_created&criteria=desc&limit=10`);
+  return found.results ?? [];
+}
+// O link de pagamento vale por este tempo; depois o pedido pendente é encerrado (premiumService.expireStaleOrders).
+export const ORDER_TTL_MS = 24 * 3600_000;
 // Checkout Pro: a página do Mercado Pago oferece Pix e cartão. O pedido vai em external_reference; o webhook reconsulta tudo na API.
-export async function createPreference(order: { id: number; amountCents: number; gems: number; packKey: string | null }, baseUrl: string) {
+export async function createPreference(order: { id: number; amountCents: number; gems: number; packKey: string | null; createdAt: Date }, baseUrl: string) {
   const https = baseUrl.startsWith('https://');
   return call<{ id: string; init_point: string }>('/checkout/preferences', { method: 'POST', idempotencyKey: `gems-order-${order.id}`, body: JSON.stringify({
     items: [{ id: `gems-${order.packKey ?? order.gems}`, title: `O Confronto: ${order.gems} gemas`, quantity: 1, currency_id: 'BRL', unit_price: order.amountCents / 100 }],
@@ -54,5 +61,6 @@ export async function createPreference(order: { id: number; amountCents: number;
     ...(https ? { auto_return: 'approved' } : {}),
     payment_methods: { excluded_payment_types: [{ id: 'ticket' }, { id: 'atm' }], installments: 1 },
     statement_descriptor: 'OCONFRONTO',
+    expires: true, expiration_date_to: new Date(order.createdAt.getTime() + ORDER_TTL_MS).toISOString(),
   }) });
 }

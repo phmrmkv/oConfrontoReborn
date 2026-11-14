@@ -9,7 +9,7 @@ import { grantPeriod, revokePeriod, premiumStatus } from '../premium/premium';
 import { metrics } from '../core/monitor';
 import { once } from '../core/operations';
 import { goldDrift, itemDrift } from '../economy/reconcile';
-import { applyRefund } from '../premium/premiumService';
+import { applyRefund, reconcileOrder } from '../premium/premiumService';
 import { addGems } from '../premium/gems';
 import { can, permissionsOf, type Permission } from '../../../shared/permissions';
 import { settingDefs, settingKeys, validSetting, settingsConflict, goldReasons, itemReasons, type SettingKey } from '../../../shared/economy';
@@ -176,10 +176,21 @@ adminRoutes.post('/admin/premium-periods/:id/revoke', need('premium.grant'), asy
 adminRoutes.get('/admin/orders', need('orders.read'), asyncRoute(async (req, res) => {
   const status = typeof req.query.status === 'string' && /^[A-Z]{4,12}$/.test(req.query.status) ? req.query.status : undefined;
   const { page, skip, take } = pageOf(req.query);
+  // Busca por número do pedido, número do pagamento no Mercado Pago ou e-mail da conta.
+  const q = typeof req.query.q === 'string' ? req.query.q.trim().slice(0, 190) : '';
+  const where: Prisma.PremiumOrderWhereInput = { status, ...(q ? { OR: [...(/^[0-9]{1,9}$/.test(q) ? [{ id: Number(q) }] : []), { providerPaymentId: q }, { account: { email: { contains: q } } }] } : {}) };
   const [items, total] = await Promise.all([
-    prisma.premiumOrder.findMany({ where: { status }, orderBy: { id: 'desc' }, skip, take, include: { account: { select: { email: true } } } }),
-    prisma.premiumOrder.count({ where: { status } })]);
+    prisma.premiumOrder.findMany({ where, orderBy: { id: 'desc' }, skip, take, include: { account: { select: { email: true } } } }),
+    prisma.premiumOrder.count({ where })]);
   res.json(paged(items, total, page));
+}));
+// Aviso perdido: pergunta ao Mercado Pago pelos pagamentos do pedido e aplica (idempotente). Cobre aprovação tardia e reembolso.
+adminRoutes.post('/admin/orders/:id/reconcile', need('orders.manage'), asyncRoute(async (req, res) => {
+  const id = integer(Number(req.params.id)), reason = reasonOf(req.body);
+  if (!await prisma.premiumOrder.findUnique({ where: { id }, select: { id: true } })) throw new GameError(404, 'Pedido não encontrado.');
+  const result = await reconcileOrder(id);
+  await prisma.$transaction(tx => audit(tx, actor(res), 'ORDER_RECONCILE', 'ORDER', id, reason, { found: result.found, outcomes: result.outcomes }));
+  res.json(result);
 }));
 // Para reembolsos feitos direto no painel do Mercado Pago quando o aviso automático não chegou.
 adminRoutes.post('/admin/orders/:id/refund', need('orders.manage'), asyncRoute(async (req, res) => {
@@ -260,7 +271,7 @@ adminRoutes.put('/admin/settings', need('settings.write'), asyncRoute(async (req
 const reasonsOf = (kind: 'source' | 'sink') => Prisma.join(Object.entries(goldReasons).filter(([, k]) => k === kind).map(([r]) => r));
 adminRoutes.get('/admin/economy', need('economy.read'), asyncRoute(async (req, res) => {
   const days = [1, 7, 30].includes(Number(req.query.days)) ? Number(req.query.days) : 7, since = new Date(Date.now() - days * 86_400_000);
-  const [goldFlow, itemFlow, wallets, daily, listings, volume, activePremium, revenue] = await Promise.all([
+  const [goldFlow, itemFlow, wallets, daily, listings, volume, activePremium, revenue, gemFlow, gemCirculation] = await Promise.all([
     prisma.goldLedger.groupBy({ by: ['reason'], where: { createdAt: { gte: since } }, _sum: { delta: true }, _count: { _all: true } }),
     prisma.itemLedger.groupBy({ by: ['reason'], where: { createdAt: { gte: since } }, _sum: { delta: true }, _count: { _all: true } }),
     prisma.character.aggregate({ _sum: { goldInHand: true, goldInBank: true }, _count: { _all: true } }),
@@ -274,6 +285,8 @@ adminRoutes.get('/admin/economy', need('economy.read'), asyncRoute(async (req, r
     prisma.marketListing.aggregate({ where: { status: 'SOLD', soldAt: { gte: since } }, _sum: { price: true, fee: true }, _count: { _all: true } }),
     prisma.premiumPeriod.findMany({ where: { revokedAt: null, startsAt: { lte: new Date() }, endsAt: { gt: new Date() } }, distinct: ['accountId'], select: { accountId: true } }),
     prisma.premiumOrder.aggregate({ where: { status: 'PAID', paidAt: { gte: since } }, _sum: { amountCents: true }, _count: { _all: true } }),
+    prisma.gemLedger.groupBy({ by: ['reason'], where: { createdAt: { gte: since } }, _sum: { delta: true }, _count: { _all: true } }),
+    prisma.account.aggregate({ _sum: { gems: true } }),
   ]);
   let inflow = 0n, outflow = 0n;
   const gold = goldFlow.map(r => {
@@ -286,7 +299,8 @@ adminRoutes.get('/admin/economy', need('economy.read'), asyncRoute(async (req, r
     items: itemFlow.map(r => ({ reason: r.reason, kind: itemReasons[r.reason as keyof typeof itemReasons] ?? 'transfer', total: r._sum.delta ?? 0, count: r._count._all })),
     daily: daily.map(r => ({ day: r.day.toISOString().slice(0, 10), kind: r.kind, total: String(r.total) })),
     market: { byStatus: listings.map(l => ({ status: l.status, count: l._count._all })), sales: volume._count._all, volume: (volume._sum.price ?? 0n).toString(), fees: (volume._sum.fee ?? 0n).toString() },
-    premium: { active: activePremium.length, paidOrders: revenue._count._all, revenueCents: revenue._sum.amountCents ?? 0 } });
+    premium: { active: activePremium.length, paidOrders: revenue._count._all, revenueCents: revenue._sum.amountCents ?? 0 },
+    gems: { circulation: gemCirculation._sum.gems ?? 0, flow: gemFlow.map(r => ({ reason: r.reason, total: r._sum.delta ?? 0, count: r._count._all })) } });
 }));
 adminRoutes.get('/admin/ledger/gold', need('ledger.read'), asyncRoute(async (req, res) => {
   const characterId = num(req.query.characterId, 0, 1), before = num(req.query.before, 2147483647, 0);

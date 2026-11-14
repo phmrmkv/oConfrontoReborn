@@ -4,7 +4,7 @@ import { GameError } from '../core/engine';
 import { pageOf, paged } from '../core/http';
 import { once } from '../core/operations';
 import { loadSettings } from '../core/settings';
-import { fetchPayment, createPreference, mpConfigured, mpMissing, mpTestMode } from './mercadopago';
+import { fetchPayment, createPreference, searchPaymentsByReference, mpConfigured, mpMissing, mpTestMode, ORDER_TTL_MS } from './mercadopago';
 import { grantPeriod, revokePeriod, premiumStatus } from './premium';
 import { addGems } from './gems';
 import { publicUrl } from '../core/mailer';
@@ -43,9 +43,16 @@ export async function startGemCheckout(accountId: number, packKey: unknown) {
   if (!pack) throw new GameError(409, 'Este pacote não está à venda no momento.');
   const account = await prisma.account.findUniqueOrThrow({ where: { id: accountId }, select: { emailVerifiedAt: true } });
   if (!account.emailVerifiedAt) throw new GameError(409, 'Confirme seu e-mail antes de comprar gemas.');
-  const recent = await prisma.premiumOrder.findFirst({ where: { accountId, status: 'PENDING', packKey, gems: pack.gems, amountCents: pack.cents, checkoutUrl: { not: null }, createdAt: { gt: new Date(Date.now() - PENDING_REUSE_MS) } }, orderBy: { id: 'desc' } });
-  if (recent?.checkoutUrl) return { url: recent.checkoutUrl, orderId: recent.id };
-  const order = await prisma.premiumOrder.create({ data: { accountId, amountCents: pack.cents, days: 0, gems: pack.gems, packKey } });
+  // Reserva do pedido sob a trava da conta: dois cliques ao mesmo tempo no mesmo pacote não criam dois pagamentos.
+  const reserved = await transaction(async tx => {
+    await lockAccount(tx, accountId);
+    const recent = await tx.premiumOrder.findFirst({ where: { accountId, status: 'PENDING', packKey, gems: pack.gems, amountCents: pack.cents, createdAt: { gt: new Date(Date.now() - PENDING_REUSE_MS) } }, orderBy: { id: 'desc' } });
+    if (recent?.checkoutUrl) return { reuse: { url: recent.checkoutUrl, orderId: recent.id } };
+    if (recent) throw new GameError(409, 'Seu pagamento está sendo preparado. Aguarde alguns segundos e tente de novo.');
+    return { order: await tx.premiumOrder.create({ data: { accountId, amountCents: pack.cents, days: 0, gems: pack.gems, packKey } }) };
+  });
+  if (reserved.reuse) return reserved.reuse;
+  const order = reserved.order!;
   try {
     const preference = await createPreference(order, publicUrl());
     await prisma.premiumOrder.update({ where: { id: order.id }, data: { providerPreferenceId: preference.id, checkoutUrl: preference.init_point } });
@@ -73,7 +80,7 @@ export async function activatePremiumWithGems(accountId: number, key: string) {
   });
 }
 
-const ORDER_SELECT = { id: true, status: true, amountCents: true, days: true, gems: true, packKey: true, createdAt: true, paidAt: true, refundedAt: true } as const;
+const ORDER_SELECT = { id: true, status: true, amountCents: true, days: true, gems: true, packKey: true, createdAt: true, paidAt: true, refundedAt: true, providerPaymentId: true } as const;
 export async function gemOrders(accountId: number, query: Record<string, unknown>) {
   const { page, skip, take } = pageOf(query);
   const [items, total] = await Promise.all([
@@ -87,6 +94,26 @@ export async function gemHistory(accountId: number, query: Record<string, unknow
     prisma.gemLedger.findMany({ where: { accountId }, orderBy: { id: 'desc' }, skip, take, select: { id: true, delta: true, balanceAfter: true, reason: true, refType: true, refId: true, createdAt: true } }),
     prisma.gemLedger.count({ where: { accountId } })]);
   return paged(items, total, page);
+}
+
+// Pedido pendente há mais de um dia: antes de encerrar, pergunta ao Mercado Pago se algum pagamento aprovado escapou do webhook.
+// Aprovação que chegar depois (Pix pago com o link vencido) ainda credita: o dinheiro foi recebido.
+export async function expireStaleOrders(limit = 20) {
+  if (!mpConfigured()) return 0;
+  const stale = await prisma.premiumOrder.findMany({ where: { status: 'PENDING', createdAt: { lt: new Date(Date.now() - ORDER_TTL_MS) } }, orderBy: { id: 'asc' }, take: limit, select: { id: true } });
+  for (const { id } of stale) {
+    await reconcileOrder(id).catch(e => console.error(`[pagamentos] reconsulta do pedido ${id} falhou:`, e instanceof Error ? e.message : e));
+    await prisma.premiumOrder.updateMany({ where: { id, status: 'PENDING' }, data: { status: 'EXPIRED' } });
+  }
+  return stale.length;
+}
+// Reconsulta no Mercado Pago os pagamentos do pedido e aplica cada um (idempotente). Usada pelo admin e pela varredura.
+export async function reconcileOrder(orderId: number): Promise<{ found: number; outcomes: WebhookOutcome[] }> {
+  if (!mpConfigured()) throw new GameError(503, 'Pagamentos ainda não foram configurados.');
+  const payments = await searchPaymentsByReference(String(orderId));
+  const outcomes: WebhookOutcome[] = [];
+  for (const payment of [...payments].reverse()) outcomes.push(await processMercadoPagoPayment(String(payment.id)));
+  return { found: payments.length, outcomes };
 }
 
 export type WebhookOutcome = 'granted' | 'credited' | 'refunded' | 'failed' | 'noop' | 'duplicate' | 'ignored' | 'amount_mismatch';

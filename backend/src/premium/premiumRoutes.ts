@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { rateLimit } from 'express-rate-limit';
 import { asyncRoute } from '../core/http';
 import { prisma, transaction, lockCharacter } from '../core/db';
 import { GameError, integer } from '../core/engine';
@@ -10,6 +11,8 @@ import { honorCosmetics } from '../../../shared/pvp';
 import { vocationAllowed } from '../../../shared/adventure';
 
 export const premiumRoutes = Router();
+// Cada chamada pode criar um pedido e uma preferência no Mercado Pago: limite próprio por conta, além do limite geral da API.
+const checkoutLimit = rateLimit({ windowMs: 60_000, limit: 10, standardHeaders: 'draft-8', legacyHeaders: false, keyGenerator: (_req, res) => `conta:${res.locals.accountId}`, validate: false, message: { error: 'Muitas tentativas de compra em pouco tempo. Aguarde um minuto.' } });
 async function requirePremium(accountId: number) {
   if (!await isPremium(prisma, accountId)) throw new GameError(402, 'Este recurso faz parte do Premium.');
 }
@@ -21,7 +24,7 @@ async function ownedCharacter(req: { params: Record<string, string> }, accountId
 }
 premiumRoutes.get('/premium', asyncRoute(async (_req, res) => { res.json(await premiumOverview(res.locals.accountId)); }));
 // Gemas: comprar um pacote (Mercado Pago), ativar/renovar o Premium com gemas, pedidos e extrato (paginados).
-premiumRoutes.post('/gems/checkout', asyncRoute(async (req, res) => { res.json(await startGemCheckout(res.locals.accountId, req.body?.pack)); }));
+premiumRoutes.post('/gems/checkout', checkoutLimit, asyncRoute(async (req, res) => { res.json(await startGemCheckout(res.locals.accountId, req.body?.pack)); }));
 premiumRoutes.post('/premium/activate', asyncRoute(async (req, res) => { res.json(await activatePremiumWithGems(res.locals.accountId, req.get('idempotency-key') ?? '')); }));
 premiumRoutes.get('/gems/orders', asyncRoute(async (req, res) => { res.json(await gemOrders(res.locals.accountId, req.query)); }));
 premiumRoutes.get('/gems/history', asyncRoute(async (req, res) => { res.json(await gemHistory(res.locals.accountId, req.query)); }));

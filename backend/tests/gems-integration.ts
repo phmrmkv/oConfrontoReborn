@@ -7,7 +7,7 @@ import { prisma } from '../src/core/db';
 import { createApp } from '../src/server';
 import { hashPassword } from '../src/core/password';
 import { premiumStatus } from '../src/premium/premium';
-import { processMercadoPagoPayment } from '../src/premium/premiumService';
+import { processMercadoPagoPayment, expireStaleOrders } from '../src/premium/premiumService';
 
 // Gemas de ponta a ponta, com o Mercado Pago simulado (fetch trocado só para api.mercadopago.com).
 // Pressupõe os padrões de configuração: pacote 1 = 100 gemas por R$ 5,00, pacote 2 = 220 por R$ 10,00, Premium = 300 gemas por 30 dias.
@@ -33,6 +33,10 @@ test('MySQL: compra de gemas pelo Mercado Pago e Premium ativado com gemas', asy
     if (url === 'https://api.mercadopago.com/checkout/preferences') {
       preferences.push({ body: JSON.parse(init.body), key: init.headers['X-Idempotency-Key'] ?? null });
       return Response.json({ id: `pref-${preferences.length}`, init_point: `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=pref-${preferences.length}` });
+    }
+    if (url.startsWith('https://api.mercadopago.com/v1/payments/search')) {
+      const ref = new URL(url).searchParams.get('external_reference');
+      return Response.json({ results: [...payments.values()].filter((p: any) => p.external_reference === ref) });
     }
     if (url.startsWith('https://api.mercadopago.com/v1/payments/')) {
       const p = payments.get(url.split('/').pop()!);
@@ -177,6 +181,66 @@ test('MySQL: compra de gemas pelo Mercado Pago e Premium ativado com gemas', asy
       assert.ok(adminOrders.items.some((o: { id: number }) => o.id === order2)); assert.ok(adminOrders.pages >= 1);
       const detail = await (await call(adminCookie, `/admin/accounts/${buyer.id}`)).json();
       assert.equal(detail.gems, -200); assert.equal(detail.gemLedger.length, 6);
+    });
+
+    const makeOrder = (extra: object = {}) => prisma.premiumOrder.create({ data: { accountId: buyer.id, amountCents: 500, days: 0, gems: 100, packKey: 'pack1', checkoutUrl: 'https://www.mercadopago.com.br/x', ...extra } });
+    const hoursAgo = (h: number) => new Date(Date.now() - h * 3600_000);
+    await t.test('dois cliques ao mesmo tempo no mesmo pacote criam um pedido só', async () => {
+      const before = preferences.length;
+      const rs = await Promise.all([1, 2, 3, 4, 5].map(() => call(cookie, '/gems/checkout', { pack: 'pack4' })));
+      assert.ok(rs.every(r => [200, 409, 429].includes(r.status)), rs.map(r => r.status).join(',')); // 429 = limite de compras por minuto da conta
+      assert.ok(rs.some(r => r.status === 200));
+      assert.equal(await prisma.premiumOrder.count({ where: { accountId: buyer.id, packKey: 'pack4' } }), 1);
+      assert.equal(preferences.length - before, 1);
+      assert.ok(preferences[before].body.expires === true && preferences[before].body.expiration_date_to);
+    });
+    await t.test('pedido pendente há mais de um dia expira; pagamento tardio credita uma vez, até com a conta devendo gemas', async () => {
+      const old = await makeOrder({ createdAt: hoursAgo(25) }), fresh = await makeOrder();
+      const g0 = await gems();
+      assert.ok(await expireStaleOrders() >= 1);
+      assert.equal((await prisma.premiumOrder.findUniqueOrThrow({ where: { id: old.id } })).status, 'EXPIRED');
+      assert.equal((await prisma.premiumOrder.findUniqueOrThrow({ where: { id: fresh.id } })).status, 'PENDING');
+      const late = pid();
+      payments.set(late, { id: Number(late), status: 'approved', external_reference: String(old.id), transaction_amount: 5, currency_id: 'BRL' });
+      assert.equal(await processMercadoPagoPayment(late), 'credited');
+      assert.equal(await processMercadoPagoPayment(late), 'duplicate');
+      assert.equal(await gems(), g0 + 100);
+      assert.equal((await prisma.premiumOrder.findUniqueOrThrow({ where: { id: old.id } })).status, 'PAID');
+    });
+    await t.test('aviso perdido: a varredura reconsulta o Mercado Pago antes de expirar e credita o que foi pago', async () => {
+      const lost = await makeOrder({ createdAt: hoursAgo(26) }), g0 = await gems(), id = pid();
+      payments.set(id, { id: Number(id), status: 'approved', external_reference: String(lost.id), transaction_amount: 5, currency_id: 'BRL' });
+      await expireStaleOrders();
+      assert.equal((await prisma.premiumOrder.findUniqueOrThrow({ where: { id: lost.id } })).status, 'PAID');
+      assert.equal(await gems(), g0 + 100);
+    });
+    await t.test('admin reconsulta um pedido (com motivo e auditoria) e busca compras por pagamento ou e-mail', async () => {
+      const o = await makeOrder(), g0 = await gems(), id = pid();
+      payments.set(id, { id: Number(id), status: 'approved', external_reference: String(o.id), transaction_amount: 5, currency_id: 'BRL' });
+      assert.equal((await call(cookie, `/admin/orders/${o.id}/reconcile`, { reason: 'Tentativa do jogador' })).status, 403);
+      assert.equal((await call(adminCookie, `/admin/orders/${o.id}/reconcile`, { reason: 'x' })).status, 400);
+      const r = await call(adminCookie, `/admin/orders/${o.id}/reconcile`, { reason: 'Webhook perdido no teste' });
+      assert.equal(r.status, 200); assert.deepEqual((await r.json()).outcomes, ['credited']);
+      assert.equal(await gems(), g0 + 100);
+      assert.equal(await prisma.adminAuditLog.count({ where: { action: 'ORDER_RECONCILE', targetId: o.id } }), 1);
+      const again = await (await call(adminCookie, `/admin/orders/${o.id}/reconcile`, { reason: 'Repetida de propósito' })).json();
+      assert.deepEqual(again.outcomes, ['duplicate']); assert.equal(await gems(), g0 + 100);
+      const byPayment = await (await call(adminCookie, `/admin/orders?q=${id}`)).json();
+      assert.deepEqual(byPayment.items.map((x: { id: number }) => x.id), [o.id]);
+      const byId = await (await call(adminCookie, `/admin/orders?q=${o.id}`)).json();
+      assert.ok(byId.items.some((x: { id: number }) => x.id === o.id));
+      const byEmail = await (await call(adminCookie, `/admin/orders?q=${encodeURIComponent(buyer.email)}`)).json();
+      assert.ok(byEmail.total >= 4);
+      const eco = await (await call(adminCookie, '/admin/economy?days=7')).json();
+      assert.equal(eco.gems.circulation, (await prisma.account.aggregate({ _sum: { gems: true } }))._sum.gems); assert.ok(eco.gems.flow.some((f: { reason: string }) => f.reason === 'PURCHASE'));
+    });
+    await t.test('compra aprovada de conta banida ainda credita (o dinheiro foi recebido) e fica no extrato', async () => {
+      await prisma.punishment.create({ data: { accountId: buyer.id, kind: 'BAN', reason: 'Teste de banimento', startsAt: new Date(Date.now() - 1000), createdById: admin.id } });
+      const o = await makeOrder(), g0 = await gems(), id = pid();
+      payments.set(id, { id: Number(id), status: 'approved', external_reference: String(o.id), transaction_amount: 5, currency_id: 'BRL' });
+      assert.equal((await (await webhook(id)).json()).outcome, 'credited');
+      assert.equal(await gems(), g0 + 100);
+      assert.equal(await prisma.gemLedger.count({ where: { accountId: buyer.id, refType: 'order', refId: o.id } }), 1);
     });
   } finally {
     globalThis.fetch = realFetch; delete process.env.MP_ACCESS_TOKEN; delete process.env.MP_WEBHOOK_SECRET;
