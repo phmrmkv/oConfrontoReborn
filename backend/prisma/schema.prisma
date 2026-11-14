@@ -121,6 +121,8 @@ model Character {
   guildApplications      GuildApplication[]     @relation("GuildApplicant")
   guildPosts             GuildPost[]            @relation("GuildPostAuthor")
   guildReplies           GuildReply[]           @relation("GuildReplyAuthor")
+  guildDonations         GuildDonation[]        @relation("GuildDonor")
+  guildChestClaims       GuildChestClaim[]      @relation("GuildChestClaimer")
   pvpWins                Int                    @default(0)
   pvpLosses              Int                    @default(0)
   promotedAt             DateTime?
@@ -370,6 +372,37 @@ model Guild {
   announcement String?    @db.Text
   applications GuildApplication[]
   posts        GuildPost[]
+  donations    GuildDonation[]
+}
+
+// Benefícios da guilda: cada doação ao cofre (o ouro sai do personagem; Guild.treasury soma o total e Guild.level sobe com ele) e cada
+// baú coletado (DAILY: um por dia de Brasília; WEEKLY: um por semana, só se a meta da guilda foi batida). A chave única garante uma
+// coleta por personagem por período, mesmo que ele troque de guilda.
+model GuildDonation {
+  id          Int       @id @default(autoincrement())
+  guildId     Int
+  guild       Guild     @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  characterId Int
+  character   Character @relation("GuildDonor", fields: [characterId], references: [id], onDelete: Cascade)
+  amount      BigInt
+  createdAt   DateTime  @default(now())
+
+  @@index([guildId, createdAt])
+  @@index([characterId])
+}
+
+model GuildChestClaim {
+  id          Int       @id @default(autoincrement())
+  characterId Int
+  character   Character @relation("GuildChestClaimer", fields: [characterId], references: [id], onDelete: Cascade)
+  guildId     Int // sem relação: o registro da coleta sobrevive à guilda dissolvida (senão daria para coletar de novo na mesma semana)
+  kind        String    @db.VarChar(8)
+  period      String    @db.VarChar(10)
+  gold        BigInt
+  createdAt   DateTime  @default(now())
+
+  @@unique([characterId, kind, period])
+  @@index([guildId, kind, period])
 }
 
 // Guildas (aba Guildas): pedido de entrada (REQUEST, do jogador) ou convite (INVITE, da guilda). Decidido, a linha some.

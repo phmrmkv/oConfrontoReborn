@@ -7,7 +7,11 @@ import { prisma, transaction, lockCharacter } from '../core/db';
 import { GameError, integer } from '../core/engine';
 import { pageOf, paged } from '../core/http';
 import { cleanText } from '../../../shared/community';
-import { canGuild, canKick, cleanGuildName, cleanGuildTag, guildLimits, guildRanks, isGuildRank, isOnline, type GuildRank } from '../../../shared/guild';
+import { loadSettings } from '../core/settings';
+import { addGold, addItem } from '../economy/economy';
+import { bestPotionFor } from '../../../shared/potions';
+import { materialForLevel } from '../../../shared/forge';
+import { GUILD_MAX_LEVEL, canGuild, canKick, chestAfterHours, cleanGuildName, cleanGuildTag, guildDayKey, guildLevelCost, guildLevelFor, guildLimits, guildNextDay, guildNextWeek, guildPeriodStart, guildRanks, guildWeekKey, isGuildRank, isOnline, memberLimitFor, pinnedLimitFor, type GuildRank } from '../../../shared/guild';
 type Tx = Prisma.TransactionClient;
 const card = { id: true, name: true, level: true, vocation: true, classTier: true, profileAvatar: true, profileEmblem: true } as const;
 const memberSelect = { ...card, guildRank: true, guildJoinedAt: true, lastSeenAt: true } as const;
@@ -83,7 +87,7 @@ export async function guildPage(accountId: number, characterId: number, guildId:
     canGuild(rank, 'accept') ? prisma.guildApplication.findMany({ where: { guildId: g.id }, orderBy: { id: 'asc' }, include: { character: { select: card } } }) : [],
     prisma.guildApplication.findUnique({ where: { guildId_characterId: { guildId: g.id, characterId } } })]);
   return { id: g.id, name: g.name, tag: g.tag, description: g.description, announcement: rank ? g.announcement : null, createdAt: g.createdAt, leaderId: g.leaderId,
-    memberLimit: guildLimits.members, members, viewerRank: rank, viewerInGuild: !!viewer.guildId, viewerApplication: mine ? { id: mine.id, kind: mine.kind } : null,
+    level: g.level, memberLimit: memberLimitFor(g.level), members, viewerRank: rank, viewerInGuild: !!viewer.guildId, viewerApplication: mine ? { id: mine.id, kind: mine.kind } : null,
     applications: applications.map(a => ({ id: a.id, kind: a.kind, createdAt: a.createdAt, character: a.character })) };
 }
 
@@ -138,7 +142,7 @@ export async function requestJoin(accountId: number, characterId: number, guildI
     if (await tx.guildApplication.findUnique({ where: { guildId_characterId: { guildId, characterId } } })) return { message: 'Você já tem um pedido ou convite desta guilda.' };
     if (await tx.guildApplication.count({ where: { characterId, kind: 'REQUEST' } }) >= guildLimits.requestsPerCharacter) throw new GameError(429, `Você pode ter até ${guildLimits.requestsPerCharacter} pedidos de entrada ao mesmo tempo.`);
     if (await tx.guildApplication.count({ where: { guildId } }) >= guildLimits.applicationsPerGuild) throw new GameError(429, 'Esta guilda já tem pedidos demais esperando.');
-    if (await tx.character.count({ where: { guildId } }) >= guildLimits.members) throw new GameError(409, 'Esta guilda está cheia.');
+    if (await tx.character.count({ where: { guildId } }) >= memberLimitFor(guild.level)) throw new GameError(409, 'Esta guilda está cheia.');
     await tx.guildApplication.create({ data: { guildId, characterId, kind: 'REQUEST' } });
     return { message: `Pedido enviado para [${guild.tag}] ${guild.name}. Os líderes vão avaliar.` };
   });
@@ -156,15 +160,15 @@ export async function invite(accountId: number, characterId: number, targetName:
     if (await tx.characterBlock.findFirst({ where: { OR: [{ blockerId: me.id, blockedId: target.id }, { blockerId: target.id, blockedId: me.id }] } })) throw new GameError(403, 'Você não pode convidar este jogador.');
     if (await tx.guildApplication.findUnique({ where: { guildId_characterId: { guildId: guild.id, characterId: target.id } } })) return { message: `${target.name} já tem um pedido ou convite desta guilda.` };
     if (await tx.guildApplication.count({ where: { guildId: guild.id } }) >= guildLimits.applicationsPerGuild) throw new GameError(429, 'Há pedidos e convites demais esperando. Resolva alguns antes.');
-    if (await tx.character.count({ where: { guildId: guild.id } }) >= guildLimits.members) throw new GameError(409, 'A guilda está cheia.');
+    if (await tx.character.count({ where: { guildId: guild.id } }) >= memberLimitFor(guild.level)) throw new GameError(409, 'A guilda está cheia.');
     await tx.guildApplication.create({ data: { guildId: guild.id, characterId: target.id, kind: 'INVITE' } });
     return { message: `Convite enviado para ${target.name}.` };
   });
 }
 
 // Entrada de um personagem sem guilda. Devolve a mensagem; quem chama apaga o pedido. UPDATE condicional: se ele entrou em outro lugar, não entra.
-async function join(tx: Tx, guild: { id: number; tag: string; name: string }, targetId: number, targetName: string) {
-  if (await tx.character.count({ where: { guildId: guild.id } }) >= guildLimits.members) throw new GameError(409, 'A guilda está cheia.');
+async function join(tx: Tx, guild: { id: number; tag: string; name: string; level: number }, targetId: number, targetName: string) {
+  if (await tx.character.count({ where: { guildId: guild.id } }) >= memberLimitFor(guild.level)) throw new GameError(409, 'A guilda está cheia.');
   const done = await tx.character.updateMany({ where: { id: targetId, guildId: null }, data: { guildId: guild.id, guildRank: 'MEMBER', guildJoinedAt: new Date() } });
   await tx.guildApplication.deleteMany({ where: { characterId: targetId } });
   return done.count === 1 ? `${targetName} entrou em [${guild.tag}] ${guild.name}.` : `${targetName} já entrou em outra guilda; o pedido foi encerrado.`;
@@ -329,7 +333,6 @@ export async function replyTopic(accountId: number, characterId: number, postId:
     return { message: 'Resposta publicada.' };
   });
 }
-const MAX_PINNED = 3;
 export async function pinTopic(accountId: number, characterId: number, postId: number, pinned: unknown) {
   integer(postId);
   return transaction(async tx => {
@@ -338,7 +341,8 @@ export async function pinTopic(accountId: number, characterId: number, postId: n
     const post = await tx.guildPost.findUnique({ where: { id: postId }, select: { id: true, guildId: true, pinned: true } });
     if (!post || post.guildId !== guild.id) throw new GameError(404, 'Tópico não encontrado.');
     const want = pinned === true;
-    if (want && !post.pinned && await tx.guildPost.count({ where: { guildId: guild.id, pinned: true } }) >= MAX_PINNED) throw new GameError(409, `A guilda pode ter até ${MAX_PINNED} tópicos fixados.`);
+    const maxPinned = pinnedLimitFor(guild.level);
+    if (want && !post.pinned && await tx.guildPost.count({ where: { guildId: guild.id, pinned: true } }) >= maxPinned) throw new GameError(409, `A guilda pode ter até ${maxPinned} tópicos fixados (sobe com o nível da guilda).`);
     await tx.guildPost.update({ where: { id: postId }, data: { pinned: want } });
     return { message: want ? 'Tópico fixado no topo.' : 'Tópico desafixado.' };
   });
@@ -361,5 +365,89 @@ export async function deletePost(accountId: number, characterId: number, kind: '
     await tx.guildReply.delete({ where: { id } });
     await tx.guildPost.update({ where: { id: reply.postId }, data: { replyCount: { decrement: 1 } } });
     return { message: 'Resposta apagada.' };
+  });
+}
+
+// ---------- Benefícios: cofre, nível e baús ----------
+// O ouro doado sai do personagem (ralo GUILD_DONATION) e soma em Guild.treasury, que dá o nível da guilda (Guild.level, recalculado a
+// cada doação). O baú do dia (um por personagem por dia de Brasília) e o da semana (um por semana, só se a guilda bateu a meta de
+// doações) entram como GUILD_CHEST, com ouro, poção ou material. Valores: loadSettings (guild.*). Nada aqui toca combate, XP nem drops.
+type Settings = Awaited<ReturnType<typeof loadSettings>>;
+const pct = (value: number, percent: number) => Math.floor(value * percent / 100);
+// Ouro do baú: nível do personagem × ouro por nível, no ajuste geral de ouro e no bônus de nível da guilda; o da semana vale N dias do baú do dia.
+function chestGold(characterLevel: number, guildLevel: number, s: Settings, weekly: boolean) {
+  const day = pct(pct(characterLevel * s['guild.dailyGoldPerLevel'], s['economy.goldRewardPercent']), 100 + s['guild.levelBonusPercent'] * (guildLevel - 1));
+  return weekly ? day * s['guild.weeklyDays'] : day;
+}
+const chestItem = (characterLevel: number, weekly: boolean, s: Settings) => weekly
+  ? { name: materialForLevel(characterLevel).name, quantity: s['guild.weeklyMaterials'] }
+  : { name: bestPotionFor(characterLevel, 'hp'), quantity: s['guild.dailyPotions'] };
+const goalOf = (members: number, s: Settings) => Math.max(1, members) * s['guild.weeklyGoalPerMember'];
+
+// Tudo da aba Benefícios: nível e progresso, vantagens, o que cada baú rende, a meta da semana e os maiores doadores.
+export async function guildBenefits(accountId: number, characterId: number) {
+  const me = await ownCharacter(accountId, characterId), full = await prisma.character.findUniqueOrThrow({ where: { id: me.id }, select: { guildJoinedAt: true } });
+  if (!me.guildId) throw new GameError(403, 'Os benefícios são só para membros da guilda.');
+  const [g, s] = await Promise.all([prisma.guild.findUniqueOrThrow({ where: { id: me.guildId } }), loadSettings(prisma)]);
+  const now = Date.now(), day = guildDayKey(now), week = guildWeekKey(now), since = guildPeriodStart(week), joined = full.guildJoinedAt?.getTime() ?? now;
+  const [members, sum, claims, top] = await Promise.all([
+    prisma.character.count({ where: { guildId: g.id } }),
+    prisma.guildDonation.aggregate({ where: { guildId: g.id, createdAt: { gte: since } }, _sum: { amount: true } }),
+    prisma.guildChestClaim.findMany({ where: { characterId: me.id, OR: [{ kind: 'DAILY', period: day }, { kind: 'WEEKLY', period: week }] }, select: { kind: true } }),
+    prisma.guildDonation.groupBy({ by: ['characterId'], where: { guildId: g.id, createdAt: { gte: since } }, _sum: { amount: true }, orderBy: { _sum: { amount: 'desc' } }, take: 5 })]);
+  const names = new Map((await prisma.character.findMany({ where: { id: { in: top.map(t => t.characterId) } }, select: { id: true, name: true } })).map(c => [c.id, c.name]));
+  const base = s['guild.levelCostGold'], treasury = Number(g.treasury), goal = goalOf(members, s), donated = Number(sum._sum.amount ?? 0n);
+  const dailyItem = chestItem(me.level, false, s), weeklyItem = chestItem(me.level, true, s);
+  return {
+    level: g.level, maxLevel: GUILD_MAX_LEVEL, treasury: String(g.treasury), levelBase: guildLevelCost(g.level, base), nextLevelAt: g.level < GUILD_MAX_LEVEL ? guildLevelCost(g.level + 1, base) : null,
+    perks: { members: memberLimitFor(g.level), pinned: pinnedLimitFor(g.level), chestBonusPercent: s['guild.levelBonusPercent'] * (g.level - 1) },
+    nextPerks: g.level < GUILD_MAX_LEVEL ? { members: memberLimitFor(g.level + 1), pinned: pinnedLimitFor(g.level + 1), chestBonusPercent: s['guild.levelBonusPercent'] * g.level } : null,
+    donationMin: s['guild.donationMinGold'],
+    daily: { claimed: claims.some(c => c.kind === 'DAILY'), eligibleAt: new Date(joined + chestAfterHours.daily * 3_600_000), resetsAt: guildNextDay(now),
+      reward: { gold: String(chestGold(me.level, g.level, s, false)), item: dailyItem } },
+    weekly: { claimed: claims.some(c => c.kind === 'WEEKLY'), goal: String(goal), donated: String(donated), goalMet: donated >= goal, eligibleAt: new Date(joined + chestAfterHours.weekly * 3_600_000), resetsAt: guildNextWeek(now),
+      reward: { gold: String(chestGold(me.level, g.level, s, true)), item: weeklyItem } },
+    topDonors: top.map(t => ({ id: t.characterId, name: names.get(t.characterId) ?? '—', amount: String(t._sum.amount ?? 0n) })),
+  };
+}
+
+export async function donate(accountId: number, characterId: number, rawAmount: unknown) {
+  const text = typeof rawAmount === 'number' ? String(rawAmount) : typeof rawAmount === 'string' ? rawAmount.trim() : '';
+  if (!/^\d{1,12}$/.test(text) || BigInt(text) <= 0n) throw new GameError(400, 'Escreva quanto ouro doar, só números.');
+  const amount = BigInt(text);
+  return transaction(async tx => {
+    const { me, guild } = await actor(tx, accountId, characterId);
+    const s = await loadSettings(tx);
+    if (amount < BigInt(s['guild.donationMinGold'])) throw new GameError(400, `A menor doação é de ${s['guild.donationMinGold'].toLocaleString('pt-BR')} de ouro.`);
+    const row = await tx.guildDonation.create({ data: { guildId: guild.id, characterId: me.id, amount } });
+    await addGold(tx, me.id, -amount, 'GUILD_DONATION', { type: 'GuildDonation', id: row.id }); // sem saldo, desfaz tudo ("Ouro insuficiente.")
+    const treasury = guild.treasury + amount, level = guildLevelFor(Number(treasury), s['guild.levelCostGold']);
+    await tx.guild.update({ where: { id: guild.id }, data: { treasury, level } });
+    return { message: level > guild.level ? `Doação recebida! A guilda subiu para o nível ${level}.` : `Doação de ${amount.toLocaleString('pt-BR')} de ouro recebida. Obrigado!`, level, leveledUp: level > guild.level };
+  });
+}
+
+export async function claimChest(accountId: number, characterId: number, kind: unknown) {
+  if (kind !== 'daily' && kind !== 'weekly') throw new GameError(400, 'Baú inválido.');
+  const weekly = kind === 'weekly';
+  return transaction(async tx => {
+    const { me, guild } = await actor(tx, accountId, characterId);
+    const s = await loadSettings(tx), now = Date.now(), period = weekly ? guildWeekKey(now) : guildDayKey(now), hours = weekly ? chestAfterHours.weekly : chestAfterHours.daily;
+    if (!me.guildJoinedAt || now - me.guildJoinedAt.getTime() < hours * 3_600_000) throw new GameError(403, `Para coletar este baú, fique na guilda por ${hours} horas.`);
+    if (weekly) {
+      const sum = await tx.guildDonation.aggregate({ where: { guildId: guild.id, createdAt: { gte: guildPeriodStart(period) } }, _sum: { amount: true } });
+      if (Number(sum._sum.amount ?? 0n) < goalOf(await tx.character.count({ where: { guildId: guild.id } }), s)) throw new GameError(409, 'A guilda ainda não bateu a meta de doações da semana.');
+    }
+    const kindKey = weekly ? 'WEEKLY' : 'DAILY';
+    if (await tx.guildChestClaim.findUnique({ where: { characterId_kind_period: { characterId: me.id, kind: kindKey, period } } })) throw new GameError(409, weekly ? 'Você já coletou o baú desta semana.' : 'Você já coletou o baú de hoje.');
+    const gold = chestGold(me.level, guild.level, s, weekly), item = chestItem(me.level, weekly, s);
+    const claim = await tx.guildChestClaim.create({ data: { characterId: me.id, guildId: guild.id, kind: kindKey, period, gold: BigInt(gold) } });
+    const ref = { type: 'GuildChestClaim', id: claim.id };
+    await addGold(tx, me.id, BigInt(gold), 'GUILD_CHEST', ref);
+    if (item.quantity > 0) {
+      const blueprint = await tx.itemBlueprint.findUnique({ where: { name: item.name }, select: { id: true } });
+      if (blueprint) await addItem(tx, me.id, blueprint.id, item.quantity, 'GUILD_CHEST', ref);
+    }
+    return { message: `Baú ${weekly ? 'da semana' : 'do dia'}: +${gold.toLocaleString('pt-BR')} de ouro e ${item.quantity}× ${item.name}.`, gold: String(gold), item };
   });
 }

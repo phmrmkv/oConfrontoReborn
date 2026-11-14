@@ -50,3 +50,37 @@ export function seenLabel(lastSeenAt: string | Date | null | undefined, now = Da
   const days = Math.floor(minutes / 1440);
   return days === 1 ? 'há 1 dia' : days < 60 ? `há ${days} dias` : 'há muito tempo';
 }
+
+// ---------- Benefícios da guilda: cofre, nível, vantagens e baús ----------
+// Nada aqui mexe em combate, XP nem drops. O ouro doado ao cofre sai do mundo e dá o nível da guilda; o nível dá vagas, tópicos
+// fixados e bônus nos baús. Os números em ouro (custos e recompensas) vêm de `loadSettings` (chaves `guild.*` em shared/economy.ts).
+export const GUILD_MAX_LEVEL = 10;
+/** Ouro doado no total para a guilda chegar ao nível `level` (nível 1 não custa nada; o N pede base × (N−1)²). */
+export const guildLevelCost = (level: number, base: number) => level <= 1 ? 0 : base * (level - 1) ** 2;
+export function guildLevelFor(totalDonated: number, base: number) {
+  let level = 1;
+  while (level < GUILD_MAX_LEVEL && totalDonated >= guildLevelCost(level + 1, base)) level++;
+  return level;
+}
+/** Vagas e tópicos fixados crescem com o nível: +5 vagas por nível e +1 fixado a cada 3 níveis. */
+export const memberLimitFor = (level: number) => guildLimits.members + 5 * (Math.min(Math.max(level, 1), GUILD_MAX_LEVEL) - 1);
+export const pinnedLimitFor = (level: number) => 3 + Math.floor((Math.min(Math.max(level, 1), GUILD_MAX_LEVEL) - 1) / 3);
+/** Quanto tempo na guilda para coletar o baú do dia e o da semana (contra entrar, coletar e sair para outra guilda). */
+export const chestAfterHours = { daily: 24, weekly: 72 } as const;
+export type ChestKind = 'DAILY' | 'WEEKLY';
+
+// Dia e semana do jogo seguem o horário de Brasília (UTC−3, sem horário de verão): o baú do dia renova à meia-noite de lá.
+const BRT_OFFSET_MS = 3 * 3_600_000;
+const brt = (now: number) => new Date(now - BRT_OFFSET_MS);
+/** "2026-11-14": o dia de Brasília de um instante. */
+export const guildDayKey = (now = Date.now()) => brt(now).toISOString().slice(0, 10);
+/** A segunda-feira (início da semana) de Brasília, como "2026-11-09". */
+export function guildWeekKey(now = Date.now()) {
+  const d = brt(now); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7));
+  return d.toISOString().slice(0, 10);
+}
+/** O instante em que o período que começa em `key` (meia-noite de Brasília) começa, em UTC. */
+export const guildPeriodStart = (key: string) => new Date(Date.parse(`${key}T00:00:00Z`) + BRT_OFFSET_MS);
+/** Quando o dia ou a semana atual termina (renovação dos baús). */
+export const guildNextDay = (now = Date.now()) => new Date(guildPeriodStart(guildDayKey(now)).getTime() + 86_400_000);
+export const guildNextWeek = (now = Date.now()) => new Date(guildPeriodStart(guildWeekKey(now)).getTime() + 7 * 86_400_000);

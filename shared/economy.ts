@@ -6,6 +6,8 @@ export const goldReasons = {
   NPC_BUY: 'sink', UPGRADE: 'sink', PROMOTION: 'sink', MARKET_FEE: 'sink', MARKET_LISTING_FEE: 'sink', ADMIN_REMOVE: 'sink',
   FORGE_CRAFT: 'sink', FORGE_REFORGE: 'sink', STATS_RESET: 'sink',
   GROUP_HUNT: 'source',
+  // Guilda: a doação ao cofre sai do mundo (ralo); o baú do dia e o da semana entram (fonte).
+  GUILD_DONATION: 'sink', GUILD_CHEST: 'source',
   MARKET_SALE: 'transfer', MARKET_PURCHASE: 'transfer',
   // Duelo: aposta sai dos dois, prêmio entra no vencedor (soma zero); a taxa da arena é ralo. Resgate de espólio: perdedor paga o vencedor.
   DUEL_WAGER: 'transfer', DUEL_PRIZE: 'transfer', DUEL_REFUND: 'transfer', DUEL_FEE: 'sink', DUEL_RANSOM: 'transfer',
@@ -19,7 +21,7 @@ export const itemReasons = {
   FORGE_CRAFT: 'source', FORGE_MATERIAL_USE: 'sink', FORGE_REFORGE_OUT: 'sink', FORGE_REFORGE_IN: 'source', FORGE_SALVAGE: 'sink', FORGE_SALVAGE_MATERIAL: 'source',
   // Despertar: o mesmo exemplar troca de raridade (sai na antiga e entra na nova, como na reforja).
   FORGE_AWAKEN_OUT: 'sink', FORGE_AWAKEN_IN: 'source',
-  GROUP_HUNT: 'source',
+  GROUP_HUNT: 'source', GUILD_CHEST: 'source',
   // Espólio de duelo e resgate: o item muda de dono (soma zero).
   DUEL_LOOT_OUT: 'transfer', DUEL_LOOT_IN: 'transfer', DUEL_RANSOM_OUT: 'transfer', DUEL_RANSOM_IN: 'transfer',
 } as const satisfies Record<string, FlowKind>;
@@ -52,6 +54,15 @@ export const settingDefs = {
   'shop.maxEquipmentLevel': { default: 100, min: 1, max: 1000, label: 'O Mercador vende equipamentos até este nível (acima, só Ferreiro e espólio dos monstros)', unit: 'nível', group: 'Preços' },
   'stats.resetBaseGold': { default: 500, min: 0, max: 100_000_000, label: 'Redistribuir atributos: custo fixo', unit: 'ouro', group: 'Classes' },
   'stats.resetGoldPerLevelSquared': { default: 5, min: 0, max: 100_000, label: 'Redistribuir atributos: ouro × nível² (nível 100 = 50.000 com o padrão)', unit: 'ouro', group: 'Classes' },
+  // Guilda (aba Guildas, Benefícios): cofre, nível, baú do dia e baú da semana. Nada aqui mexe em combate, XP nem drops.
+  'guild.donationMinGold': { default: 100, min: 1, max: 1_000_000, label: 'Guilda: menor doação ao cofre', unit: 'ouro', group: 'Guilda' },
+  'guild.levelCostGold': { default: 5000, min: 100, max: 100_000_000, label: 'Guilda: ouro doado no total para chegar ao nível 2 (o nível N pede isto × (N−1)²)', unit: 'ouro', group: 'Guilda' },
+  'guild.levelBonusPercent': { default: 10, min: 0, max: 50, label: 'Guilda: bônus no ouro dos baús por nível da guilda acima do 1', unit: '%', group: 'Guilda' },
+  'guild.dailyGoldPerLevel': { default: 10, min: 0, max: 100_000, label: 'Guilda: ouro do baú do dia por nível do personagem', unit: 'ouro', group: 'Guilda' },
+  'guild.dailyPotions': { default: 3, min: 0, max: 50, label: 'Guilda: poções de vida do baú do dia', unit: 'un.', group: 'Guilda' },
+  'guild.weeklyDays': { default: 10, min: 0, max: 100, label: 'Guilda: ouro do baú da semana, em dias do baú do dia', unit: 'dias', group: 'Guilda' },
+  'guild.weeklyMaterials': { default: 3, min: 0, max: 50, label: 'Guilda: materiais de ferreiro do baú da semana', unit: 'un.', group: 'Guilda' },
+  'guild.weeklyGoalPerMember': { default: 1000, min: 0, max: 100_000_000, label: 'Guilda: meta semanal de doações por membro (a guilda precisa juntar isto × membros)', unit: 'ouro', group: 'Guilda' },
   'group.energyCost': { default: 10, min: 0, max: 100, label: 'Caçada em grupo: energia gasta por participante', unit: 'energia', group: 'Caçada em grupo' },
   'group.roundSeconds': { default: 60, min: 15, max: 600, label: 'Caçada em grupo: prazo de cada rodada (quem não escolher, defende)', unit: 's', group: 'Caçada em grupo' },
   'group.rewardPercent': { default: 100, min: 10, max: 500, label: 'Caçada em grupo: XP e ouro da fera para cada participante', unit: '%', group: 'Caçada em grupo' },

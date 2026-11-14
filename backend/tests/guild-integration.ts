@@ -184,3 +184,102 @@ test('MySQL: guildas, cargos, quadro e lista de amigos', async t => {
     await assert.rejects(friendList(X.acc, L.id, {}), (e: unknown) => e instanceof GameError && e.status === 404);
   });
 });
+
+// Benefícios: cofre, nível, vantagens e os baús do dia e da semana. Valores esperados saem dos próprios ajustes (loadSettings).
+import { bestPotionFor } from '../../shared/potions';
+import { materialForLevel } from '../../shared/forge';
+import { loadSettings } from '../src/core/settings';
+import { claimChest, donate, guildBenefits } from '../src/community/guildService';
+import { guildDayKey, guildWeekKey, memberLimitFor } from '../../shared/guild';
+test('MySQL: benefícios da guilda (cofre, nível, baú do dia e da semana)', async t => {
+  assert.match(process.env.DATABASE_URL ?? '', /\/[^/?]*_test(?:\?|$)/, 'Use uma base dedicada terminada em _test.');
+  const run = randomUUID().replace(/[^a-f0-9]/g, '').slice(0, 6), password = await hashPassword('Guild-test-2026!'), made: number[] = [];
+  const mk = async (n: string, level = 30, gold = 0n) => {
+    const a = await prisma.account.create({ data: { email: `guildb-${run}-${n}@example.invalid`, password, characters: { create: { name: `Gb ${n} ${run}`, vocationChosen: true, level, goldInHand: gold } } }, include: { characters: true } });
+    made.push(a.id); return { acc: a.id, id: a.characters[0].id, name: a.characters[0].name };
+  };
+  const [L, M, O, P] = await Promise.all([mk('l', 30, 50_000n), mk('m', 30, 20_000n), mk('o', 40, 5_000n), mk('p')]);
+  const tag = run.slice(0, 3).toUpperCase(), s = await loadSettings(prisma);
+  const old = (h: number) => new Date(Date.now() - h * 3_600_000);
+  const gold = async (id: number) => (await prisma.character.findUniqueOrThrow({ where: { id } })).goldInHand;
+  const dayGold = (level: number, guildLevel: number) => Math.floor(Math.floor(level * s['guild.dailyGoldPerLevel'] * s['economy.goldRewardPercent'] / 100) * (100 + s['guild.levelBonusPercent'] * (guildLevel - 1)) / 100);
+  t.after(async () => {
+    await prisma.guild.deleteMany({ where: { tag: { startsWith: tag } } });
+    await prisma.character.deleteMany({ where: { accountId: { in: made } } }).then(() => prisma.account.deleteMany({ where: { id: { in: made } } })).catch(() => {});
+  });
+  const g1 = (await createGuild(L.acc, L.id, { name: `Gdb ${run} Cofre`, tag: `${tag}A` })).guildId;
+  await requestJoin(M.acc, M.id, g1);
+  await decideApplication(L.acc, L.id, (await guildPage(L.acc, L.id, g1)).applications[0].id, 'accept');
+  const levelCost = s['guild.levelCostGold'];
+
+  await t.test('doação: mínimo, saldo, lançamento no extrato e nível da guilda', async () => {
+    await fails(guildBenefits(P.acc, P.id), 403); // sem guilda
+    await fails(donate(L.acc, L.id, 'abc'), 400);
+    await fails(donate(L.acc, L.id, 0), 400);
+    await fails(donate(L.acc, L.id, s['guild.donationMinGold'] - 1), 400, /menor doação/);
+    const before = await gold(M.id);
+    await fails(donate(M.acc, M.id, 999_999_999), 409, /Ouro insuficiente/);
+    assert.equal(await gold(M.id), before);
+    assert.equal(await prisma.guildDonation.count({ where: { characterId: M.id } }), 0); // desfeito junto
+    const a = await donate(L.acc, L.id, 1000);
+    assert.deepEqual([a.leveledUp, a.level], [false, 1]);
+    assert.equal(await gold(L.id), 49_000n);
+    const row = await prisma.goldLedger.findFirstOrThrow({ where: { characterId: L.id, reason: 'GUILD_DONATION' } });
+    assert.deepEqual([row.delta, row.balanceAfter, row.refType], [-1000n, 49_000n, 'GuildDonation']);
+    const b = await donate(L.acc, L.id, levelCost - 1000); // fecha o custo do nível 2
+    assert.deepEqual([b.leveledUp, b.level], [true, 2]);
+    const g = await prisma.guild.findUniqueOrThrow({ where: { id: g1 } });
+    assert.deepEqual([g.level, Number(g.treasury)], [2, levelCost]);
+    assert.equal((await guildPage(L.acc, L.id, g1)).memberLimit, memberLimitFor(2));
+  });
+
+  await t.test('baú do dia: só depois de 24 h na guilda, uma vez por dia, com ouro e poção no extrato', async () => {
+    await fails(claimChest(L.acc, L.id, 'daily'), 403, /24 horas/);
+    await fails(claimChest(L.acc, L.id, 'mensal'), 400);
+    await prisma.character.updateMany({ where: { id: { in: [L.id, M.id] } }, data: { guildJoinedAt: old(80) } });
+    const before = await gold(L.id), bp = await prisma.itemBlueprint.findUniqueOrThrow({ where: { name: bestPotionFor(30, 'hp') } });
+    const r = await claimChest(L.acc, L.id, 'daily');
+    const expected = BigInt(dayGold(30, 2));
+    assert.equal(await gold(L.id) - before, expected);
+    assert.equal(r.gold, String(expected));
+    const lg = await prisma.goldLedger.findFirstOrThrow({ where: { characterId: L.id, reason: 'GUILD_CHEST' } });
+    assert.deepEqual([lg.delta, lg.refType], [expected, 'GuildChestClaim']);
+    if (s['guild.dailyPotions'] > 0) assert.equal((await prisma.itemLedger.findFirstOrThrow({ where: { characterId: L.id, reason: 'GUILD_CHEST', blueprintId: bp.id } })).delta, s['guild.dailyPotions']);
+    await fails(claimChest(L.acc, L.id, 'daily'), 409, /hoje/);
+    assert.equal((await guildBenefits(L.acc, L.id)).daily.claimed, true);
+    assert.equal((await guildBenefits(M.acc, M.id)).daily.claimed, false); // o outro membro ainda pode
+    assert.equal((await prisma.guildChestClaim.findFirstOrThrow({ where: { characterId: L.id, kind: 'DAILY' } })).period, guildDayKey());
+  });
+
+  await t.test('baú da semana: exige a meta de doações, 72 h na guilda e vale uma vez por semana', async () => {
+    const g2 = (await createGuild(O.acc, O.id, { name: `Gdb ${run} Meta`, tag: `${tag}B` })).guildId;
+    await fails(claimChest(O.acc, O.id, 'weekly'), 403, /72 horas/);
+    await prisma.character.update({ where: { id: O.id }, data: { guildJoinedAt: old(100) } });
+    const goal = s['guild.weeklyGoalPerMember']; // um membro só
+    if (goal > 0) await fails(claimChest(O.acc, O.id, 'weekly'), 409, /meta/);
+    const b0 = await guildBenefits(O.acc, O.id);
+    assert.deepEqual([b0.weekly.goalMet, b0.weekly.goal], [goal === 0, String(goal)]);
+    if (goal > 0) await donate(O.acc, O.id, goal);
+    const before = await gold(O.id), mat = await prisma.itemBlueprint.findUniqueOrThrow({ where: { name: materialForLevel(40).name } });
+    await claimChest(O.acc, O.id, 'weekly');
+    assert.equal(await gold(O.id) - before, BigInt(dayGold(40, 1) * s['guild.weeklyDays']));
+    if (s['guild.weeklyMaterials'] > 0) assert.equal((await prisma.itemLedger.findFirstOrThrow({ where: { characterId: O.id, reason: 'GUILD_CHEST', blueprintId: mat.id } })).delta, s['guild.weeklyMaterials']);
+    await fails(claimChest(O.acc, O.id, 'weekly'), 409, /semana/);
+    assert.equal((await prisma.guildChestClaim.findFirstOrThrow({ where: { characterId: O.id, kind: 'WEEKLY' } })).period, guildWeekKey());
+    // Dissolver a guilda não apaga o registro da coleta: a mesma semana não rende outro baú em outra guilda.
+    await prisma.guild.delete({ where: { id: g2 } });
+    assert.equal(await prisma.guildChestClaim.count({ where: { characterId: O.id, kind: 'WEEKLY', period: guildWeekKey() } }), 1);
+    const again = await prisma.guildChestClaim.create({ data: { characterId: O.id, guildId: g2, kind: 'WEEKLY', period: guildWeekKey(), gold: 1n } }).then(() => 'criou', () => 'recusou');
+    assert.equal(again, 'recusou');
+  });
+
+  await t.test('maiores doadores da semana e vantagens do nível', async () => {
+    await donate(M.acc, M.id, 2000);
+    const b = await guildBenefits(M.acc, M.id);
+    // L doou o custo do nível 2 e M doou 2000: se L doou mais, vem primeiro.
+    const expected = levelCost > 2000 ? [L.name, M.name] : [M.name, L.name];
+    assert.deepEqual(b.topDonors.map(d => d.name), expected);
+    assert.deepEqual([b.level, b.perks.members, b.perks.chestBonusPercent], [2, memberLimitFor(2), s['guild.levelBonusPercent']]);
+    assert.ok(b.nextLevelAt === null || b.nextLevelAt > Number(b.treasury));
+  });
+});
