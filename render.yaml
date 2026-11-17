@@ -1,0 +1,40 @@
+# Blueprint do Render para O Confronto (um único serviço Node serve a interface e a API).
+# Requisito: um MySQL 8 acessível pela internet (o Render gratuito não tem MySQL e o jogo não tem modo sem banco).
+# Passo a passo:
+#   1. Crie um MySQL (Hostinger com acesso remoto liberado, Aiven free ou outro) e uma base vazia.
+#   2. No Render: New > Blueprint > repositório paulohmaciel/oConfrontoReborn. Preencha DATABASE_URL quando pedir.
+#   3. Domínio personalizado oconfronto.libertycondominio.online: CNAME na Hostinger apontando para <servico>.onrender.com.
+#      Use o jogo SEMPRE pelo domínio personalizado: o servidor só aceita ações (POST) vindas de APP_ORIGIN.
+# Sem segredos neste arquivo: DATABASE_URL é informada no painel (sync: false).
+services:
+  - type: web
+    name: oconfronto
+    runtime: node
+    plan: free
+    region: oregon
+    # devDependencies são necessárias (prisma, vite, tsx). `build` gera as folhas de arte e a interface em dist/.
+    buildCommand: npm ci --include=dev && npm run generate && npm run build
+    # Plano gratuito não tem preDeployCommand: migrações (aditivas) e catálogo (seed repetível) rodam antes de subir.
+    # start:prod força NODE_ENV=production (cookie Secure, CSP).
+    startCommand: npm run db:deploy && npm run seed && npm run start:prod
+    healthCheckPath: /api/health   # 200 quando o banco responde, 503 quando não
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: DATABASE_URL
+        sync: false                 # mysql://USUARIO:SENHA@HOST:3306/BASE (codifique caracteres reservados na senha)
+      - key: HOST
+        value: 0.0.0.0              # o proxy do Render precisa alcançar o processo
+      - key: APP_ORIGIN
+        value: https://oconfronto.libertycondominio.online
+      - key: PUBLIC_URL
+        value: https://oconfronto.libertycondominio.online
+      - key: TRUST_PROXY
+        value: "1"                  # um salto (proxy do Render): limites de uso contam o IP real
+      - key: MAIL_DRIVER
+        value: console              # sem e-mail real: recuperação de senha e confirmação ficam nos logs
+      - key: ALLOW_CONSOLE_MAIL
+        value: "1"                  # exigido em produção para beta fechado sem e-mail
+      # Pagamentos desligados: sem MP_ACCESS_TOKEN / MP_WEBHOOK_SECRET o Premium aparece como "ainda não está à venda".
+      # Para testar o Mercado Pago, adicione as credenciais de TESTE (veja MERCADOPAGO-TESTE.md).
