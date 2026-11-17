@@ -24,6 +24,8 @@ services:
         value: 22
       - key: DATABASE_URL
         sync: false                 # mysql://USUARIO:SENHA@HOST:3306/BASE (codifique caracteres reservados na senha)
+      - key: DB_TX_TIMEOUT_MS
+        value: "30000"              # MySQL na Hostinger, longe do Render: transações passam dos 5 s padrão
       - key: HOST
         value: 0.0.0.0              # o proxy do Render precisa alcançar o processo
       - key: APP_ORIGIN

@@ -1,7 +1,10 @@
 import 'dotenv/config';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { GameError, integer } from './engine';
-export const prisma = new PrismaClient();
+// Com o banco longe do servidor (ex.: Render nos EUA e MySQL na Hostinger), cada consulta leva ~200 ms e uma
+// transação de cadastro passa dos 5 s padrão do Prisma. DB_TX_TIMEOUT_MS sobe esse limite; sem ele, vale o padrão.
+const txTimeout = Number(process.env.DB_TX_TIMEOUT_MS) || undefined;
+export const prisma = new PrismaClient(txTimeout ? { transactionOptions: { timeout: txTimeout, maxWait: Math.min(txTimeout, 10_000) } } : undefined);
 export async function transaction<T>(run: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
   for (let attempt = 0; ; attempt++) {
     try { return await prisma.$transaction(run, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted }); }
