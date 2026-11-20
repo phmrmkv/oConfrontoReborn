@@ -12,7 +12,7 @@
 | # | Gravidade | Achado | Onde |
 |---|---|---|---|
 | 1 | **Alta** (condicional) | `dev-login` vira ADMIN para qualquer um se o servidor público ficar atrás de proxy local sem `X-Forwarded-For` e o `.env` ainda tiver `NODE_ENV=development` + `DEV_QUICK_LOGIN=1` | `backend/src/account/auth.ts` (rota `dev-login`), `iniciar.bat`, `.env.example` |
-| 2 | **Alta** (antes de publicar) | Conta ADMIN `mestre@localhost.dev` com senha fixa e pública `Mestre-Temp-2026!`, impressa no console a cada início | `backend/prisma/create-master.ts`, `iniciar.bat` — *já estava no TODO* |
+| 2 | **Alta** (antes de publicar) | Conta ADMIN `mestre@localhost.dev` com senha fixa e pública `(senha antiga, removida)`, impressa no console a cada início | `backend/prisma/create-master.ts`, `iniciar.bat` — *já estava no TODO* |
 | 3 | Média | "Modo produção" depende só de `NODE_ENV` no `.env`: sem ele, cookie sem `Secure`, sem `upgrade-insecure-requests` e travas de dev liberadas | `auth.ts` (cookie), `server.ts` (helmet), `package.json` (`start` = `dev`) |
 | 4 | Média | MODERATOR revoga qualquer punição, inclusive banimento permanente que só ADMIN pode aplicar | `backend/src/admin/adminRoutes.ts` (`/admin/punishments/:id/revoke`) |
 | 5 | Média | E-mail da conta master usa domínio público (`.dev`); se a conta existir em produção, o dono do domínio pode redefinir a senha de um ADMIN | `create-master.ts`, `auth.ts`, `emailRoutes.ts` |
@@ -41,7 +41,7 @@
 
 ### 2. Senha fixa da conta master — Alta (já estava no TODO)
 - [x] Corrigido em 2026-10-31: `TEMP_PASSWORD` removida; `npm run master:create` gera senha aleatória e **não a exibe** (só `-- --aleatoria` mostra uma vez, só `-- --senha` define uma). Falta: apagar a conta do banco antes de publicar.
-- **Hoje:** `TEMP_PASSWORD = 'Mestre-Temp-2026!'` é a senha padrão do `npm run master:create`. O `iniciar.bat` executa o script sempre e imprime a senha. A conta entra pelo login normal, sem restrição de loopback.
+- **Hoje:** `TEMP_PASSWORD = '(senha antiga, removida)'` é a senha padrão do `npm run master:create`. O `iniciar.bat` executa o script sempre e imprime a senha. A conta entra pelo login normal, sem restrição de loopback.
 - **Correção:** apagar a constante, usar `--aleatoria` como padrão, não imprimir a senha e apagar a conta do banco antes de publicar.
 
 ### 3. Produção depende só de `NODE_ENV` — Média

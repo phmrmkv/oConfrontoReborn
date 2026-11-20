@@ -41,7 +41,7 @@
 - [ ] Usar a capa também em compartilhamento (og:image) e conferir direitos/licença das duas artes geradas por IA antes do lançamento comercial
 
 - [x] Entrada "Mestre" para desenvolvimento (botão na home só no seu computador; `DEV_QUICK_LOGIN=1`) (2026-10-28)
-- [x] `npm run master:create` cria/redefine o login master (e-mail `mestre@localhost.dev`, senha temporária `Mestre-Temp-2026!`; `-- --aleatoria` gera outra; `-- --senha "..."` escolhe)
+- [x] `npm run master:create` cria/redefine o login master (e-mail `mestre@localhost.dev`, senha temporária `(senha antiga, removida)`; `-- --aleatoria` gera outra; `-- --senha "..."` escolhe)
 - [x] Senha fixa da conta master removida; `master:create` gera senha aleatória sem exibir; `dev-login` não promove mais conta existente e exige `HOST` loopback + `NODE_ENV=development`; servidor aborta com `DEV_QUICK_LOGIN=1` em host público; `npm run start:prod` (2026-10-31, `SEGURANCA.md` 1–4, 8–10)
 - [ ] **Antes de publicar:** remover `DEV_QUICK_LOGIN` do `.env`, apagar a conta `mestre@localhost.dev` e conferir que nenhuma conta de teste ficou no banco de produção
 - [x] Segurança (2026-11-12): 11 trocar senha logado e sair dos outros aparelhos; 12 posse antes da trava no Mercado; 7 nível mínimo no Mercado (`market.minLevel`) e opção de e-mail confirmado (`market.verifiedEmail`); 6 avisos de proxy; contas de desenvolvimento não entram em produção; produção recusa subir com e-mail só no terminal
