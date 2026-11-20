@@ -11,6 +11,8 @@ import { createCharacterKit, parseCharacterName } from '../game/characterService
 import { addItem, recordGold } from '../economy/economy';
 import { sendVerification } from './accountTokens';
 import { notifyMail, publicUrl } from '../core/mailer';
+import { signupBlock, signupMode } from './signupPolicy';
+import { rateLimit } from 'express-rate-limit';
 export const digest = (value: string) => createHash('sha256').update(value).digest('hex');
 // Conta de desenvolvimento local. Nunca recebe e-mail de redefinição e só existe fora de produção.
 export const MASTER_EMAIL = 'mestre@localhost.dev';
@@ -67,7 +69,15 @@ async function loginCookie(res: Parameters<RequestHandler>[1], accountId: number
   await prisma.session.create({ data: { tokenHash: digest(token), accountId, expiresAt } });
   res.cookie('oc_session', token, { httpOnly: true, sameSite: 'strict', secure: process.env.NODE_ENV === 'production', expires: expiresAt, path: '/' });
 }
-authRouter.post('/register', asyncRoute(async (req, res) => {
+// Limites por IP além do geral de /api/auth (30 a cada 15 min): cadastro em massa e tentativa de adivinhar senha.
+// Ajustáveis por CADASTRO_LIMITE_HORA e LOGIN_FALHAS_15MIN; atrás de proxy dependem de TRUST_PROXY correto.
+const registerLimit = rateLimit({ windowMs: 60 * 60_000, limit: Math.max(1, Number(process.env.CADASTRO_LIMITE_HORA) || 20), standardHeaders: 'draft-8', legacyHeaders: false, message: { error: 'Muitos cadastros deste endereço em pouco tempo. Tente de novo mais tarde.' } });
+const loginFailLimit = rateLimit({ windowMs: 15 * 60_000, limit: Math.max(1, Number(process.env.LOGIN_FALHAS_15MIN) || 10), skipSuccessfulRequests: true, standardHeaders: 'draft-8', legacyHeaders: false, message: { error: 'Muitas tentativas de entrada com erro. Aguarde 15 minutos antes de tentar novamente.' } });
+// Informa ao site se o cadastro está aberto, só por convite ou fechado (para mostrar o campo certo).
+authRouter.get('/signup-mode', (_req, res) => { res.json({ mode: signupMode() }); });
+authRouter.post('/register', registerLimit, asyncRoute(async (req, res) => {
+  const blocked = signupBlock(req.body?.invite);
+  if (blocked) throw new GameError(blocked.status, blocked.message);
   const { email, password } = credentials(req.body);
   const name = parseCharacterName(req.body.name);
   const hash = await hashPassword(password);
@@ -96,7 +106,7 @@ authRouter.post('/register', asyncRoute(async (req, res) => {
     throw e;
   }
 }));
-authRouter.post('/login', asyncRoute(async (req, res) => {
+authRouter.post('/login', loginFailLimit, asyncRoute(async (req, res) => {
   const { email, password } = credentials(req.body);
   const account = await prisma.account.findUnique({ where: { email } });
   const dummy = 'scrypt:00000000000000000000000000000000:' + '0'.repeat(128);
